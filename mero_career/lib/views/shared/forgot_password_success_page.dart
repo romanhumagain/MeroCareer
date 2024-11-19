@@ -30,17 +30,17 @@ class ForgotPasswordSuccessPage extends StatelessWidget {
             ),
             Text(
               "Password Reset Email Sent",
-              style: TextStyle(
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   fontSize: 23, fontWeight: FontWeight.w700, letterSpacing: 1),
             ),
             SizedBox(
               height: 10,
             ),
             Text(
-                "If this email is registered, we've sent you a link to reset your password. Please check your inbox (and spam folder) for the reset instructions.",
+                "If this email is registered, we've sent you a link to reset your password. Please check your mail to reset password.",
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   color: Colors.grey,
                 ),
                 textAlign: TextAlign.center),

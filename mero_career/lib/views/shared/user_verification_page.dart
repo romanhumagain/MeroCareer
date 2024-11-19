@@ -32,7 +32,7 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
             Text(
               "Enter the 4-digit verification code sent to your email.",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   fontSize: 19,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5),
@@ -76,10 +76,13 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
                     "Didn't receive the code? ",
-                    style: TextStyle(letterSpacing: 0.5, fontSize: 15),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(letterSpacing: 0.5, fontSize: 15),
                   ),
                   Text(
                     " Resend",
@@ -119,7 +122,10 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
           hintText: '', // No hint text
         ),
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        style: Theme.of(context)
+            .textTheme
+            .titleLarge
+            ?.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
         onChanged: (value) {
           // Automatically move focus to the next input field when a digit is entered
           if (value.length == 1) {

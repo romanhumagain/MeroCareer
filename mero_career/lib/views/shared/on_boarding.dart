@@ -49,12 +49,6 @@ class _OnBoardingState extends State<OnBoarding> {
                 imageUrl: 'assets/images/on_boarding4.jpg',
               ),
 
-              OnBoardingPage(
-                heading: "Track Your Applications",
-                subHeading:
-                    "Stay on top of your job applications and get updates on the status of each one.",
-                imageUrl: 'assets/images/on_boarding6.jpg',
-              ),
               // OnBoardingPage(),
             ],
           ),
@@ -85,7 +79,7 @@ class _OnBoardingState extends State<OnBoarding> {
               right: 20,
               child: ElevatedButton(
                 onPressed: () {
-                  if (_currentPage < 3) {
+                  if (_currentPage < 2) {
                     _pageController.nextPage(
                         duration: Duration(microseconds: 500),
                         curve: Curves.ease);

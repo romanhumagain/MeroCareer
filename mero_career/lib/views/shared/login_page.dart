@@ -50,17 +50,20 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   "MeroCareer",
                   style: GoogleFonts.openSans(
-                    textStyle:
-                        TextStyle(fontSize: 22.5, fontWeight: FontWeight.bold),
-                  ),
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .headlineLarge
+                          ?.copyWith(fontSize: 24.5)),
                 ),
                 const SizedBox(
                   height: 2,
                 ),
-                const Text(
+                Text(
                   "Get started with your job search today.",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w400, letterSpacing: 0.5),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(fontSize: 15),
                 ),
                 const SizedBox(
                   height: 35,
@@ -95,8 +98,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         Text(
                           "Remember Me",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, letterSpacing: 0.3),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontSize: 15),
                         )
                       ],
                     ),
@@ -109,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         "Forgot Password ?",
-                        style: TextStyle(color: Colors.grey),
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     )
                   ],
@@ -129,12 +134,12 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Create a new account ?",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 15.5,
-                          letterSpacing: 0.4),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
                     ),
                     const SizedBox(
                       width: 10,

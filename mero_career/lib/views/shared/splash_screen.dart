@@ -17,8 +17,9 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
 
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>OnBoarding()));
+    Timer(Duration(seconds: 4), () {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => OnBoarding()));
     });
   }
 
@@ -40,11 +41,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 )),
               ),
               SizedBox(
-                height:0,
+                height: 0,
               ),
               Text(
                 "MeroCareer",
-                style: TextStyle(
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 26,
                     letterSpacing: 1.5,

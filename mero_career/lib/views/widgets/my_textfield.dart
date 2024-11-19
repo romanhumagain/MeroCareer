@@ -15,28 +15,47 @@ class MyTextfield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
-              vertical: verticalContentPadding, horizontal: 8.0),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey)),
-          labelText: labelText,
-          labelStyle: TextStyle(
-              letterSpacing: 0.5,
+        contentPadding: EdgeInsets.symmetric(
+            vertical: verticalContentPadding, horizontal: 8.0),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: isDarkMode
+                ? Colors.grey.shade700
+                : Colors.grey, // Change color based on dark mode
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: isDarkMode
+                ? Colors.white
+                : Colors.blue, // Set focused border color
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade500,
+          ),
+        ),
+        labelText: labelText,
+        labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey),
-          prefixIcon: Icon(
-            prefixIcon,
-            size: 21,
-            color: Colors.grey.shade600,
-          )),
+              letterSpacing: 0.5,
+              color: isDarkMode ? Colors.grey.shade200 : Colors.black,
+            ),
+        prefixIcon: Icon(
+          prefixIcon,
+          size: 21,
+          color: isDarkMode ? Colors.grey.shade200 : Colors.grey.shade700,
+        ),
+      ),
     );
   }
 }

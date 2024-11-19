@@ -29,7 +29,7 @@ class RegisterPage extends StatelessWidget {
         toolbarHeight: 70,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        padding: const EdgeInsets.symmetric(horizontal: 33.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,12 +43,13 @@ class RegisterPage extends StatelessWidget {
               Text(
                 "Lets Create Your Account",
                 style: GoogleFonts.openSans(
-                  textStyle:
-                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .headlineLarge
+                        ?.copyWith(fontSize: 24)),
               ),
               SizedBox(
-                height: 30,
+                height: 25,
               ),
               Row(
                 children: [
@@ -109,7 +110,7 @@ class RegisterPage extends StatelessWidget {
                 verticalContentPadding: 13.5,
               ),
               SizedBox(
-                height: 10,
+                height: 8,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -121,28 +122,30 @@ class RegisterPage extends StatelessWidget {
                   ),
                   Text(
                     "I agree to ",
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(color: Colors.grey.shade500),
                   ),
                   Text(
                     "Privacy Policy ",
-                    style: TextStyle(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline),
+                        decoration: TextDecoration.underline,
+                        fontSize: 14),
                   ),
                   Text(
                     "and ",
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(color: Colors.grey.shade500),
                   ),
                   Text(
                     "Terms of use ",
-                    style: TextStyle(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline),
+                        decoration: TextDecoration.underline,
+                        fontSize: 14),
                   ),
                 ],
               ),
               SizedBox(
-                height: 30,
+                height: 20,
               ),
               MyButton(
                 color: Colors.blue,
@@ -157,13 +160,14 @@ class RegisterPage extends StatelessWidget {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     "Already have an account ?",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                        letterSpacing: 0.5),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(
                     width: 10,
@@ -176,7 +180,7 @@ class RegisterPage extends StatelessWidget {
                     child: Text("Sign In",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            fontSize: 15,
+                            fontSize: 15.2,
                             color: Colors.blue,
                             letterSpacing: 0.5)),
                   )

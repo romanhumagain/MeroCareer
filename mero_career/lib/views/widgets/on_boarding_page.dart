@@ -4,6 +4,7 @@ class OnBoardingPage extends StatelessWidget {
   final String heading;
   final String subHeading;
   final String imageUrl;
+
   const OnBoardingPage(
       {super.key,
       required this.heading,
@@ -39,8 +40,8 @@ class OnBoardingPage extends StatelessWidget {
           ),
           Text(
             heading,
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: 1.2),
-
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: 1.2),
             textAlign: TextAlign.center,
           ),
           SizedBox(
@@ -48,7 +49,10 @@ class OnBoardingPage extends StatelessWidget {
           ),
           Text(
             subHeading,
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium
+                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 13),
             textAlign: TextAlign.center,
           ),
         ],

@@ -32,7 +32,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           children: [
             Text(
               "Forgot Password",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge
+                  ?.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
             ),
             SizedBox(
               height: 10,
@@ -41,7 +44,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               "Enter your registered email address, and we'll send you a link to reset your password.",
               style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   color: Colors.grey),
             ),
             SizedBox(
