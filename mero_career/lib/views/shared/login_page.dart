@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mero_career/views/job_seekers/pages/profile/profile_setup_page.dart';
 import 'package:mero_career/views/shared/forgot_password_page.dart';
 import 'package:mero_career/views/shared/register_page.dart';
-import 'package:mero_career/views/shared/user_verification_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
 import 'package:mero_career/views/widgets/my_textfield.dart';
@@ -19,8 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _handleLogin() async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => UserVerificationPage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ProfileSetupPage()));
   }
 
   @override

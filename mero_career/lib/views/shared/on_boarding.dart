@@ -67,7 +67,7 @@ class _OnBoardingState extends State<OnBoarding> {
                   style: TextStyle(
                       fontSize: 16,
                       letterSpacing: 1,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                       color: Colors.grey.shade600),
                 ),
               )),
@@ -88,11 +88,11 @@ class _OnBoardingState extends State<OnBoarding> {
                         MaterialPageRoute(builder: (context) => LoginPage()));
                   }
                 },
-                child: Icon(Icons.keyboard_arrow_right),
                 style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white),
+                child: Icon(Icons.keyboard_arrow_right),
               ))
         ],
       ),

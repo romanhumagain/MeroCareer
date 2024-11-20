@@ -5,13 +5,15 @@ class MyTextfield extends StatelessWidget {
   final IconData prefixIcon;
   final double verticalContentPadding;
   final TextEditingController controller;
+  final String? hintText;
 
   const MyTextfield(
       {super.key,
       required this.labelText,
       required this.prefixIcon,
       required this.verticalContentPadding,
-      required this.controller});
+      required this.controller,
+      this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,12 @@ class MyTextfield extends StatelessWidget {
           ),
         ),
         labelText: labelText,
+        hintText: hintText,
+        hintStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontSize: 13,
+              letterSpacing: 0.5,
+              color: Colors.grey,
+            ),
         labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontSize: 15,
               letterSpacing: 0.5,
