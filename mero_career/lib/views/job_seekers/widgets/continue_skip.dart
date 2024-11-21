@@ -30,7 +30,7 @@ class _ContinueSkipState extends State<ContinueSkip> {
           style: TextStyle(color: Colors.grey, fontSize: 16),
         ),
         SizedBox(
-          height: 30,
+          height: 15,
         ),
       ],
     );

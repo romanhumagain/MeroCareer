@@ -31,6 +31,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         padding: const EdgeInsets.all(25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Clean and inviting motivational message
             Text(

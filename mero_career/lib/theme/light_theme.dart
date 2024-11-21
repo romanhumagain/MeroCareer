@@ -9,7 +9,7 @@ ThemeData lightMode = ThemeData(
       onPrimary: Colors.white,
       background: Colors.white,
       onBackground: Colors.black,
-      surface: Colors.grey.shade100,
+      surface: Colors.grey.shade50,
       onSurface: Colors.black87,
       error: Colors.red,
       onError: Colors.white,

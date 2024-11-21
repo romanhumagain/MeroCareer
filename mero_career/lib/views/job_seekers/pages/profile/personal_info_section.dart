@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/widgets/continue_skip.dart';
-import 'package:mero_career/views/widgets/my_textfield.dart';
+import 'package:mero_career/views/widgets/my_profile_textfield.dart';
 
 class PersonalInfoSection extends StatefulWidget {
   PersonalInfoSection({super.key});
@@ -65,7 +65,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall
-                        ?.copyWith(fontSize: 20, fontWeight: FontWeight.w500),
+                        ?.copyWith(fontSize: 19.6, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -74,7 +74,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: MyTextfield(
+                child: MyProfileTextfield(
                     labelText: "Full Name",
                     prefixIcon: Icons.person,
                     verticalContentPadding: 12,
@@ -97,7 +97,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall
-                        ?.copyWith(fontSize: 20, fontWeight: FontWeight.w500),
+                        ?.copyWith(fontSize: 19, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -108,7 +108,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Column(
                   children: [
-                    MyTextfield(
+                    MyProfileTextfield(
                         labelText: "Phone Number",
                         prefixIcon: Icons.phone,
                         verticalContentPadding: 12,
@@ -116,7 +116,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                     SizedBox(
                       height: 20,
                     ),
-                    MyTextfield(
+                    MyProfileTextfield(
                         labelText: "Email Address",
                         prefixIcon: Icons.email_rounded,
                         verticalContentPadding: 12,
@@ -124,7 +124,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                     SizedBox(
                       height: 20,
                     ),
-                    MyTextfield(
+                    MyProfileTextfield(
                         labelText: "Address",
                         prefixIcon: Icons.location_city,
                         verticalContentPadding: 12,
@@ -185,7 +185,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall
-                          ?.copyWith(fontSize: 20, fontWeight: FontWeight.w500),
+                          ?.copyWith(fontSize: 19, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -199,7 +199,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                   Padding(
                     padding:
                         const EdgeInsets.only(right: 120, bottom: 10, left: 28),
-                    child: MyTextfield(
+                    child: MyProfileTextfield(
                       labelText: "Language",
                       hintText: "eg:- Nepali, English, Hindi ",
                       prefixIcon: Icons.language,

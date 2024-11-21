@@ -9,7 +9,7 @@ ThemeData darkMode = ThemeData(
       onPrimary: Colors.white,
       background: Colors.black,
       onBackground: Colors.white,
-      surface: Colors.grey.shade800,
+      surface: Colors.grey.shade900,
       onSurface: Colors.white70,
       error: Colors.red,
       onError: Colors.white,
