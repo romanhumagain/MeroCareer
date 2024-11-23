@@ -41,7 +41,7 @@ class OnBoardingPage extends StatelessWidget {
           Text(
             heading,
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: 1.2),
+                fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: 0.6),
             textAlign: TextAlign.center,
           ),
           SizedBox(
@@ -51,8 +51,8 @@ class OnBoardingPage extends StatelessWidget {
             subHeading,
             style: Theme.of(context)
                 .textTheme
-                .headlineMedium
-                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 13),
+                .titleSmall
+                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 13.5),
             textAlign: TextAlign.center,
           ),
         ],

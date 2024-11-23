@@ -9,7 +9,8 @@ ThemeData darkMode = ThemeData(
       onPrimary: Colors.white,
       background: Colors.black,
       onBackground: Colors.white,
-      surface: Colors.grey.shade900,
+      surface: Colors.grey.shade900.withOpacity(0.4),
+      surfaceContainer: Colors.grey.shade900,
       onSurface: Colors.white70,
       error: Colors.red,
       onError: Colors.white,
@@ -58,4 +59,6 @@ ThemeData darkMode = ThemeData(
         color: Colors.grey.shade500,
       ),
     ),
-    appBarTheme: AppBarTheme(backgroundColor: Colors.black));
+    appBarTheme: AppBarTheme(backgroundColor: Colors.black),
+    bottomNavigationBarTheme:
+        BottomNavigationBarThemeData(backgroundColor: Colors.grey.shade900));

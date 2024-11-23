@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
             ? themeProvider.themeData
             : themeProvider.themeData,
         home: SplashScreen(),
+        // home: MainScreen(),
         // home: ProfileSetupPage()
       );
     });

@@ -5,11 +5,12 @@ ThemeData lightMode = ThemeData(
     primaryColor: Colors.blue.shade600,
     scaffoldBackgroundColor: Colors.white,
     colorScheme: ColorScheme.light(
-      primary: Colors.blue,
+      primary: Colors.blue.shade600,
       onPrimary: Colors.white,
       background: Colors.white,
       onBackground: Colors.black,
-      surface: Colors.grey.shade50,
+      surface: Colors.grey.shade200,
+      surfaceContainer: Colors.grey.shade300,
       onSurface: Colors.black87,
       error: Colors.red,
       onError: Colors.white,
@@ -62,4 +63,6 @@ ThemeData lightMode = ThemeData(
         color: Colors.grey.shade600, // Small label text
       ),
     ),
-    appBarTheme: AppBarTheme(backgroundColor: Colors.white));
+    appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade100),
+    bottomNavigationBarTheme:
+        BottomNavigationBarThemeData(backgroundColor: Colors.grey.shade50));

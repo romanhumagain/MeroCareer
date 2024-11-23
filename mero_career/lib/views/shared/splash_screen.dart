@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:mero_career/views/shared/on_boarding.dart';
+import 'package:mero_career/views/shared/onboarding/on_boarding.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,9 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 padding: const EdgeInsets.only(left: 0.0),
                 child: ClipRRect(
                     child: Image.asset(
-                  'assets/images/logo.png',
+                  'assets/images/app_logo.png',
                   width: 200,
-                  height: 100,
+                  height: 85,
                 )),
               ),
               SizedBox(
