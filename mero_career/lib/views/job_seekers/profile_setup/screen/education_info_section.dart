@@ -8,7 +8,7 @@ class EducationInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Number of tabs
+      length: 2,
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25),

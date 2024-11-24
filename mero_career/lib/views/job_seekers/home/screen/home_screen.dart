@@ -19,50 +19,6 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        toolbarHeight: 80,
-        leadingWidth: 350,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Row(
-            children: [
-              Image.asset(
-                'assets/images/app_logo.png',
-                height: 40,
-              ),
-              SizedBox(
-                width: 3,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "MeroCareer",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                  ),
-                  Text(
-                    "Your Career, Your Path",
-                    style: TextStyle(color: Colors.grey, fontSize: 9.5),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 18.0),
-            child: CircleAvatar(
-              radius: 17,
-              backgroundImage: AssetImage(
-                'assets/images/pp.jpg',
-              ),
-            ),
-          )
-        ],
-      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
@@ -81,24 +37,24 @@ class HomeScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     // This Column will take up the available space, pushing the icon to the far right
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Good Morning, ",
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 19.5,
+                              fontSize: 19.8,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.5),
                         ),
                         Text(
-                          "Roman",
+                          "Roman Humagain",
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 19.5,
+                              fontSize: 19,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 0.4),
                         ),
@@ -106,40 +62,14 @@ class HomeScreen extends StatelessWidget {
                     ),
                     // Notification Icon
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: EdgeInsets.symmetric(horizontal: 14.0),
                       child: Column(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.notifications_active,
-                            size: 23.5,
+                            size: 25,
                             color: Colors.white,
                           ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          isDarkMode
-                              ? GestureDetector(
-                                  onTap: () {
-                                    Provider.of<ThemeProvider>(context,
-                                            listen: false)
-                                        .updateTheme(value: false);
-                                  },
-                                  child: Icon(
-                                    Icons.dark_mode,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    Provider.of<ThemeProvider>(context,
-                                            listen: false)
-                                        .updateTheme(value: true);
-                                  },
-                                  child: Icon(
-                                    Icons.sunny,
-                                    color: Colors.white,
-                                  ),
-                                )
                         ],
                       ),
                     ),
@@ -196,7 +126,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 20),
 
             Divider(
-              color: Colors.grey.shade600,
+              color: Theme.of(context).colorScheme.surfaceContainer,
             ),
             SizedBox(height: 15),
             // recent jobs for you
@@ -315,7 +245,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 20),
 
             Divider(
-              color: Colors.grey.shade600,
+              color: Theme.of(context).colorScheme.surfaceContainer,
             ),
             SizedBox(height: 15),
             Container(

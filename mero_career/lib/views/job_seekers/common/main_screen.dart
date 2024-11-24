@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
 import 'package:mero_career/views/job_seekers/mock_interview/screen/mock_interview_prep.dart';
-import 'package:mero_career/views/job_seekers/profile/screen/profile_screen.dart';
 import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
 
 import '../home/screen/home_screen.dart';
+import '../menu/bottom_sheet_menu.dart';
+import '../profile/screen/profile_screen.dart'; // Import ProfileScreen
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,32 +16,95 @@ class MainScreen extends StatefulWidget {
 }
 
 class _NavigationMenuState extends State<MainScreen> {
-  // List of screens for navigation
+  int _selectedIndex = 0;
+
   final List<Widget> _screens = [
-    // const JobDetailsScreen(),
     const HomeScreen(),
     const SearchScreen(),
     const ChatScreen(),
     const MockInterviewPrep(),
-    const ProfileScreen(),
+    Container(), // Placeholder for the menu
+    const ProfileScreen() // Add ProfileScreen to the list
   ];
 
-  int _selectedIndex = 0;
+  void _showMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) => const BottomSheetMenu(),
+    );
+  }
+
+  void _navigateToProfile() {
+    setState(() {
+      _selectedIndex = 5; // Set index to ProfileScreen
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        toolbarHeight: 80,
+        leadingWidth: 350,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/app_logo.png',
+                height: 40,
+              ),
+              const SizedBox(width: 3),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "MeroCareer",
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  ),
+                  Text(
+                    "Your Career, Your Path",
+                    style: TextStyle(color: Colors.grey, fontSize: 9.5),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 18.0),
+            child: GestureDetector(
+              onTap: _navigateToProfile,
+              child: const CircleAvatar(
+                radius: 17,
+                backgroundImage: AssetImage(
+                  'assets/images/pp.jpg',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4),
           child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
+            currentIndex: _selectedIndex > 4 ? 0 : _selectedIndex,
+            // Handle ProfileScreen
             onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
+              if (index == 4) {
+                _showMenu(context);
+              } else {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              }
             },
             backgroundColor:
                 Theme.of(context).bottomNavigationBarTheme.backgroundColor,
@@ -49,12 +113,12 @@ class _NavigationMenuState extends State<MainScreen> {
             unselectedItemColor: Colors.grey,
             showSelectedLabels: true,
             showUnselectedLabels: false,
-            selectedLabelStyle: TextStyle(
+            selectedLabelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.5,
                 fontSize: 14.5),
             selectedFontSize: 14,
-            selectedIconTheme: IconThemeData(size: 24),
+            selectedIconTheme: const IconThemeData(size: 24),
             items: const [
               BottomNavigationBarItem(
                 icon: Padding(
@@ -95,16 +159,14 @@ class _NavigationMenuState extends State<MainScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundImage: AssetImage(
-                      'assets/images/pp.jpg',
-                    ),
+                  padding: EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.menu_outlined,
+                    size: 28,
                   ),
                 ),
-                label: "Profile",
-              ),
+                label: "Menu",
+              )
             ],
           ),
         ),
