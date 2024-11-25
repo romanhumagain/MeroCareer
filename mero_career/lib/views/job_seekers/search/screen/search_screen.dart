@@ -249,11 +249,13 @@ class _SearchScreenState extends State<SearchScreen> {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
         return Container(
           height: 500,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
+              color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
               borderRadius: BorderRadius.circular(28)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -13,7 +13,7 @@ class BottomSheetMenu extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height / 1.8,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.background,
+          color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(28), topLeft: Radius.circular(28))),
       child: Column(
@@ -70,22 +70,32 @@ class BottomSheetMenu extends StatelessWidget {
                   "Account Settings",
                   style: style1,
                 ),
-                ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text("Update Profile"),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.grey,
-                    size: 20,
+                SizedBox(
+                  height: 50,
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                    leading: Icon(Icons.person),
+                    title: Text("Update Profile"),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
                   ),
                 ),
-                ListTile(
-                  leading: Icon(Icons.lock_person_outlined),
-                  title: Text("Manage Account Security"),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.grey,
-                    size: 20,
+                SizedBox(
+                  height: 50,
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                    leading: Icon(Icons.lock_person_outlined),
+                    title: Text("Manage Account Security"),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
                   ),
                 ),
                 Divider(
@@ -95,24 +105,37 @@ class BottomSheetMenu extends StatelessWidget {
                   "Insights",
                   style: style1,
                 ),
-                ListTile(
-                  leading: Icon(Icons.phone),
-                  title: Text("Contact US"),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.grey,
-                    size: 20,
+                SizedBox(
+                  height: 40,
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                    leading: Icon(Icons.phone),
+                    title: Text("Contact US"),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
                   ),
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Divider(
                   color: Theme.of(context).colorScheme.surfaceContainer,
                 ),
-                ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text("Logout"),
-                  onTap: () {
-                    // Perform Logout
-                  },
+                SizedBox(
+                  height: 50,
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                    leading: const Icon(Icons.logout),
+                    title: const Text("Logout"),
+                    onTap: () {
+                      // Perform Logout
+                    },
+                  ),
                 ),
               ],
             ),
