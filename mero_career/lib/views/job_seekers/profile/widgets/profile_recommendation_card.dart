@@ -6,6 +6,7 @@ class ProfileRecommendationCard extends StatelessWidget {
   final String heading;
   final String buttonTitle;
   final Function onTap;
+  final bool hasData;
 
   const ProfileRecommendationCard(
       {super.key,
@@ -14,7 +15,8 @@ class ProfileRecommendationCard extends StatelessWidget {
       required this.icon,
       required this.heading,
       required this.buttonTitle,
-      required this.onTap});
+      required this.onTap,
+      required this.hasData});
 
   final Size size;
 
@@ -29,27 +31,50 @@ class ProfileRecommendationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14)),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.arrow_upward,
-                    color: Colors.green,
-                    size: 18,
-                  ),
-                  Text(
-                    "$percentageCover %",
-                    style: TextStyle(
-                        color: Colors.green, letterSpacing: 0.1, fontSize: 12),
-                  )
-                ],
-              )
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                      color:
+                          hasData ? Colors.green.shade100 : Colors.red.shade100,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: hasData
+                      ? Icon(
+                          Icons.done,
+                          color: Colors.green,
+                          size: 14.2,
+                        )
+                      : Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 14.2,
+                        ),
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_upward,
+                      color: hasData ? Colors.green : Colors.red,
+                      size: 18,
+                    ),
+                    Text(
+                      "$percentageCover %",
+                      style: TextStyle(
+                          color: hasData ? Colors.green : Colors.red,
+                          letterSpacing: 0.1,
+                          fontSize: 12),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
           SizedBox(
-            height: 8,
+            height: 14,
           ),
           Container(
             padding: EdgeInsets.all(4),
@@ -63,7 +88,7 @@ class ProfileRecommendationCard extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 8,
+            height: 12,
           ),
           Text(
             heading,
@@ -71,9 +96,7 @@ class ProfileRecommendationCard extends StatelessWidget {
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
           ),
-          SizedBox(
-            height: 14,
-          ),
+          SizedBox(height: 15),
           GestureDetector(
             onTap: () {
               onTap();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/job_seekers/map/screen/company_map.dart';
 
 class JobDetailsScreen extends StatelessWidget {
   const JobDetailsScreen({super.key});
@@ -261,15 +262,23 @@ class JobDetailsScreen extends StatelessWidget {
                   SizedBox(
                     width: 20,
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                    ),
-                    child: Icon(
-                      Icons.location_on,
-                      size: 30,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CompanyMap()));
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                      ),
+                      child: Icon(
+                        Icons.location_on,
+                        size: 30,
+                      ),
                     ),
                   )
                 ],

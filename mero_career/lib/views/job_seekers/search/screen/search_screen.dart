@@ -268,8 +268,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 15),
                   decoration: BoxDecoration(
-                    color: Colors.grey[400], // Color of the small bar
-                    borderRadius: BorderRadius.circular(12), // Rounded edges
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
@@ -382,6 +382,18 @@ class _FilterDropdownButtonState extends State<FilterDropdownButton> {
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 8),
         labelText: widget.labelText,
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade500,
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.blue,
+            width: 2.0,
+          ),
+        ),
       ),
     );
   }

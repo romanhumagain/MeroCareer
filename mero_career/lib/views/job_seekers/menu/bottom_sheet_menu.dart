@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/theme_provider.dart';
+import 'package:mero_career/views/job_seekers/menu/screen/account_security_management.dart';
+import 'package:mero_career/views/job_seekers/menu/screen/contact_us.dart';
+import 'package:mero_career/views/job_seekers/menu/screen/settings_page.dart';
 import 'package:provider/provider.dart';
 
 class BottomSheetMenu extends StatelessWidget {
@@ -72,29 +75,46 @@ class BottomSheetMenu extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 50,
-                  child: ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                    leading: Icon(Icons.person),
-                    title: Text("Update Profile"),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 20,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()));
+                    },
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                      leading: Icon(Icons.settings),
+                      title: Text("Settings"),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 50,
-                  child: ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                    leading: Icon(Icons.lock_person_outlined),
-                    title: Text("Manage Account Security"),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 20,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AccountSecurityManagement()));
+                    },
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                      leading: Icon(Icons.lock_person_outlined),
+                      title: Text("Manage Account Security"),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -107,15 +127,21 @@ class BottomSheetMenu extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 40,
-                  child: ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                    leading: Icon(Icons.phone),
-                    title: Text("Contact US"),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 20,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ContactUs()));
+                    },
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                      leading: Icon(Icons.phone),
+                      title: Text("Contact US"),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),

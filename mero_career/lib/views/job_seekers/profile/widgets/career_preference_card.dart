@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/preference_badge.dart';
 
 class CareerPreferenceCard extends StatelessWidget {
@@ -13,7 +14,7 @@ class CareerPreferenceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _showCareerPreferenceScreen(context);
+        showCareerPreferenceScreen(context);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
@@ -115,7 +116,7 @@ class CareerPreferenceCard extends StatelessWidget {
     );
   }
 
-  void _showCareerPreferenceScreen(BuildContext context) {
+  void showCareerPreferenceScreen(BuildContext context) {
     TextEditingController _jobRolesController = TextEditingController();
     TextEditingController _jobLocationController = TextEditingController();
     TextEditingController _jobTypeController = TextEditingController();
@@ -134,20 +135,22 @@ class CareerPreferenceCard extends StatelessWidget {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        ModalTopBar(),
                         SizedBox(
-                          height: 10,
+                          height: 25,
                         ),
-                        Text("Profile Preference",
+                        Text("Career Preference",
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineMedium
@@ -162,49 +165,61 @@ class CareerPreferenceCard extends StatelessWidget {
                         SizedBox(
                           height: 20,
                         ),
-                        PreferenceTextField(
-                          controller: _jobRolesController,
-                          labelText: "Prefered Job Roles",
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        PreferenceTextField(
-                          controller: _jobLocationController,
-                          labelText: "Prefered Job Location",
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        PreferenceTextField(
-                          controller: _jobRolesController,
-                          labelText: "Prefered Job Roles",
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        PreferenceDropdownButton(
-                          items: const ["Part-Time", "Full-Time", "Remote"],
-                          labelText: "Prefered Job Type",
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        PreferenceDropdownButton(
-                          items: const [
-                            "IT & Telecommunication",
-                            "Banking",
-                            "Education",
-                            "Construction",
-                            "Design"
-                          ],
-                          labelText: "Prefered Job Category",
+                        Padding(
+                          padding: const EdgeInsets.only(right: 18.0),
+                          child: Column(
+                            children: [
+                              PreferenceTextField(
+                                controller: _jobRolesController,
+                                labelText: "Prefered Job Roles",
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              PreferenceTextField(
+                                controller: _jobLocationController,
+                                labelText: "Prefered Job Location",
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              PreferenceTextField(
+                                controller: _jobRolesController,
+                                labelText: "Prefered Job Roles",
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              PreferenceDropdownButton(
+                                items: const [
+                                  "Part-Time",
+                                  "Full-Time",
+                                  "Remote"
+                                ],
+                                labelText: "Prefered Job Type",
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              PreferenceDropdownButton(
+                                items: const [
+                                  "IT & Telecommunication",
+                                  "Banking",
+                                  "Education",
+                                  "Construction",
+                                  "Design"
+                                ],
+                                labelText: "Prefered Job Category",
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 25),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -270,6 +285,26 @@ class PreferenceDropdownButton extends StatelessWidget {
           .toList(),
       onChanged: (value) {},
       decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey.shade500,
+              width: 1.5,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.blue,
+              width: 2.0,
+            ),
+          ),
+          labelStyle: const TextStyle(
+            fontSize: 15,
+          ),
+          floatingLabelStyle: const TextStyle(
+            color: Colors.blue,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
           labelText: labelText),
     );
@@ -288,13 +323,32 @@ class PreferenceTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 8),
-          label: Text(
-            labelText + '*',
-            style: TextStyle(fontSize: 15),
-            // softWrap: true,
-            // overflow: TextOverflow.visible,
-          )),
+        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade400,
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.blue,
+            width: 2.0,
+          ),
+        ),
+        labelText: "$labelText *",
+        labelStyle: const TextStyle(
+          fontSize: 15,
+        ),
+        floatingLabelStyle: const TextStyle(
+          color: Colors.blue,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      style: const TextStyle(
+        fontSize: 14,
+      ),
     );
   }
 }

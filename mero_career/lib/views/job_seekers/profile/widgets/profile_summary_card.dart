@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
 
 class ProfileSummary extends StatefulWidget {
   const ProfileSummary({
@@ -77,7 +78,7 @@ class _ProfileSummaryState extends State<ProfileSummary> {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -85,7 +86,11 @@ class _ProfileSummaryState extends State<ProfileSummary> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 10,
+                        height: 4,
+                      ),
+                      ModalTopBar(),
+                      SizedBox(
+                        height: 25,
                       ),
                       Text("Profile Summary",
                           style: Theme.of(context)
@@ -119,7 +124,8 @@ class _ProfileSummaryState extends State<ProfileSummary> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 25),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
