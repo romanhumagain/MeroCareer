@@ -255,8 +255,9 @@ class _SearchScreenState extends State<SearchScreen> {
           height: 500,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(28)),
+            color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(28),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -266,16 +267,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   width: 80,
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 15),
-                  // Spacing below the bar
                   decoration: BoxDecoration(
                     color: Colors.grey[400], // Color of the small bar
                     borderRadius: BorderRadius.circular(12), // Rounded edges
                   ),
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
@@ -291,108 +289,41 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 20,
+                    SizedBox(height: 20),
+                    FilterDropdownButton(
+                      items: const ["All", "Part-Time", "Full-Time", "Remote"],
+                      labelText: "Job Type",
+                      initialValue: jobType ?? "All",
                     ),
-                    DropdownButtonFormField(
-                      value: jobType,
-                      items: ["All", "Part-Time", "Full-Time", "Remote"]
-                          .map((type) => DropdownMenuItem(
-                                value: type,
-                                child: Text(type),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          jobType = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          labelText: "Job Type"),
+                    SizedBox(height: 20),
+                    FilterDropdownButton(
+                      items: const ["All", "Junior", "Mid-Level", "Senior"],
+                      labelText: "Experience",
+                      initialValue: experience ?? "All",
                     ),
-                    SizedBox(
-                      height: 20,
+                    SizedBox(height: 20),
+                    FilterDropdownButton(
+                      items: const [
+                        "All",
+                        "Entry Level",
+                        "Mid Level",
+                        "Senior Level"
+                      ],
+                      labelText: "Job Level",
+                      initialValue: jobLevel ?? "All",
                     ),
-                    DropdownButtonFormField(
-                      value: experience,
-                      items: ["All", "Junior", "Mid-Level", "Senior"]
-                          .map((type) => DropdownMenuItem(
-                                value: type,
-                                child: Text(type),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          experience = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          labelText: "Experience"),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    DropdownButtonFormField(
-                      value: jobLevel,
-                      items: ["All", "Entry Level", "Mid Level", "Senior Level"]
-                          .map((type) => DropdownMenuItem(
-                                value: type,
-                                child: Text(type),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          jobLevel = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          labelText: "Job Level"),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    DropdownButtonFormField(
-                      value: jobCategory,
-                      items: [
+                    SizedBox(height: 20),
+                    FilterDropdownButton(
+                      items: const [
                         "All",
                         "IT",
                         "Banking",
                         "Designer",
-                        "Constructon",
+                        "Construction",
                         "Hospitality"
-                      ]
-                          .map((type) => DropdownMenuItem(
-                                value: type,
-                                child: Text(type),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          jobCategory = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 12),
-                          labelText: "Job Categories"),
+                      ],
+                      labelText: "Job Categories",
+                      initialValue: jobCategory ?? "All",
                     ),
                   ],
                 ),
@@ -401,6 +332,57 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class FilterDropdownButton extends StatefulWidget {
+  final List<String> items;
+  final String labelText;
+  final String initialValue;
+
+  const FilterDropdownButton({
+    super.key,
+    required this.items,
+    required this.labelText,
+    required this.initialValue,
+  });
+
+  @override
+  State<FilterDropdownButton> createState() => _FilterDropdownButtonState();
+}
+
+class _FilterDropdownButtonState extends State<FilterDropdownButton> {
+  late String selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedValue = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      dropdownColor: Theme.of(context).colorScheme.surfaceContainer,
+      borderRadius: BorderRadius.circular(16),
+      value: selectedValue,
+      icon: const Icon(Icons.keyboard_arrow_down),
+      items: widget.items
+          .map((type) => DropdownMenuItem(
+                value: type,
+                child: Text(type),
+              ))
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          selectedValue = value!;
+        });
+      },
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+        labelText: widget.labelText,
+      ),
     );
   }
 }
