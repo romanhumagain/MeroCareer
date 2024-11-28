@@ -9,7 +9,7 @@ class CompanyMap extends StatelessWidget {
 
   Future<Map<String, dynamic>> getCoordinates(String location) async {
     final url = Uri.parse(
-        "https://api.opencagedata.com/geocode/v1/json?q=$location&key=$apiKey");
+        "https://api.opencagedata.com/geocode/v1/json?q=Kathmandu,%20Nepal&key=09fa90be675b4c0a8194a8443531ca20");
 
     final response = await http.get(url);
 

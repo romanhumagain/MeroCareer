@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/theme_provider.dart';
+import 'package:mero_career/views/job_seekers/home/screen/all_jobs.dart';
+import 'package:mero_career/views/job_seekers/home/screen/all_recent_jobs_screen.dart';
+import 'package:mero_career/views/job_seekers/home/screen/hot_jobs.dart';
+import 'package:mero_career/views/job_seekers/home/screen/jobs_expiring_screen.dart';
+import 'package:mero_career/views/job_seekers/home/screen/top_jobs.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/job_category_section.dart';
@@ -91,32 +96,50 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    TopJobSections(
-                      cardColor: cardColor,
-                      iconColor: Colors.green,
-                      title: "Top Jobs",
-                      subTitle: "69 vacancies",
-                      icon: Icons.star,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => TopJobs()));
+                      },
+                      child: TopJobSections(
+                        cardColor: cardColor,
+                        iconColor: Colors.green,
+                        title: "Top Jobs",
+                        subTitle: "69 vacancies",
+                        icon: Icons.star,
+                      ),
                     ),
                     SizedBox(
                       width: 20,
                     ),
-                    TopJobSections(
-                      cardColor: cardColor,
-                      iconColor: Colors.red,
-                      title: "Hot Jobs",
-                      subTitle: "9 vacancies",
-                      icon: Icons.local_fire_department,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => HotJobs()));
+                      },
+                      child: TopJobSections(
+                        cardColor: cardColor,
+                        iconColor: Colors.red,
+                        title: "Hot Jobs",
+                        subTitle: "9 vacancies",
+                        icon: Icons.local_fire_department,
+                      ),
                     ),
                     SizedBox(
                       width: 20,
                     ),
-                    TopJobSections(
-                      cardColor: cardColor,
-                      iconColor: Colors.blue,
-                      title: "All Jobs",
-                      subTitle: "9 vacancies",
-                      icon: Icons.all_inbox,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => AllJobs()));
+                      },
+                      child: TopJobSections(
+                        cardColor: cardColor,
+                        iconColor: Colors.blue,
+                        title: "All Jobs",
+                        subTitle: "9 vacancies",
+                        icon: Icons.all_inbox,
+                      ),
                     ),
                   ],
                 ),
@@ -134,7 +157,7 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 28, vertical: 12),
               child: Column(
-                children: const [
+                children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -145,12 +168,20 @@ class HomeScreen extends StatelessWidget {
                             fontSize: 16.2,
                             letterSpacing: 0.4),
                       ),
-                      Text(
-                        "View All",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w500),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AllRecentJobsScreen()));
+                        },
+                        child: Text(
+                          "View All",
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w500),
+                        ),
                       )
                     ],
                   )
@@ -265,12 +296,21 @@ class HomeScreen extends StatelessWidget {
                               color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 0.4),
                         ),
-                        Text(
-                          "View All",
-                          style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 14.2,
-                              fontWeight: FontWeight.w500),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        JobsExpiringScreen()));
+                          },
+                          child: Text(
+                            "View All",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14.2,
+                                fontWeight: FontWeight.w500),
+                          ),
                         )
                       ],
                     ),
@@ -330,7 +370,7 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 15),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigate to subscription/sign-up page
+                      showSubscriptionDialog(context);
                     },
                     child: Text("Subscribe Now"),
                   ),
@@ -340,6 +380,56 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void showSubscriptionDialog(BuildContext context) {
+    bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          backgroundColor:
+              isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+          title: Text(
+            "Stay Updated!",
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          content: Text(
+            "Subscribe now to receive timely alerts about the latest job postings, career opportunities, and updates tailored just for you. Don’t miss out on your next big break!",
+            style:
+                Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                "Not Now",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Implement subscription logic here
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Thank you for subscribing!"),
+                  ),
+                );
+              },
+              child: Text("Subscribe"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

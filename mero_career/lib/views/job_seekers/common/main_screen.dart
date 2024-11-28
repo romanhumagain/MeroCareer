@@ -48,30 +48,38 @@ class _NavigationMenuState extends State<MainScreen> {
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         toolbarHeight: 80,
         leadingWidth: 350,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Row(
-            children: [
-              Image.asset(
-                'assets/images/app_logo.png',
-                height: 40,
-              ),
-              const SizedBox(width: 3),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "MeroCareer",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                  ),
-                  Text(
-                    "Your Career, Your Path",
-                    style: TextStyle(color: Colors.grey, fontSize: 9.5),
-                  )
-                ],
-              )
-            ],
+        leading: GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedIndex = 0; // Set index to ProfileScreen
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(left: 15.0),
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/app_logo.png',
+                  height: 40,
+                ),
+                const SizedBox(width: 3),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "MeroCareer",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                    Text(
+                      "Your Career, Your Path",
+                      style: TextStyle(color: Colors.grey, fontSize: 9.5),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         actions: [

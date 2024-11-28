@@ -13,6 +13,11 @@ class DeactivateAccount extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios)),
         title: const Text("Account Settings"),
       ),
       body: Padding(

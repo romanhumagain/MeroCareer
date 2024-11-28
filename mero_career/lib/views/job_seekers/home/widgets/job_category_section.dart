@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'category_card.dart';
 
-class JobCategorySection extends StatelessWidget {
+class JobCategorySection extends StatefulWidget {
   const JobCategorySection({
     super.key,
     required this.size,
@@ -13,6 +13,13 @@ class JobCategorySection extends StatelessWidget {
   final Color cardColor;
 
   @override
+  State<JobCategorySection> createState() => _JobCategorySectionState();
+}
+
+class _JobCategorySectionState extends State<JobCategorySection> {
+  bool _setViewAll = false;
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Material(
@@ -21,10 +28,10 @@ class JobCategorySection extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
 
-          width: size.width - 22,
+          width: widget.size.width - 22,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: cardColor,
+            color: widget.cardColor,
           ),
           // height: size.height / 4,
           child: Column(
@@ -43,12 +50,19 @@ class JobCategorySection extends StatelessWidget {
                           letterSpacing: 0.2,
                           color: Theme.of(context).colorScheme.onSurface),
                     ),
-                    Text(
-                      "View All",
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w500),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _setViewAll = !_setViewAll;
+                        });
+                      },
+                      child: Text(
+                        _setViewAll ? "View Less" : "View All",
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w500),
+                      ),
                     )
                   ],
                 ),
@@ -61,42 +75,64 @@ class JobCategorySection extends StatelessWidget {
                 runSpacing: 15,
                 children: [
                   CategoryCard(
-                    size: size,
+                    size: widget.size,
                     category: "IT & Telecommunication",
                     categoryIconUrl: 'assets/images/category/IT.png',
                   ),
                   CategoryCard(
-                    size: size,
+                    size: widget.size,
                     category: "Architecture/ Design",
                     categoryIconUrl: 'assets/images/category/architecture.png',
                   ),
                   CategoryCard(
-                    size: size,
+                    size: widget.size,
                     category: "Teaching/ Education",
                     categoryIconUrl: 'assets/images/category/teaching.png',
                   ),
                   CategoryCard(
-                    size: size,
+                    size: widget.size,
                     category: "Hospital",
                     categoryIconUrl: 'assets/images/category/hospital.png',
                   ),
                   CategoryCard(
-                    size: size,
+                    size: widget.size,
                     category: "Banking/ Insurance",
                     categoryIconUrl: 'assets/images/category/banking.png',
                   ),
                   CategoryCard(
-                    size: size,
+                    size: widget.size,
                     category: "Graphic/ Designing",
                     categoryIconUrl: 'assets/images/category/graphic.png',
                   ),
+                  _setViewAll
+                      ? Wrap(spacing: 15, runSpacing: 15, children: [
+                          CategoryCard(
+                            size: widget.size,
+                            category: "Accounting",
+                            categoryIconUrl:
+                                'assets/images/category/accounting.png',
+                          ),
+                          CategoryCard(
+                            size: widget.size,
+                            category: "Construction",
+                            categoryIconUrl:
+                                'assets/images/category/construction.png',
+                          ),
+                          CategoryCard(
+                            size: widget.size,
+                            category: "Others",
+                            categoryIconUrl:
+                                'assets/images/category/others.png',
+                          ),
+                        ])
+                      : SizedBox()
                 ],
               ),
               SizedBox(
                 height: 25,
               ),
               Container(
-                width: size.width / 1.2,
+                width: widget.size.width / 1.2,
                 padding: EdgeInsets.all(9),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
