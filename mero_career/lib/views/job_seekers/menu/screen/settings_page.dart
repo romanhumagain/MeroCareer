@@ -2,8 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool _hasSetNewJobsAlert = true;
+  bool _hasSetNewJobsRecommendation = true;
+  bool _hasSetJobApplicationUpdatesAlert = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +64,12 @@ class SettingsPage extends StatelessWidget {
                         height: 5,
                         child: CupertinoSwitch(
                             activeColor: Colors.blue,
-                            value: true,
-                            onChanged: (value) {}),
+                            value: _hasSetNewJobsAlert,
+                            onChanged: (value) {
+                              setState(() {
+                                _hasSetNewJobsAlert = value;
+                              });
+                            }),
                       )
                     ],
                   ),
@@ -77,8 +90,12 @@ class SettingsPage extends StatelessWidget {
                         height: 5,
                         child: CupertinoSwitch(
                             activeColor: Colors.blue,
-                            value: true,
-                            onChanged: (value) {}),
+                            value: _hasSetNewJobsRecommendation,
+                            onChanged: (value) {
+                              setState(() {
+                                _hasSetNewJobsRecommendation = value;
+                              });
+                            }),
                       ),
                     ],
                   ),
@@ -99,8 +116,12 @@ class SettingsPage extends StatelessWidget {
                         height: 5,
                         child: CupertinoSwitch(
                             activeColor: Colors.blue,
-                            value: true,
-                            onChanged: (value) {}),
+                            value: _hasSetJobApplicationUpdatesAlert,
+                            onChanged: (value) {
+                              setState(() {
+                                _hasSetJobApplicationUpdatesAlert = value;
+                              });
+                            }),
                       ),
                     ],
                   ),

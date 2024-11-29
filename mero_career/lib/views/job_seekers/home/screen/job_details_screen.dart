@@ -36,7 +36,7 @@ class JobDetailsScreen extends StatelessWidget {
                 width: size.width,
                 height: size.height / 6.9,
                 child: Image.asset(
-                  'assets/images/job_details/hiring.webp',
+                  'assets/images/job_details/hiring2.webp',
                   fit: BoxFit.cover,
                 ),
               ),

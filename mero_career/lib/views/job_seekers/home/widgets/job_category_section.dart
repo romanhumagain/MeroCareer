@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/home/screen/jobs_by_category_screen.dart';
+import 'package:mero_career/views/job_seekers/home/screen/jobs_by_organization/view_jobs_by_company.dart';
 
 import 'category_card.dart';
 
@@ -217,31 +218,39 @@ class _JobCategorySectionState extends State<JobCategorySection> {
               SizedBox(
                 height: 25,
               ),
-              Container(
-                width: widget.size.width / 1.2,
-                padding: EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.blue, // Set the border color to blue
-                    width: 2.0, // Optional: Set the border width
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ViewJobsByCompany()));
+                },
+                child: Container(
+                  width: widget.size.width / 1.2,
+                  padding: EdgeInsets.all(9),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.blue, // Set the border color to blue
+                      width: 2.0, // Optional: Set the border width
+                    ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      "View Jobs by Organization",
-                      style: TextStyle(color: Colors.blue, fontSize: 15.5),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      Icons.corporate_fare,
-                      color: Colors.blue,
-                    ),
-                  ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "View Jobs by Organization",
+                        style: TextStyle(color: Colors.blue, fontSize: 15.5),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.corporate_fare,
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],

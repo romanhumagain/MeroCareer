@@ -3,6 +3,7 @@ import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/views/job_seekers/home/screen/all_jobs.dart';
 import 'package:mero_career/views/job_seekers/home/screen/all_recent_jobs_screen.dart';
 import 'package:mero_career/views/job_seekers/home/screen/hot_jobs.dart';
+import 'package:mero_career/views/job_seekers/home/screen/jobs_by_organization/view_jobs_by_company.dart';
 import 'package:mero_career/views/job_seekers/home/screen/jobs_expiring_screen.dart';
 import 'package:mero_career/views/job_seekers/home/screen/top_jobs.dart';
 import 'package:provider/provider.dart';
@@ -273,7 +274,10 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigate to the companies page or section
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ViewJobsByCompany()));
                     },
                     child: Text("Explore Companies"),
                   )

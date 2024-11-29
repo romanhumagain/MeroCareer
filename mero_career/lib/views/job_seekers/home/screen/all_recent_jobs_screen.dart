@@ -22,32 +22,60 @@ class AllRecentJobsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+              child: Container(
+                width: size.width,
+                height: size.height / 7,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.shade500,
+                      Colors.blue.shade200,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Looking for your next opportunity?",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
+                                fontSize: 21,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "Browse through the most recent job listings tailored just for you.",
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontSize: 14, color: Colors.grey.shade200),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             // Introductory Header
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "Looking for your next opportunity?",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontWeight: FontWeight.bold, fontSize: 22),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Browse through the most recent job listings tailored just for you.",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
-                  ),
                   Image.asset(
                     'assets/images/job_details/jobs_illustration.png',
                     height: 230,

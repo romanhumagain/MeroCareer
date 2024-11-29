@@ -244,7 +244,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  void _showFilters(BuildContext context) {
+  _showFilters(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -293,13 +293,23 @@ class _SearchScreenState extends State<SearchScreen> {
                     FilterDropdownButton(
                       items: const ["All", "Part-Time", "Full-Time", "Remote"],
                       labelText: "Job Type",
-                      initialValue: jobType ?? "All",
+                      initialValue: jobType!,
+                      onChanged: (value) {
+                        setState(() {
+                          jobType = value;
+                        });
+                      },
                     ),
                     SizedBox(height: 20),
                     FilterDropdownButton(
                       items: const ["All", "Junior", "Mid-Level", "Senior"],
                       labelText: "Experience",
-                      initialValue: experience ?? "All",
+                      initialValue: experience!,
+                      onChanged: (value) {
+                        setState(() {
+                          experience = value;
+                        });
+                      },
                     ),
                     SizedBox(height: 20),
                     FilterDropdownButton(
@@ -310,7 +320,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         "Senior Level"
                       ],
                       labelText: "Job Level",
-                      initialValue: jobLevel ?? "All",
+                      initialValue: jobLevel!,
+                      onChanged: (value) {
+                        setState(() {
+                          jobLevel = value;
+                        });
+                      },
                     ),
                     SizedBox(height: 20),
                     FilterDropdownButton(
@@ -323,7 +338,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         "Hospitality"
                       ],
                       labelText: "Job Categories",
-                      initialValue: jobCategory ?? "All",
+                      initialValue: jobCategory!,
+                      onChanged: (value) {
+                        setState(() {
+                          jobCategory = value;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -340,12 +360,14 @@ class FilterDropdownButton extends StatefulWidget {
   final List<String> items;
   final String labelText;
   final String initialValue;
+  final ValueChanged<String> onChanged; // Callback for parent
 
   const FilterDropdownButton({
     super.key,
     required this.items,
     required this.labelText,
     required this.initialValue,
+    required this.onChanged,
   });
 
   @override
@@ -378,6 +400,7 @@ class _FilterDropdownButtonState extends State<FilterDropdownButton> {
         setState(() {
           selectedValue = value!;
         });
+        widget.onChanged(value!);
       },
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 8),

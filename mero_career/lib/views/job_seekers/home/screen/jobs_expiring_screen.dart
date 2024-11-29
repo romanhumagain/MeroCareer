@@ -11,7 +11,6 @@ class JobsExpiringScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final primaryColor = Theme.of(context).colorScheme.primary;
     final cardColor = Theme.of(context).colorScheme.surface;
     final tertiaryColor = Theme.of(context).colorScheme.tertiary;
 
@@ -29,38 +28,48 @@ class JobsExpiringScreen extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
                   child: Column(
                     children: [
-                      // Header Text
-                      Text(
-                        "Act Fast! These Jobs are Closing Soon",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
-
-                      // Subheading Description
-                      Text(
-                        "Explore these job opportunities before the deadline passes. Don’t miss out on your chance to apply!",
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 20),
-
-                      // Illustrative Icon or Graphic
-                      Icon(
-                        Icons.hourglass_bottom,
-                        size: 80,
-                        color: Colors.red[400],
+                      Container(
+                        width: size.width,
+                        height: size.height / 6.5,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.blue.shade500,
+                              Colors.blue.shade200,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Act Fast! These Jobs are Closing Soon",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.copyWith(
+                                        fontSize: 21.5, color: Colors.white),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                "Explore these job opportunities before the deadline passes. Don’t miss out on your chance to apply!",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade200),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(height: 20),
                       Divider(
