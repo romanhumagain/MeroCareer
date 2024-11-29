@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/home/screen/job_details_screen.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../providers/theme_provider.dart';
 
 class JobDetailsCard extends StatelessWidget {
   final String jobTitle;
@@ -23,6 +26,7 @@ class JobDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
       child: Row(
@@ -53,8 +57,8 @@ class JobDetailsCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
                                 imageUrl,
-                                height: 45,
-                                width: 55,
+                                height: 40,
+                                width: 45,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -69,7 +73,10 @@ class JobDetailsCard extends StatelessWidget {
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 15.5,
+                                      color: isDarkMode
+                                          ? Colors.grey.shade100
+                                          : Colors.grey.shade900,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
@@ -77,7 +84,12 @@ class JobDetailsCard extends StatelessWidget {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleSmall
-                                      ?.copyWith(fontSize: 14),
+                                      ?.copyWith(
+                                        fontSize: 13,
+                                        color: isDarkMode
+                                            ? Colors.grey.shade300
+                                            : Colors.grey.shade800,
+                                      ),
                                 )
                               ],
                             ),
@@ -186,7 +198,9 @@ class JobDetailsCard extends StatelessWidget {
                         Text(
                           "Deadline $deadline minutes from now",
                           style: TextStyle(
-                              color: tertiaryColor,
+                              color: isDarkMode
+                                  ? Colors.grey.shade300
+                                  : Colors.grey.shade800,
                               fontWeight: FontWeight.w400),
                         )
                       ],

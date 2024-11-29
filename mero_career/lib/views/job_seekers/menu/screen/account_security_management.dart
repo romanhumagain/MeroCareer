@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/change_password_screen.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/deactivate_account.dart';
 
+import '../../common/app_bar.dart';
+
 class AccountSecurityManagement extends StatelessWidget {
   const AccountSecurityManagement({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios)),
-        title: Text("Account Settings"),
-      ),
+      appBar: MyAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 25),
         child: Column(

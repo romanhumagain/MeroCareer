@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/theme_provider.dart';
+import '../../common/app_bar.dart';
 import '../widgets/job_details_card.dart';
 
 class JobsExpiringScreen extends StatelessWidget {
@@ -16,15 +17,7 @@ class JobsExpiringScreen extends StatelessWidget {
 
     bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 70,
-        title: Text("Jobs Expiring Soon"),
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios)),
-      ),
+      appBar: MyAppBar(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -7,14 +8,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios)),
-        title: Text("Settings"),
-      ),
+      appBar: MyAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

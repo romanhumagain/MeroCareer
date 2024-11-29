@@ -6,7 +6,7 @@ import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
 
 import '../home/screen/home_screen.dart';
 import '../menu/bottom_sheet_menu.dart';
-import '../profile/screen/profile_screen.dart'; // Import ProfileScreen
+import '../profile/screen/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -23,8 +23,8 @@ class _NavigationMenuState extends State<MainScreen> {
     const SearchScreen(),
     const ChatScreen(),
     const MockInterviewPrep(),
-    Container(), // Placeholder for the menu
-    const ProfileScreen() // Add ProfileScreen to the list
+    Container(),
+    const ProfileScreen()
   ];
 
   void _showMenu(BuildContext context) {
@@ -37,7 +37,7 @@ class _NavigationMenuState extends State<MainScreen> {
 
   void _navigateToProfile() {
     setState(() {
-      _selectedIndex = 5; // Set index to ProfileScreen
+      _selectedIndex = 5;
     });
   }
 
@@ -51,7 +51,7 @@ class _NavigationMenuState extends State<MainScreen> {
         leading: GestureDetector(
           onTap: () {
             setState(() {
-              _selectedIndex = 0; // Set index to ProfileScreen
+              _selectedIndex = 0;
             });
           },
           child: Padding(
