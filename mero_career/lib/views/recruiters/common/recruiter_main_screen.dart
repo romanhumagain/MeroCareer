@@ -1,37 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
-import 'package:mero_career/views/job_seekers/mock_interview/screen/mock_interview_prep.dart';
-import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
+import 'package:mero_career/views/recruiters/applicants/screen/view_applicants_screen.dart';
+import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
+import 'package:mero_career/views/recruiters/job_post/screen/job_post_screen.dart';
+import 'package:mero_career/views/recruiters/menu/screen/recruiter_bottom_sheet_menu.dart';
 
-import '../home/screen/home_screen.dart';
-import '../menu/bottom_sheet_menu.dart';
-import '../profile/screen/profile_screen.dart';
+import '../../job_seekers/menu/bottom_sheet_menu.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class RecruiterMainScreen extends StatefulWidget {
+  const RecruiterMainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _NavigationMenuState();
+  State<RecruiterMainScreen> createState() => _RecruiterMainScreenState();
 }
 
-class _NavigationMenuState extends State<MainScreen> {
+class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const HomeScreen(),
-    const SearchScreen(),
-    const ChatScreen(),
-    const MockInterviewPrep(),
-    Container(),
-    const ProfileScreen()
+    HomeScreen(),
+    ViewApplicantsScreen(),
+    JobPostScreen(),
+    ChatScreen(),
+    JobPostScreen(),
+    BottomSheetMenu(),
   ];
 
   void _showMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext context) => const BottomSheetMenu(),
+      builder: (BuildContext context) => const RecruiterBottomSheetMenu(),
     );
   }
 
@@ -46,7 +46,7 @@ class _NavigationMenuState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        toolbarHeight: 65,
+        toolbarHeight: 60,
         leadingWidth: 350,
         leading: GestureDetector(
           onTap: () {
@@ -139,11 +139,21 @@ class _NavigationMenuState extends State<MainScreen> {
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(
-                    CupertinoIcons.search,
-                    size: 24.5,
+                    Icons.app_registration,
+                    size: 28.5,
                   ),
                 ),
-                label: "Search",
+                label: "Applicants",
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(
+                    CupertinoIcons.add_circled,
+                    size: 28,
+                  ),
+                ),
+                label: "Post Job",
               ),
               BottomNavigationBarItem(
                 icon: Padding(
@@ -154,16 +164,6 @@ class _NavigationMenuState extends State<MainScreen> {
                   ),
                 ),
                 label: "Chat",
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Icon(
-                    Icons.dashboard,
-                    size: 24.5,
-                  ),
-                ),
-                label: "Interview",
               ),
               BottomNavigationBarItem(
                 icon: Padding(

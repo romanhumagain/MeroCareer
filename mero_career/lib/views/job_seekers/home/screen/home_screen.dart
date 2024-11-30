@@ -8,6 +8,7 @@ import 'package:mero_career/views/job_seekers/home/screen/jobs_expiring_screen.d
 import 'package:mero_career/views/job_seekers/home/screen/top_jobs.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/home_screen_heading.dart';
 import '../widgets/job_category_section.dart';
 import '../widgets/job_details_card.dart';
 
@@ -30,66 +31,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             // first container
-            Container(
-              height: size.height / 8,
-              width: size.width,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.blue.shade600,
-                      Colors.blue.shade200,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12))),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    // This Column will take up the available space, pushing the icon to the far right
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Good Morning, ",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 19.8,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5),
-                        ),
-                        Text(
-                          "Roman Humagain",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 19,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.4),
-                        ),
-                      ],
-                    ),
-                    // Notification Icon
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14.0),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.notifications_active,
-                            size: 25,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            HomeScreenHeading(size: size),
             SizedBox(
               height: 10,
             ),

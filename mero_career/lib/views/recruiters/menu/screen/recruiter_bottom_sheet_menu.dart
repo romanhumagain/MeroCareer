@@ -6,15 +6,15 @@ import 'package:mero_career/views/job_seekers/menu/screen/contact_us.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/settings_page.dart';
 import 'package:provider/provider.dart';
 
-class BottomSheetMenu extends StatelessWidget {
-  const BottomSheetMenu({super.key});
+class RecruiterBottomSheetMenu extends StatelessWidget {
+  const RecruiterBottomSheetMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
     final TextStyle style1 = TextStyle(color: Colors.grey.shade600);
     final isDarkMode = context.watch<ThemeProvider>().isDarkMode;
     return Container(
-      height: MediaQuery.of(context).size.height / 1.58,
+      height: MediaQuery.of(context).size.height / 1.85,
       decoration: BoxDecoration(
           color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
           borderRadius: BorderRadius.only(
@@ -64,53 +64,6 @@ class BottomSheetMenu extends StatelessWidget {
                                 .updateTheme(value: value);
                           }),
                     ],
-                  ),
-                ),
-                Divider(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                ),
-                Text(
-                  "Job Info",
-                  style: style1,
-                ),
-                SizedBox(
-                  height: 50,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: ListTile(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                      leading: Icon(
-                        Icons.bookmark,
-                        color: Colors.blue,
-                      ),
-                      title: Text("Saved Jobs"),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: ListTile(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                      leading: Icon(
-                        Icons.app_registration_outlined,
-                        color: Colors.blue,
-                      ),
-                      title: Text("Applied Jobs"),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                    ),
                   ),
                 ),
                 Divider(

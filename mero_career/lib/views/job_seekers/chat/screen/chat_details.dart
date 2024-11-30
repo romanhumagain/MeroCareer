@@ -120,7 +120,9 @@ class ChatDetails extends StatelessWidget {
               width: size.width,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  color: isDarkMode
+                      ? Colors.grey.shade900
+                      : Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(0)),
               child: Row(
                 children: [

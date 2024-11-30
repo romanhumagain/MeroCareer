@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mero_career/views/job_seekers/home/screen/job_details_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/theme_provider.dart';
+import '../../../job_seekers/home/screen/job_details_screen.dart';
 
-class JobDetailsCard extends StatelessWidget {
+class PostedJobDetailsCard extends StatelessWidget {
   final String jobTitle;
   final String companyName;
   final String imageUrl;
@@ -13,7 +13,7 @@ class JobDetailsCard extends StatelessWidget {
   final Color cardColor;
   final Color tertiaryColor;
 
-  const JobDetailsCard({
+  const PostedJobDetailsCard({
     super.key,
     required this.size,
     required this.tertiaryColor,
@@ -98,9 +98,22 @@ class JobDetailsCard extends StatelessWidget {
                         SizedBox(
                           width: 15,
                         ),
-                        Icon(
-                          Icons.bookmark_border,
-                          size: 26,
+                        Container(
+                          height: 25,
+                          width: 25,
+                          padding: const EdgeInsets.all(3),
+                          // Adjust size
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.red.shade100,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "2",
+                              style: TextStyle(color: Colors.grey.shade700),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         )
                       ],
                     ),
