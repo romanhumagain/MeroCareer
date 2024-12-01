@@ -14,7 +14,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
   ];
 
   String _listJobsBy = "all";
-  final List<String> _filterList = ['all', 'open', 'closed', 'archive'];
+  final List<String> _filterList = ['all', 'open', 'closed'];
 
   @override
   Widget build(BuildContext context) {
@@ -83,34 +83,68 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
                   final statusColor = _getStatusColor(job["status"]!);
 
                   return Card(
+                    elevation: 2,
                     margin: const EdgeInsets.only(bottom: 16),
                     child: ListTile(
-                      title: Text(job["title"]!),
-                      subtitle: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: statusColor,
-                              borderRadius: BorderRadius.circular(12),
+                      title: Text(
+                        job["title"]!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontSize: 17.5, letterSpacing: 0),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
+                                spacing: 6,
+                                // Horizontal spacing between children
+                                runSpacing: 8,
+                                // Vertical spacing between rows
+                                children: [
+                                  _buildInfoChip("Full Time"),
+                                  _buildInfoChip("Senior Level"),
+                                ],
+                              ),
                             ),
-                            child: Text(
-                              job["status"]!,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12),
+                            SizedBox(
+                              height: 5,
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text("Posted on: 12th Nov, 2024"), // Example metadata
-                        ],
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainer,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: statusColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    job["status"]!,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text("Posted on: 12th Nov, 2024"),
+                                // Example metadata
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       trailing: PopupMenuButton(
                         itemBuilder: (context) => [
                           PopupMenuItem(value: 'view', child: Text("View")),
                           PopupMenuItem(value: 'edit', child: Text("Edit")),
-                          PopupMenuItem(
-                              value: 'archive', child: Text("Archive")),
                         ],
                         onSelected: (value) {
                           // Handle actions
@@ -160,4 +194,21 @@ class LobListingFilterOption extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildInfoChip(String label, [String? value]) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+    decoration: BoxDecoration(
+        // color: Colors.blue.shade300,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey)),
+    child: Row(
+      mainAxisSize: MainAxisSize.min, // Ensures the Row doesn't expand
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
+    ),
+  );
 }

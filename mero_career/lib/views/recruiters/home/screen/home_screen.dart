@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mero_career/views/recruiters/home/screen/job_posting_details.dart';
+import 'package:mero_career/views/recruiters/home/screen/job_listing_screen.dart';
 import 'package:mero_career/views/recruiters/home/widgets/home_screen_heading.dart';
 
 import '../widgets/posted_job_details_card.dart';
@@ -436,32 +436,29 @@ class KeyMatricesCard extends StatelessWidget {
         padding: EdgeInsets.all(8),
         width: size.width / 3.7,
         decoration: BoxDecoration(
-            // gradient: LinearGradient(colors: [
-            //   Colors.blue.shade200,
-            //   Colors.blue.shade400,
-            // ]),
             color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
             Text(
-              heading,
+              count,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w400,
-                  color:
-                      isDarkMode ? Colors.grey.shade300 : Colors.grey.shade800),
+                  fontSize: 20.8,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blue),
             ),
             SizedBox(
               height: 5,
             ),
             Text(
-              count,
+              heading,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.w500,
-                  color: Colors.blue),
+                  color:
+                      isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600),
             )
           ],
         ),

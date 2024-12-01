@@ -30,8 +30,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('email', 'username', 'password1', 'password2'),
         }),
     )
-
-    # Make sure to set `filter_horizontal` for `groups` and `user_permissions` if needed
+    
     filter_horizontal = ('groups', 'user_permissions')
 
 # Register the custom user model and admin

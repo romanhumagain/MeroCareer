@@ -80,7 +80,7 @@ class PostedJobDetailsCard extends StatelessWidget {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  companyName,
+                                  "IT & Telecommunication",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleSmall
@@ -118,80 +118,19 @@ class PostedJobDetailsCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 12,
                     ),
-                    Divider(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                    ),
-                    Wrap(
-                      spacing: 15, // Horizontal spacing between children
-                      runSpacing: 8, // Vertical spacing between rows
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.school,
-                              color: tertiaryColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Under Graduate (Bachelor)",
-                              style: TextStyle(color: tertiaryColor),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.card_giftcard,
-                              color: tertiaryColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Mid Level",
-                              style: TextStyle(color: tertiaryColor),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.roller_shades_closed_outlined,
-                              color: tertiaryColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Not Disclosed",
-                              style: TextStyle(color: tertiaryColor),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: tertiaryColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Pulchowk, Lalitpur",
-                              style: TextStyle(color: tertiaryColor),
-                            ),
-                          ],
-                        ),
-                      ],
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Wrap(
+                        spacing: 6, // Horizontal spacing between children
+                        runSpacing: 8, // Vertical spacing between rows
+                        children: [
+                          _buildInfoChip("No. of Vacancy- ", "2"),
+                          _buildInfoChip("Full Time"),
+                          _buildInfoChip("Senior Level"),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 10,
@@ -227,4 +166,24 @@ class PostedJobDetailsCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildInfoChip(String label, [String? value]) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+    decoration: BoxDecoration(
+      color: Colors.blue.shade300,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min, // Ensures the Row doesn't expand
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white)),
+        if (value != null) ...[
+          Text(value, style: const TextStyle(color: Colors.white)),
+        ],
+      ],
+    ),
+  );
 }

@@ -13,7 +13,7 @@ class CompanyBasicDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: size.width / 1.15,
-      height: size.height / 4.5,
+      height: size.height / 4.2,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(16),

@@ -24,7 +24,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None) 
         if password:
             user = User(**validated_data)
-            user.set_password(password)  # Hash the password
+            user.set_password(password)
             user.save()
             return user
         raise serializers.ValidationError("Password is required.")
