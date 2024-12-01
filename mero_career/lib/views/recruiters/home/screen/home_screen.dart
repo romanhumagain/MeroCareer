@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/recruiters/home/screen/job_posting_details.dart';
 import 'package:mero_career/views/recruiters/home/widgets/home_screen_heading.dart';
 
 import '../widgets/posted_job_details_card.dart';
@@ -340,7 +341,12 @@ class RecentJobsPosting extends StatelessWidget {
                     letterSpacing: 0.4),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => JobListingsScreen()));
+                },
                 child: Text(
                   "View All",
                   style: TextStyle(

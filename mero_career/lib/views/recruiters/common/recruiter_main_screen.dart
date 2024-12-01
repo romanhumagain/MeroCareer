@@ -6,7 +6,7 @@ import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
 import 'package:mero_career/views/recruiters/job_post/screen/job_post_screen.dart';
 import 'package:mero_career/views/recruiters/menu/screen/recruiter_bottom_sheet_menu.dart';
 
-import '../../job_seekers/menu/bottom_sheet_menu.dart';
+import '../profile/screen/profile_screen.dart';
 
 class RecruiterMainScreen extends StatefulWidget {
   const RecruiterMainScreen({super.key});
@@ -24,7 +24,7 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
     JobPostScreen(),
     ChatScreen(),
     JobPostScreen(),
-    BottomSheetMenu(),
+    RecruiterProfileScreen(),
   ];
 
   void _showMenu(BuildContext context) {
@@ -90,7 +90,7 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
               child: const CircleAvatar(
                 radius: 17,
                 backgroundImage: AssetImage(
-                  'assets/images/pp.jpg',
+                  'assets/images/company_logo/f1.jpg',
                 ),
               ),
             ),

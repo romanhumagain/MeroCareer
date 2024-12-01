@@ -132,7 +132,7 @@ class JobApplicants extends StatelessWidget {
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall
-                          ?.copyWith(fontSize: 18),
+                          ?.copyWith(fontSize: 17, letterSpacing: 0),
                     ),
                     SizedBox(
                       width: 8,
