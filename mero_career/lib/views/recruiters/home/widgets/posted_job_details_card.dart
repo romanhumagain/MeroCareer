@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/theme_provider.dart';
-import '../../../job_seekers/home/screen/job_details_screen.dart';
+import '../screen/posted_job_details_screen.dart';
 
 class PostedJobDetailsCard extends StatelessWidget {
   final String jobTitle;
@@ -39,7 +39,7 @@ class PostedJobDetailsCard extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => JobDetailsScreen()));
+                        builder: (context) => PostedJobDetailsScreen()));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),

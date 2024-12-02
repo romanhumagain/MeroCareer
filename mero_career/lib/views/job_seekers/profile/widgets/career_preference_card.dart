@@ -117,7 +117,8 @@ class CareerPreferenceCard extends StatelessWidget {
   }
 
   void showCareerPreferenceScreen(BuildContext context) {
-    TextEditingController _jobRolesController = TextEditingController();
+    TextEditingController _jobTitleController = TextEditingController();
+    TextEditingController _jobLevelController = TextEditingController();
     TextEditingController _jobLocationController = TextEditingController();
     TextEditingController _jobTypeController = TextEditingController();
 
@@ -170,8 +171,8 @@ class CareerPreferenceCard extends StatelessWidget {
                           child: Column(
                             children: [
                               PreferenceTextField(
-                                controller: _jobRolesController,
-                                labelText: "Prefered Job Roles",
+                                controller: _jobTitleController,
+                                labelText: "Prefered Job Title",
                               ),
                               SizedBox(
                                 height: 15,
@@ -184,8 +185,20 @@ class CareerPreferenceCard extends StatelessWidget {
                                 height: 15,
                               ),
                               PreferenceTextField(
-                                controller: _jobRolesController,
-                                labelText: "Prefered Job Roles",
+                                controller: _jobLocationController,
+                                labelText: "Expected Salary (/Month)",
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              PreferenceDropdownButton(
+                                items: const [
+                                  "Entry Level",
+                                  "Mid Level",
+                                  "Senior Level",
+                                  "Expert Level",
+                                ],
+                                labelText: "Prefered Job Level",
                               ),
                               SizedBox(
                                 height: 15,
@@ -194,7 +207,10 @@ class CareerPreferenceCard extends StatelessWidget {
                                 items: const [
                                   "Part-Time",
                                   "Full-Time",
-                                  "Remote"
+                                  "Remote",
+                                  "Freelance",
+                                  "Internship",
+                                  "Other",
                                 ],
                                 labelText: "Prefered Job Type",
                               ),

@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../../home/screen/home_screen.dart';
+import '../../home/widgets/applicants_details.dart';
 import 'applicants_detail_screen.dart';
 
-class ViewApplicantsScreen extends StatelessWidget {
+class ViewApplicantsScreen extends StatefulWidget {
   const ViewApplicantsScreen({super.key});
+
+  @override
+  State<ViewApplicantsScreen> createState() => _ViewApplicantsScreenState();
+}
+
+class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
+  String _listJobsBy = "active";
+  final List<String> _filterList = ['active', 'closed'];
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +70,35 @@ class ViewApplicantsScreen extends StatelessWidget {
           ),
           SizedBox(
             height: 2,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _filterList.map((filter) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: FilterChip(
+                      label: Text(
+                        filter.toUpperCase(),
+                        style: TextStyle(fontSize: 12.5),
+                      ),
+                      selected: _listJobsBy == filter,
+                      onSelected: (selected) {
+                        setState(() {
+                          _listJobsBy = selected ? filter : 'all';
+                        });
+                      },
+                      selectedColor: Colors.blueAccent,
+                      padding: EdgeInsets.all(4),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),

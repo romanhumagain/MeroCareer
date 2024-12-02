@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
+import 'package:mero_career/views/recruiters/home/screen/posted_job_details_screen.dart';
 
 class JobListingsScreen extends StatefulWidget {
   @override
@@ -145,9 +146,18 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
                         itemBuilder: (context) => [
                           PopupMenuItem(value: 'view', child: Text("View")),
                           PopupMenuItem(value: 'edit', child: Text("Edit")),
+                          PopupMenuItem(value: 'delete', child: Text("Delete")),
                         ],
                         onSelected: (value) {
-                          // Handle actions
+                          if (value == "view") {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PostedJobDetailsScreen()));
+                          } else if (value == "delete") {
+                            _showConfirmationDeleteMessage(context);
+                          }
                         },
                       ),
                     ),
@@ -172,6 +182,70 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
       default:
         return Colors.grey;
     }
+  }
+
+  void _showConfirmationDeleteMessage(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor:
+              isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Row(
+            children: const [
+              Icon(
+                Icons.delete_forever,
+                color: Colors.red,
+                size: 30,
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                // Wrap the Text widget with Expanded
+                child: Text(
+                  "Are you sure you want to delete this job post?",
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            "This action cannot be undone. Please confirm your choice.",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                "Cancel",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Add the delete action here
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                "Delete",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

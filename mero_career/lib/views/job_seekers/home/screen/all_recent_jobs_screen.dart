@@ -44,7 +44,6 @@ class AllRecentJobsScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Looking for your next opportunity?",
@@ -74,7 +73,6 @@ class AllRecentJobsScreen extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
                     'assets/images/job_details/jobs_illustration.png',
@@ -85,81 +83,84 @@ class AllRecentJobsScreen extends StatelessWidget {
             ),
 
             SizedBox(height: 30),
-            Column(
-              children: [
-                JobDetailsCard(
-                  size: size,
-                  cardColor: cardColor,
-                  tertiaryColor: tertiaryColor,
-                  jobTitle: "AI Engineer ",
-                  companyName: "F1 soft International pvt.ltd",
-                  deadline: "2 hours and 51",
-                  imageUrl: 'assets/images/company_logo/f1.jpg',
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                JobDetailsCard(
-                  size: size,
-                  cardColor: cardColor,
-                  tertiaryColor: tertiaryColor,
-                  jobTitle: "Senior Software Engineer",
-                  companyName: "LeapFrog Technology LTD",
-                  deadline: "2 hours and 51",
-                  imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                JobDetailsCard(
-                  size: size,
-                  cardColor: cardColor,
-                  tertiaryColor: tertiaryColor,
-                  jobTitle: "Senior Backend Developer",
-                  companyName: "Cotiviti Nepal",
-                  deadline: "4 hours and 51",
-                  imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                JobDetailsCard(
-                  size: size,
-                  cardColor: cardColor,
-                  tertiaryColor: tertiaryColor,
-                  jobTitle: "Flutter Developer ",
-                  companyName: "F1 soft International",
-                  deadline: "2 hours and 51",
-                  imageUrl: 'assets/images/company_logo/f1.jpg',
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                JobDetailsCard(
-                  size: size,
-                  cardColor: cardColor,
-                  tertiaryColor: tertiaryColor,
-                  jobTitle: "Senior Backend Developer",
-                  companyName: "Cotiviti Nepal",
-                  deadline: "4 hours and 51",
-                  imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                JobDetailsCard(
-                  size: size,
-                  cardColor: cardColor,
-                  tertiaryColor: tertiaryColor,
-                  jobTitle: "Senior Software Engineer",
-                  companyName: "LeapFrog Technology LTD",
-                  deadline: "2 hours and 51",
-                  imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                children: [
+                  JobDetailsCard(
+                    size: size,
+                    cardColor: cardColor,
+                    tertiaryColor: tertiaryColor,
+                    jobTitle: "AI Engineer ",
+                    companyName: "F1 soft International pvt.ltd",
+                    deadline: "2 hours and 51",
+                    imageUrl: 'assets/images/company_logo/f1.jpg',
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  JobDetailsCard(
+                    size: size,
+                    cardColor: cardColor,
+                    tertiaryColor: tertiaryColor,
+                    jobTitle: "Senior Software Engineer",
+                    companyName: "LeapFrog Technology LTD",
+                    deadline: "2 hours and 51",
+                    imageUrl: 'assets/images/company_logo/leapfrog.jpg',
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  JobDetailsCard(
+                    size: size,
+                    cardColor: cardColor,
+                    tertiaryColor: tertiaryColor,
+                    jobTitle: "Senior Backend Developer",
+                    companyName: "Cotiviti Nepal",
+                    deadline: "4 hours and 51",
+                    imageUrl: 'assets/images/company_logo/cotiviti.jpg',
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  JobDetailsCard(
+                    size: size,
+                    cardColor: cardColor,
+                    tertiaryColor: tertiaryColor,
+                    jobTitle: "Flutter Developer ",
+                    companyName: "F1 soft International",
+                    deadline: "2 hours and 51",
+                    imageUrl: 'assets/images/company_logo/f1.jpg',
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  JobDetailsCard(
+                    size: size,
+                    cardColor: cardColor,
+                    tertiaryColor: tertiaryColor,
+                    jobTitle: "Senior Backend Developer",
+                    companyName: "Cotiviti Nepal",
+                    deadline: "4 hours and 51",
+                    imageUrl: 'assets/images/company_logo/cotiviti.jpg',
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  JobDetailsCard(
+                    size: size,
+                    cardColor: cardColor,
+                    tertiaryColor: tertiaryColor,
+                    jobTitle: "Senior Software Engineer",
+                    companyName: "LeapFrog Technology LTD",
+                    deadline: "2 hours and 51",
+                    imageUrl: 'assets/images/company_logo/leapfrog.jpg',
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
             )
           ],
         ),

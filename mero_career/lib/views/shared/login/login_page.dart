@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mero_career/views/job_seekers/profile_setup/screen/profile_setup_page.dart';
+import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
 import 'package:mero_career/views/shared/forgot_password/forgot_password_page.dart';
 import 'package:mero_career/views/shared/register/register_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
@@ -158,6 +159,29 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.blue,
                               letterSpacing: 0.4)),
                     )
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()));
+                      },
+                      child: Text("Continue as Recruiter",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 17,
+                              color: Colors.blue,
+                              letterSpacing: 0.4)),
+                    ),
                   ],
                 ),
                 const SizedBox(

@@ -1,8 +1,13 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
+import 'package:mero_career/views/job_seekers/profile/screen/education_details_screen.dart';
+import 'package:mero_career/views/job_seekers/profile/screen/experience_details_screen.dart';
+import 'package:mero_career/views/job_seekers/profile/screen/project_details_screen.dart';
+import 'package:mero_career/views/job_seekers/profile/screen/skill_details_page.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/profile_heading_section.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/profile_recommendation_card.dart';
+import 'package:mero_career/views/job_seekers/profile/widgets/profile_summary_card.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import 'career_preference_card.dart';
@@ -104,9 +109,12 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
               size: size,
               percentageCover: "10",
               icon: Icons.person,
-              heading: "Add your personal details ",
+              heading: "Add your profile summary ",
               buttonTitle: "Personal Details",
-              onTap: () {},
+              onTap: () {
+                ProfileSummary profileSummary = ProfileSummary(size: size);
+                profileSummary.showAddProfileSummarySection(context);
+              },
               hasData: true,
             ),
             SizedBox(
@@ -118,8 +126,30 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
               icon: Icons.school,
               heading: "Add your education details ",
               buttonTitle: "Education details",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EducationDetailsScreen()));
+              },
               hasData: true,
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            ProfileRecommendationCard(
+              size: size,
+              percentageCover: "0",
+              icon: Icons.work,
+              heading: "Add your experience details ",
+              buttonTitle: "Project Details",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ExperienceDetailsScreen()));
+              },
+              hasData: false,
             ),
             SizedBox(
               width: 15,
@@ -130,7 +160,12 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
               icon: Icons.folder,
               heading: "Add your project details ",
               buttonTitle: "Project Details",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProjectDetailsScreen()));
+              },
               hasData: false,
             ),
             SizedBox(
@@ -142,11 +177,13 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
               icon: Icons.auto_awesome,
               heading: "Add your skills details ",
               buttonTitle: "Skills details",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SkillDetailsPage()));
+              },
               hasData: true,
-            ),
-            SizedBox(
-              width: 15,
             ),
             SizedBox(
               width: 15,

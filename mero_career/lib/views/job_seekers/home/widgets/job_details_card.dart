@@ -28,7 +28,7 @@ class JobDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     return Padding(
-      padding: const EdgeInsets.only(right: 18.0, top: 8, bottom: 8),
+      padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           Material(

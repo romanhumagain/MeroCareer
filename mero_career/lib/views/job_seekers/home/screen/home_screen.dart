@@ -143,47 +143,50 @@ class HomeScreen extends StatelessWidget {
             SizedBox(
               height: 5,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "AI Engineer ",
-                    companyName: "F1 soft International pvt.ltd",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/f1.jpg',
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Software Engineer",
-                    companyName: "LeapFrog Technology LTD",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Backend Developer",
-                    companyName: "Cotiviti Nepal",
-                    deadline: "4 hours and 51",
-                    imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Flutter Developer ",
-                    companyName: "F1 soft International",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/f1.jpg',
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      jobTitle: "AI Engineer ",
+                      companyName: "F1 soft International pvt.ltd",
+                      deadline: "2 hours and 51",
+                      imageUrl: 'assets/images/company_logo/f1.jpg',
+                    ),
+                    JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      jobTitle: "Senior Software Engineer",
+                      companyName: "LeapFrog Technology LTD",
+                      deadline: "2 hours and 51",
+                      imageUrl: 'assets/images/company_logo/leapfrog.jpg',
+                    ),
+                    JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      jobTitle: "Senior Backend Developer",
+                      companyName: "Cotiviti Nepal",
+                      deadline: "4 hours and 51",
+                      imageUrl: 'assets/images/company_logo/cotiviti.jpg',
+                    ),
+                    JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      jobTitle: "Flutter Developer ",
+                      companyName: "F1 soft International",
+                      deadline: "2 hours and 51",
+                      imageUrl: 'assets/images/company_logo/f1.jpg',
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -268,29 +271,32 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        JobDetailsCard(
-                          size: size,
-                          cardColor: cardColor,
-                          tertiaryColor: tertiaryColor,
-                          jobTitle: "Senior Backend Developer",
-                          companyName: "Cotiviti Nepal",
-                          deadline: "4 hours and 51",
-                          imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                        ),
-                        JobDetailsCard(
-                          size: size,
-                          cardColor: cardColor,
-                          tertiaryColor: tertiaryColor,
-                          jobTitle: "Senior Software Engineer",
-                          companyName: "LeapFrog Technology LTD",
-                          deadline: "2 hours and 51",
-                          imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                        ),
-                      ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          JobDetailsCard(
+                            size: size,
+                            cardColor: cardColor,
+                            tertiaryColor: tertiaryColor,
+                            jobTitle: "Senior Backend Developer",
+                            companyName: "Cotiviti Nepal",
+                            deadline: "4 hours and 51",
+                            imageUrl: 'assets/images/company_logo/cotiviti.jpg',
+                          ),
+                          JobDetailsCard(
+                            size: size,
+                            cardColor: cardColor,
+                            tertiaryColor: tertiaryColor,
+                            jobTitle: "Senior Software Engineer",
+                            companyName: "LeapFrog Technology LTD",
+                            deadline: "2 hours and 51",
+                            imageUrl: 'assets/images/company_logo/leapfrog.jpg',
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],

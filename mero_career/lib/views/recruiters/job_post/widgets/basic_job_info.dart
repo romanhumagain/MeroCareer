@@ -42,14 +42,14 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
     {"id": 9, "categoryName": "Others"},
   ];
 
-  final List<Map<String, dynamic>> _educationList = [
-    {"id": 1, "educationName": "Doctorate (Ph.D)"},
-    {"id": 2, "educationName": "Graduate (Masters)"},
-    {"id": 3, "educationName": "Under Graduate (Bachelors)"},
-    {"id": 4, "educationName": "Higher Secondary (+2/A levels)"},
-    {"id": 5, "educationName": "Diploma Certificate"},
-    {"id": 6, "educationName": "School (SEE)"},
-    {"id": 7, "educationName": "Other"},
+  final List<Map<String, dynamic>> _degreeNameList = [
+    {"id": 1, "degreeName": "Doctorate (Ph.D)"},
+    {"id": 2, "degreeName": "Graduate (Masters)"},
+    {"id": 3, "degreeName": "Under Graduate (Bachelors)"},
+    {"id": 4, "degreeName": "Higher Secondary (+2/A levels)"},
+    {"id": 5, "degreeName": "Diploma Certificate"},
+    {"id": 6, "degreeName": "School (SEE)"},
+    {"id": 7, "degreeName": "Other"},
   ];
 
   final List<Map<String, dynamic>> _jobTypeList = [
@@ -71,7 +71,7 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
 
   String _selectedCategory = "";
   String _selectedCategoryId = "";
-  String _selectedEducation = "";
+  String _selectedDegree = "";
   String _selectedJobType = "";
   String _selectedJobLevel = "";
 
@@ -135,10 +135,10 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                           width: 15,
                         ),
                         SelectContainer(
-                          isSelected: _selectedEducation == "" ? false : true,
-                          selectText: _selectedEducation == ""
-                              ? "Select Education"
-                              : _selectedEducation,
+                          isSelected: _selectedDegree == "" ? false : true,
+                          selectText: _selectedDegree == ""
+                              ? "Select Degree"
+                              : _selectedDegree,
                           onTap: () {
                             _showEducationCategoryModalSheet(context);
                           },
@@ -347,12 +347,12 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                             .titleLarge
                             ?.copyWith(fontSize: 18.5),
                       ),
-                      _selectedEducation == ""
+                      _selectedDegree == ""
                           ? Text("")
                           : GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  _selectedEducation = "";
+                                  _selectedDegree = "";
                                   Navigator.pop(context);
                                 });
                               },
@@ -369,13 +369,13 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: ListView.builder(
-                      itemCount: _educationList.length,
+                      itemCount: _degreeNameList.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
                             setState(() {
-                              _selectedEducation =
-                                  _educationList[index]['educationName'];
+                              _selectedDegree =
+                                  _degreeNameList[index]['degreeName'];
                             });
                             Navigator.pop(context);
                           },
@@ -383,7 +383,9 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                             padding: EdgeInsets.all(12),
                             margin: EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.white : Colors.white,
+                              color: isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: const [
                                 BoxShadow(
@@ -394,7 +396,7 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                               ],
                             ),
                             child: Text(
-                              _educationList[index]['educationName'],
+                              _degreeNameList[index]['degreeName'],
                               style: TextStyle(fontSize: 16.4),
                             ),
                           ),
@@ -483,7 +485,9 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                             padding: EdgeInsets.all(12),
                             margin: EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.white : Colors.white,
+                              color: isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: const [
                                 BoxShadow(
@@ -584,7 +588,9 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                             padding: EdgeInsets.all(12),
                             margin: EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.white : Colors.white,
+                              color: isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: const [
                                 BoxShadow(

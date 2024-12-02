@@ -54,24 +54,11 @@ class BasicDetailsCard extends StatelessWidget {
                 Row(
                   children: const [
                     Icon(
-                      Icons.card_travel,
+                      Icons.person,
                       size: 18,
                     ),
                     SizedBox(width: 10),
-                    Text("Fresher")
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  children: const [
-                    Icon(
-                      Icons.location_on,
-                      size: 18,
-                    ),
-                    SizedBox(width: 10),
-                    Text("Panauti, Kavre")
+                    Text("romanhumagin")
                   ],
                 ),
                 SizedBox(
@@ -85,6 +72,19 @@ class BasicDetailsCard extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     Text("romanhumagian@gmail.com")
+                  ],
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: const [
+                    Icon(
+                      Icons.location_on,
+                      size: 18,
+                    ),
+                    SizedBox(width: 10),
+                    Text("Panauti, Kavre")
                   ],
                 ),
                 SizedBox(
@@ -117,6 +117,8 @@ class BasicDetailsCard extends StatelessWidget {
         TextEditingController(text: "9840617106");
     TextEditingController emailController =
         TextEditingController(text: "romanhumagain@gmail.com");
+    TextEditingController locationController =
+        TextEditingController(text: "Bhaktapur");
 
     showModalBottomSheet(
         context: context,
@@ -189,6 +191,13 @@ class BasicDetailsCard extends StatelessWidget {
                               CustomTextField(
                                 controller: phoneNummberController,
                                 labelText: "Phone Number",
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              CustomTextField(
+                                controller: locationController,
+                                labelText: "Address",
                               ),
                             ],
                           ),

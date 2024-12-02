@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
 
-class ApplicantsDetailScreen extends StatelessWidget {
+import '../../home/widgets/applicants_details.dart';
+
+class ApplicantsDetailScreen extends StatefulWidget {
   final String jobName;
 
   const ApplicantsDetailScreen({super.key, required this.jobName});
+
+  @override
+  State<ApplicantsDetailScreen> createState() => _ApplicantsDetailScreenState();
+}
+
+class _ApplicantsDetailScreenState extends State<ApplicantsDetailScreen> {
+  String _listJobsBy = "all";
+  final List<String> _filterList = [
+    'all',
+    'Under Review',
+    'Reviewed',
+    'Shortlisted',
+    'Accepted'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +36,7 @@ class ApplicantsDetailScreen extends StatelessWidget {
           ),
         ),
         toolbarHeight: 65,
-        title: Text(jobName),
+        title: Text(widget.jobName),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -74,6 +89,35 @@ class ApplicantsDetailScreen extends StatelessWidget {
             ),
             SizedBox(
               height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _filterList.map((filter) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: FilterChip(
+                        label: Text(
+                          filter.toUpperCase(),
+                          style: TextStyle(fontSize: 12.5),
+                        ),
+                        selected: _listJobsBy == filter,
+                        onSelected: (selected) {
+                          setState(() {
+                            _listJobsBy = selected ? filter : 'all';
+                          });
+                        },
+                        selectedColor: Colors.blueAccent,
+                        padding: EdgeInsets.all(4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
             Divider(
               color: Theme.of(context).colorScheme.surfaceContainer,

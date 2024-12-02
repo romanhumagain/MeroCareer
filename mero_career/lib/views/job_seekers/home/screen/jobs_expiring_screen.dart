@@ -20,6 +20,7 @@ class JobsExpiringScreen extends StatelessWidget {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
               children: [
@@ -45,7 +46,7 @@ class JobsExpiringScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 "Act Fast! These Jobs are Closing Soon",
@@ -81,32 +82,37 @@ class JobsExpiringScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Column(children: [
-              JobDetailsCard(
-                size: size,
-                cardColor: cardColor,
-                tertiaryColor: tertiaryColor,
-                jobTitle: "AI Engineer ",
-                companyName: "F1 soft International pvt.ltd",
-                deadline: "2 hours and 51",
-                imageUrl: 'assets/images/company_logo/f1.jpg',
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              JobDetailsCard(
-                size: size,
-                cardColor: cardColor,
-                tertiaryColor: tertiaryColor,
-                jobTitle: "Senior Software Engineer",
-                companyName: "LeapFrog Technology LTD",
-                deadline: "2 hours and 51",
-                imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-              ),
-              SizedBox(
-                height: 40,
-              ),
-            ]),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      jobTitle: "AI Engineer ",
+                      companyName: "F1 soft International pvt.ltd",
+                      deadline: "2 hours and 51",
+                      imageUrl: 'assets/images/company_logo/f1.jpg',
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      jobTitle: "Senior Software Engineer",
+                      companyName: "LeapFrog Technology LTD",
+                      deadline: "2 hours and 51",
+                      imageUrl: 'assets/images/company_logo/leapfrog.jpg',
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                  ]),
+            ),
           ],
         ),
       ),

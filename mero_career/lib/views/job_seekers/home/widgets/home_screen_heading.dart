@@ -51,11 +51,20 @@ class HomeScreenHeading extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.4),
                 ),
+                Text(
+                  "Find the perfect jobs that suites your interest !",
+                  maxLines: 2,
+                  style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12.5,
+                      overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.w400),
+                )
               ],
             ),
             // Notification Icon
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.0),
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: Column(
                 children: [
                   Icon(

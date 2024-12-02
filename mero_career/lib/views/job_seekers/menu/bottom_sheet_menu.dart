@@ -14,7 +14,7 @@ class BottomSheetMenu extends StatelessWidget {
     final TextStyle style1 = TextStyle(color: Colors.grey.shade600);
     final isDarkMode = context.watch<ThemeProvider>().isDarkMode;
     return Container(
-      height: MediaQuery.of(context).size.height / 1.58,
+      height: MediaQuery.of(context).size.height / 1.4,
       decoration: BoxDecoration(
           color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
           borderRadius: BorderRadius.only(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mero_career/views/recruiters/job_seeker_review/screen/job_seeker_profile_preview.dart';
 
 import '../../../widgets/custom_textfield.dart';
 import '../../common/modal_top_bar.dart';
@@ -126,18 +127,26 @@ class ProfileHeadingSection extends StatelessWidget {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
+          children: [
+            const Icon(
               CupertinoIcons.eye_solid,
               size: 19,
               color: Colors.blue,
             ),
-            SizedBox(
+            const SizedBox(
               width: 8,
             ),
-            Text(
-              "Preview Profile",
-              style: TextStyle(color: Colors.blue),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => JobSeekerProfilePreview()));
+              },
+              child: Text(
+                "Preview Profile",
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
           ],
         ),
