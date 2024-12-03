@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../../models/job/job_post_model.dart';
+
 class SalaryDetails extends StatelessWidget {
-  const SalaryDetails({super.key});
+  final JobPost jobPost;
+  final GlobalKey<FormState> formKey;
+
+  const SalaryDetails(
+      {super.key, required this.jobPost, required this.formKey});
 
   @override
   Widget build(BuildContext context) {

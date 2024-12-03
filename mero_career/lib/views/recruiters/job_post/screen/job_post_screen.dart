@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/models/job/job_category_model.dart';
 import 'package:mero_career/views/recruiters/job_post/widgets/basic_job_info.dart';
 import 'package:mero_career/views/recruiters/job_post/widgets/job_requirements_details.dart';
 import 'package:mero_career/views/recruiters/job_post/widgets/professional_skills.dart';
 
+import '../../../../models/job/job_post_model.dart';
+import '../../../../models/job/skill_model.dart';
 import '../widgets/experience_salary_details.dart';
 
 class JobPostScreen extends StatefulWidget {
@@ -17,8 +20,52 @@ class _JobPostScreenState extends State<JobPostScreen> {
   int _currentPage = 0;
   final int _totalSteps = 4;
 
-  // to calculate progress in the progress bar
   double get _progress => (_currentPage + 1) / _totalSteps;
+
+  final GlobalKey<FormState> _basicInfoKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _skillsKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _requirementsKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _experienceKey = GlobalKey<FormState>();
+
+  JobPost jobPost = JobPost(
+    jobTitle: '',
+    noOfVacancies: 0,
+    jobCategory: JobCategory(id: 0, name: ''),
+    degree: '',
+    deadline: DateTime.now(),
+    jobType: '',
+    jobLevel: '',
+    skills: [],
+    jobRequirements: '',
+    experience: 0,
+    salaryRange: '',
+    id: 0,
+  );
+
+  void _handleSubmission() {
+    print({
+      "title": jobPost.jobTitle,
+      "no of vacancies": jobPost.noOfVacancies,
+      "job category": jobPost.jobCategory.name,
+      "degree": jobPost.degree,
+      "deadline": jobPost.deadline,
+      "job type": jobPost.jobType,
+      "job level": jobPost.jobLevel,
+      // "skills": jobPost.skills.join(", "),
+      "job requirements": jobPost.jobRequirements,
+      "experience": jobPost.experience,
+      "salary range": jobPost.salaryRange,
+      "id": jobPost.id,
+    });
+  }
+
+  void updateSkills(List<String> newSkills) {
+    setState(() {
+      setState(() {
+        jobPost.skills = newSkills.map((skill) => Skill(name: skill)).toList();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +110,23 @@ class _JobPostScreenState extends State<JobPostScreen> {
                   });
                 },
                 children: [
-                  BasicJobInfo(),
-                  ProfessionalSkills(),
-                  JobRequirementsDetails(),
-                  ExperienceSalaryDetails()
+                  BasicJobInfo(
+                    jobPost: jobPost,
+                    formKey: _basicInfoKey,
+                  ),
+                  ProfessionalSkills(
+                    jobPost: jobPost,
+                    formKey: _skillsKey,
+                    onSkillsUpdated: updateSkills,
+                  ),
+                  JobRequirementsDetails(
+                    jobPost: jobPost,
+                    formKey: _requirementsKey,
+                  ),
+                  ExperienceSalaryDetails(
+                    jobPost: jobPost,
+                    formKey: _experienceKey,
+                  )
                 ],
               ),
             ),
@@ -92,13 +152,23 @@ class _JobPostScreenState extends State<JobPostScreen> {
                         size: size,
                         text: "Next",
                         onTap: () {
-                          _pageController.nextPage(
+                          if (validateCurrentStep()) {
+                            _pageController.nextPage(
                               duration: Duration(milliseconds: 300),
-                              curve: Curves.easeInOut);
+                              curve: Curves.easeInOut,
+                            );
+                          }
                         }),
                   if (_currentPage == _totalSteps - 1)
                     PageControllerButton(
-                        size: size, text: "Submit", onTap: () {})
+                        size: size,
+                        text: "Submit",
+                        onTap: () {
+                          // if (validateAllForms()) {
+                          //   print("Job Post Submitted: ${jobPost.jobTitle}");
+                          // }
+                          _handleSubmission();
+                        })
                 ],
               ),
             ),
@@ -106,6 +176,30 @@ class _JobPostScreenState extends State<JobPostScreen> {
         ),
       ),
     );
+  }
+
+  // Validate the current step
+  bool validateCurrentStep() {
+    switch (_currentPage) {
+      case 0:
+        return _basicInfoKey.currentState?.validate() ?? false;
+      case 1:
+        return _skillsKey.currentState?.validate() ?? false;
+      case 2:
+        return _requirementsKey.currentState?.validate() ?? false;
+      case 3:
+        return _experienceKey.currentState?.validate() ?? false;
+      default:
+        return false;
+    }
+  }
+
+  // Validate all forms during submission
+  bool validateAllForms() {
+    return _basicInfoKey.currentState?.validate() ??
+        false && _skillsKey.currentState!.validate() ??
+        false && false && _experienceKey.currentState!.validate() ??
+        false;
   }
 }
 
@@ -150,23 +244,4 @@ class PageControllerButton extends StatelessWidget {
       ),
     );
   }
-}
-
-// Form steps
-Widget _buildStepOne() {
-  return Center(
-    child: Text("Step 1: Personal Information"),
-  );
-}
-
-Widget _buildStepTwo() {
-  return Center(
-    child: Text("Step 2: Address Details"),
-  );
-}
-
-Widget _buildStepThree() {
-  return Center(
-    child: Text("Step 3: Confirm Details"),
-  );
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
-import 'package:mero_career/views/shared/register/user_verification_page.dart';
+import 'package:mero_career/views/shared/register/recruiter_register_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
-import 'package:mero_career/views/widgets/my_textfield.dart';
+import 'package:provider/provider.dart';
 
 import '../../job_seekers/common/modal_top_bar.dart';
+import '../../widgets/validated_text_field.dart';
 import '../login/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -18,6 +20,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -35,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
     {"id": 4, "categoryName": "Hospital"},
     {"id": 5, "categoryName": "Banking & Insurance"},
     {"id": 6, "categoryName": "Graphic Designing"},
-    {"id": 7, "categoryName": "Accounting"},
+    {"id": 7, "categoryName": "Accounting & Finance"},
     {"id": 8, "categoryName": "Construction"},
     {"id": 9, "categoryName": "Others"},
   ];
@@ -44,18 +48,22 @@ class _RegisterPageState extends State<RegisterPage> {
   String _selectedCategoryId = "";
 
   void _registerUser() async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => UserVerificationPage()));
+    if (_formKey.currentState?.validate() ?? false) {
+      print("All fields are valid!");
+    }
+    // Navigator.push(context,
+    //     MaterialPageRoute(builder: (context) => UserVerificationPage()));
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: MyAppBar(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 33.0),
+        padding: const EdgeInsets.symmetric(horizontal: 28.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,143 +83,233 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: MyTextfield(
-                      controller: _firstNameController,
-                      labelText: 'First Name',
-                      prefixIcon: CupertinoIcons.person_solid,
-                      verticalContentPadding: 12,
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ValidatedTextField(
+                            controller: _firstNameController,
+                            labelText: 'First Name',
+                            prefixIcon: CupertinoIcons.person_solid,
+                            verticalContentPadding: 12,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'First name cannot be empty !';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: ValidatedTextField(
+                            controller: _lastNameController,
+                            labelText: 'Last Name',
+                            prefixIcon: CupertinoIcons.person_solid,
+                            verticalContentPadding: 12,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Last name cannot be empty !';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: MyTextfield(
-                      controller: _lastNameController,
-                      labelText: 'Last Name',
-                      prefixIcon: CupertinoIcons.person_solid,
-                      verticalContentPadding: 12,
+                    SizedBox(
+                      height: 17,
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 17,
-              ),
-              MyTextfield(
-                controller: _usernameController,
-                labelText: 'Username',
-                prefixIcon: CupertinoIcons.person_add_solid,
-                verticalContentPadding: 13.5,
-              ),
-              SizedBox(
-                height: 17,
-              ),
-              MyTextfield(
-                controller: _emailController,
-                labelText: 'Email',
-                prefixIcon: Icons.mail,
-                verticalContentPadding: 13.5,
-              ),
-
-              SizedBox(
-                height: 17,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: MyTextfield(
-                      controller: _phoneNumberController,
-                      labelText: 'Phone',
-                      prefixIcon: Icons.phone,
+                    ValidatedTextField(
+                      controller: _usernameController,
+                      labelText: 'Username',
+                      prefixIcon: CupertinoIcons.person_add_solid,
                       verticalContentPadding: 13.5,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Username cannot be empty !';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: MyTextfield(
-                      controller: _locationController,
-                      labelText: 'Address',
-                      prefixIcon: Icons.location_on,
+                    SizedBox(
+                      height: 17,
+                    ),
+                    ValidatedTextField(
+                      controller: _emailController,
+                      labelText: 'Email',
+                      prefixIcon: Icons.mail,
                       verticalContentPadding: 13.5,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email cannot be empty';
+                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                            .hasMatch(value)) {
+                          return 'Enter a valid email';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 17,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ValidatedTextField(
+                            controller: _phoneNumberController,
+                            labelText: 'Phone',
+                            prefixIcon: Icons.phone,
+                            verticalContentPadding: 13.5,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Phone number cannot be empty !';
+                              } else if (value.length != 10) {
+                                return "Enter a valid phone number";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: ValidatedTextField(
+                            controller: _locationController,
+                            labelText: 'Address',
+                            prefixIcon: Icons.location_on,
+                            verticalContentPadding: 13.5,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Address cannot be empty !';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 17,
+                    ),
+                    SelectContainer(
+                      size: size,
+                      isSelected: _selectedCategory == "" ? false : true,
+                      selectText: _selectedCategory == ""
+                          ? "Select Job Preference *"
+                          : _selectedCategory,
+                      onTap: () {
+                        _showJobCategoryModalSheet(context);
+                      },
+                    ),
+                    SizedBox(
+                      height: 17,
+                    ),
+                    MyPasswordfield(
+                      controller: _passwordController,
+                      labelText: "Password",
+                      verticalContentPadding: 13.5,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password cannot be empty';
+                        } else if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 17,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Checkbox(
+                          value: true,
+                          onChanged: (value) {},
+                          activeColor: Colors.blue.shade600,
+                        ),
+                        Text(
+                          "I agree to ",
+                          style: TextStyle(color: Colors.grey.shade500),
+                        ),
+                        Text(
+                          "Privacy Policy ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14),
+                        ),
+                        Text(
+                          "and ",
+                          style: TextStyle(color: Colors.grey.shade500),
+                        ),
+                        Text(
+                          "Terms of use ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    MyButton(
+                      color: Colors.blue,
+                      width: size.width,
+                      height: 44,
+                      text: "Sign Up",
+                      onTap: _registerUser,
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(
-                height: 17,
-              ),
-              SelectContainer(
-                size: size,
-                isSelected: _selectedCategory == "" ? false : true,
-                selectText: _selectedCategory == ""
-                    ? "Select Job Preference *"
-                    : _selectedCategory,
-                onTap: () {
-                  _showJobCategoryModalSheet(context);
-                },
-              ),
-              SizedBox(
-                height: 17,
-              ),
-              MyPasswordfield(
-                controller: _passwordController,
-                labelText: "Password",
-                verticalContentPadding: 13.5,
-              ),
-              SizedBox(
-                height: 17,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Checkbox(
-                    value: true,
-                    onChanged: (value) {},
-                    activeColor: Colors.blue.shade600,
-                  ),
-                  Text(
-                    "I agree to ",
-                    style: TextStyle(color: Colors.grey.shade500),
-                  ),
-                  Text(
-                    "Privacy Policy ",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
-                        fontSize: 14),
-                  ),
-                  Text(
-                    "and ",
-                    style: TextStyle(color: Colors.grey.shade500),
-                  ),
-                  Text(
-                    "Terms of use ",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
-                        fontSize: 14),
-                  ),
-                ],
-              ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
-              MyButton(
-                color: Colors.blue,
-                width: size.width,
-                height: 44,
-                text: "Sign Up",
-                onTap: _registerUser,
+              Material(
+                elevation: 2,
+                borderRadius: BorderRadius.circular(12),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RecruiterRegisterPage()));
+                  },
+                  child: Container(
+                    width: size.width / 1.12,
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: isDarkMode
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade300)),
+                    child: Center(
+                        child: Text(
+                      "Signup as Recruiter?",
+                      style: TextStyle(fontSize: 17),
+                    )),
+                  ),
+                ),
               ),
-              // MyButton(color: Colors.blue, size: size, text: "Sign In"),
               const SizedBox(
-                height: 25,
+                height: 15,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -242,41 +340,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(
-                height: 15,
+                height: 35,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                child: Row(
-                  children: const [
-                    Expanded(child: Divider(color: Colors.grey)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text(
-                        "Or sign up with",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 15,
-                            color: Colors.grey,
-                            letterSpacing: 0.5),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  SocialOption(
-                    imageUrl: 'assets/images/google.png',
-                  ),
-                  SizedBox(width: 15),
-                  SocialOption(
-                    imageUrl: 'assets/images/linkedin.png',
-                  ),
-                ],
-              )
             ],
           ),
         ),

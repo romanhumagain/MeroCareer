@@ -22,7 +22,7 @@ class MyButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 2.0),
       child: Material(
         borderRadius: BorderRadius.circular(12),
-        elevation: 10,
+        elevation: 5,
         child: GestureDetector(
           onTap: () {
             onTap();

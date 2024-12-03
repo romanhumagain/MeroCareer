@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+
+import '../../../../models/job/job_post_model.dart';
 
 class JobRequirementsDetails extends StatefulWidget {
+  final JobPost jobPost;
+  final GlobalKey<FormState> formKey;
+
+  const JobRequirementsDetails(
+      {super.key, required this.jobPost, required this.formKey});
+
   @override
   _JobRequirementsDetailsState createState() => _JobRequirementsDetailsState();
 }
 
 class _JobRequirementsDetailsState extends State<JobRequirementsDetails> {
-  final QuillController _controller = QuillController.basic();
+  // Create a TextEditingController to control the TextFormField
+  final TextEditingController _jobRequirementsController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _jobRequirementsController.text = widget.jobPost.jobRequirements;
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _jobRequirementsController.dispose();
     super.dispose();
   }
 
@@ -26,9 +41,7 @@ class _JobRequirementsDetailsState extends State<JobRequirementsDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Text(
                 "Add Job Requirements",
                 style: TextStyle(fontSize: 20.5, fontWeight: FontWeight.w500),
@@ -41,56 +54,46 @@ class _JobRequirementsDetailsState extends State<JobRequirementsDetails> {
             ],
           ),
         ),
-
         SizedBox(height: 16),
         Divider(
           color: Theme.of(context).colorScheme.surfaceContainer,
         ),
-        // Toolbar
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: QuillSimpleToolbar(
-            controller: _controller,
-            configurations: const QuillSimpleToolbarConfigurations(
-                showBoldButton: true,
-                showItalicButton: true,
-                showUnderLineButton: true,
-                showAlignmentButtons: true,
-                showListBullets: true,
-                showListNumbers: true,
-                showQuote: false,
-                showCodeBlock: false,
-                showHeaderStyle: false,
-                showUndo: false,
-                showRedo: false,
-                showClearFormat: false,
-                showClipboardCopy: false,
-                showClipboardCut: false,
-                showClipboardPaste: false,
-                showIndent: false,
-                showStrikeThrough: false,
-                showLink: false,
-                showFontFamily: false,
-                showFontSize: false,
-                showSearchButton: false,
-                showSubscript: false,
-                showSuperscript: false),
-          ),
-        ),
 
-        SizedBox(
-          height: 10,
-        ),
-        Divider(
-          color: Theme.of(context).colorScheme.surfaceContainer,
-        ),
+        // Job Requirements TextArea
         Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Expanded(
-            child: QuillEditor.basic(
-              controller: _controller,
-              configurations: const QuillEditorConfigurations(
-                  placeholder: "Job requirements description.."),
+          child: Form(
+            key: widget.formKey,
+            child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please provide job requirements detail";
+                }
+                return null;
+              },
+              controller: _jobRequirementsController,
+              maxLines: 8,
+              // Makes the TextField expandable
+              decoration: InputDecoration(
+                labelText: "Job Requirements",
+                hintText: "Enter the job requirements here",
+                hintStyle:
+                    TextStyle(color: Colors.grey, fontWeight: FontWeight.w400),
+                // Set hint text color to grey
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  // Rounded corners when focused
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  widget.jobPost.jobRequirements = value;
+                });
+              },
             ),
           ),
         ),

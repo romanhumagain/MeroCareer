@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/models/job/job_category_model.dart';
+import 'package:mero_career/models/job/job_post_model.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
 import 'package:mero_career/views/widgets/custom_number_field.dart';
 import 'package:mero_career/views/widgets/custom_textfield.dart';
 
+import '../../../../utils/date_formater.dart';
+
 class BasicJobInfo extends StatefulWidget {
-  const BasicJobInfo({super.key});
+  final JobPost jobPost;
+  final GlobalKey<FormState> formKey;
+
+  const BasicJobInfo({super.key, required this.jobPost, required this.formKey});
 
   @override
   State<BasicJobInfo> createState() => _BasicJobInfoState();
@@ -76,132 +83,190 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
   String _selectedJobLevel = "";
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _jobTitleController.text = widget.jobPost.jobTitle;
+    _noOfVacancyController.text = widget.jobPost.noOfVacancies.toString();
+    _deadlineController.text = formatDate(widget.jobPost.deadline);
+    _selectedCategory = widget.jobPost.jobCategory.name;
+    _selectedCategoryId = widget.jobPost.jobCategory.id.toString();
+    _selectedDegree = widget.jobPost.degree;
+    _selectedJobType = widget.jobPost.jobType;
+    _selectedJobLevel = widget.jobPost.jobLevel;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            "Basic Job Info",
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium
-                ?.copyWith(fontSize: 20, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            "Please fill all the basic job information properly",
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 18.0),
-            child: Column(
-              children: [
-                CustomTextField(
-                    controller: _jobTitleController, labelText: "Job Title"),
-                SizedBox(
-                  height: 10,
-                ),
-                CustomNumberField(
-                    controller: _noOfVacancyController,
-                    labelText: "No of Vacancy"),
-                SizedBox(
-                  height: 20,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Basic Job Info",
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 20, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "Please fill all the basic job information properly",
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 18.0),
+              child: Form(
+                key: widget.formKey,
+                child: Column(
+                  children: [
+                    CustomTextField(
+                      controller: _jobTitleController,
+                      labelText: "Job Title",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Job Title cannot be empty !';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          widget.jobPost.jobTitle = value;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CustomNumberField(
+                      controller: _noOfVacancyController,
+                      labelText: "No of Vacancy",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please provide No of Vacancy for this job';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          widget.jobPost.noOfVacancies = int.parse(value) ?? 0;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            SelectContainer(
+                              isSelected:
+                                  _selectedCategory == "" ? false : true,
+                              selectText: _selectedCategory == ""
+                                  ? "Select Job Category"
+                                  : _selectedCategory,
+                              onTap: () {
+                                _showJobCategoryModalSheet(context);
+                              },
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            SelectContainer(
+                              isSelected: _selectedDegree == "" ? false : true,
+                              selectText: _selectedDegree == ""
+                                  ? "Select Degree"
+                                  : _selectedDegree,
+                              onTap: () {
+                                _showEducationCategoryModalSheet(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
                       children: [
-                        SelectContainer(
-                          isSelected: _selectedCategory == "" ? false : true,
-                          selectText: _selectedCategory == ""
-                              ? "Select Job Category"
-                              : _selectedCategory,
-                          onTap: () {
-                            _showJobCategoryModalSheet(context);
-                          },
+                        Expanded(
+                          child: CustomTextField(
+                            controller: _deadlineController,
+                            labelText: "Application Deadline",
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select deadline for this job';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                widget.jobPost.deadline = value as DateTime;
+                              });
+                            },
+                          ),
                         ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        SelectContainer(
-                          isSelected: _selectedDegree == "" ? false : true,
-                          selectText: _selectedDegree == ""
-                              ? "Select Degree"
-                              : _selectedDegree,
-                          onTap: () {
-                            _showEducationCategoryModalSheet(context);
-                          },
-                        ),
+                        GestureDetector(
+                            onTap: () {
+                              _selectDate(context);
+                            },
+                            child: Icon(Icons.calendar_month))
                       ],
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomNumberField(
-                          controller: _deadlineController,
-                          labelText: "Application Deadline"),
+                    SizedBox(
+                      height: 15,
                     ),
-                    GestureDetector(
-                        onTap: () {
-                          _selectDate(context);
-                        },
-                        child: Icon(Icons.calendar_month))
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            SelectContainer(
+                              isSelected: _selectedJobType == "" ? false : true,
+                              selectText: _selectedJobType == ""
+                                  ? "Select Job Type"
+                                  : _selectedJobType,
+                              onTap: () {
+                                _showJobTypeModalSheet(context);
+                              },
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            SelectContainer(
+                              isSelected:
+                                  _selectedJobLevel == "" ? false : true,
+                              selectText: _selectedJobLevel == ""
+                                  ? "Select Job Level"
+                                  : _selectedJobLevel,
+                              onTap: () {
+                                _showJobLevelModalSheet(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        SelectContainer(
-                          isSelected: _selectedJobType == "" ? false : true,
-                          selectText: _selectedJobType == ""
-                              ? "Select Job Type"
-                              : _selectedJobType,
-                          onTap: () {
-                            _showJobTypeModalSheet(context);
-                          },
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        SelectContainer(
-                          isSelected: _selectedJobLevel == "" ? false : true,
-                          selectText: _selectedJobLevel == ""
-                              ? "Select Job Level"
-                              : _selectedJobLevel,
-                          onTap: () {
-                            _showJobLevelModalSheet(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -274,6 +339,10 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                                   _categoryList[index]['categoryName'];
                               _selectedCategoryId =
                                   _categoryList[index]['id'].toString();
+
+                              widget.jobPost.jobCategory = JobCategory(
+                                  id: _categoryList[index]['id'],
+                                  name: _categoryList[index]['categoryName']);
                             });
                             Navigator.pop(context);
                           },
@@ -375,6 +444,8 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                           onTap: () {
                             setState(() {
                               _selectedDegree =
+                                  _degreeNameList[index]['degreeName'];
+                              widget.jobPost.degree =
                                   _degreeNameList[index]['degreeName'];
                             });
                             Navigator.pop(context);
@@ -478,6 +549,7 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                           onTap: () {
                             setState(() {
                               _selectedJobType = _jobTypeList[index]['jobType'];
+                              widget.jobPost.jobType = _selectedJobType;
                             });
                             Navigator.pop(context);
                           },
@@ -581,6 +653,7 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
                             setState(() {
                               _selectedJobLevel =
                                   _jobLevelList[index]['jobLevel'];
+                              widget.jobPost.jobLevel = _selectedJobLevel;
                             });
                             Navigator.pop(context);
                           },

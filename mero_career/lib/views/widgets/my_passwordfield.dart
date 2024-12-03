@@ -5,12 +5,15 @@ class MyPasswordfield extends StatefulWidget {
   final String labelText;
   final double verticalContentPadding;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
-  const MyPasswordfield(
-      {super.key,
-      required this.labelText,
-      required this.verticalContentPadding,
-      required this.controller});
+  const MyPasswordfield({
+    super.key,
+    required this.labelText,
+    required this.verticalContentPadding,
+    required this.controller,
+    this.validator,
+  });
 
   @override
   State<MyPasswordfield> createState() => _MyPasswordfieldState();
@@ -23,9 +26,10 @@ class _MyPasswordfieldState extends State<MyPasswordfield> {
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       obscureText: _showPassword,
+      validator: widget.validator,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
             vertical: widget.verticalContentPadding, horizontal: 10.0),
@@ -67,9 +71,7 @@ class _MyPasswordfieldState extends State<MyPasswordfield> {
           child: Icon(
             _showPassword ? Icons.remove_red_eye : Icons.visibility_off,
             size: 20,
-            color: isDarkMode
-                ? Colors.grey.shade200
-                : Colors.grey.shade700, // Suffix icon color based on theme
+            color: isDarkMode ? Colors.grey.shade200 : Colors.grey.shade700,
           ),
         ),
       ),

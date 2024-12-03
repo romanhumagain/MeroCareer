@@ -6,21 +6,25 @@ class MyTextfield extends StatelessWidget {
   final double verticalContentPadding;
   final TextEditingController controller;
   final String? hintText;
+  final String? Function(String?)? validator;
 
-  const MyTextfield(
-      {super.key,
-      required this.labelText,
-      required this.prefixIcon,
-      required this.verticalContentPadding,
-      required this.controller,
-      this.hintText});
+  const MyTextfield({
+    super.key,
+    required this.labelText,
+    required this.prefixIcon,
+    required this.verticalContentPadding,
+    required this.controller,
+    this.hintText,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return TextField(
+    return TextFormField(
       controller: controller,
+      validator: validator,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(
             vertical: verticalContentPadding, horizontal: 8.0),

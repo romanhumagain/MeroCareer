@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from .models import User, OTP
 
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -35,3 +35,5 @@ class CustomUserAdmin(UserAdmin):
 
 # Register the custom user model and admin
 admin.site.register(User)
+admin.site.register(OTP)
+

@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../../../models/job/job_post_model.dart';
+
 class ProfessionalSkills extends StatefulWidget {
-  const ProfessionalSkills({super.key});
+  final JobPost jobPost;
+  final GlobalKey<FormState> formKey;
+  final Function(List<String>) onSkillsUpdated;
+
+  const ProfessionalSkills({
+    super.key,
+    required this.jobPost,
+    required this.formKey,
+    required this.onSkillsUpdated,
+  });
 
   @override
   State<ProfessionalSkills> createState() => _ProfessionalSkillsState();
@@ -16,6 +27,7 @@ class _ProfessionalSkillsState extends State<ProfessionalSkills> {
       setState(() {
         skills.add(_skillController.text.trim());
         _skillController.clear();
+        widget.onSkillsUpdated(skills);
       });
     }
   }
@@ -23,6 +35,7 @@ class _ProfessionalSkillsState extends State<ProfessionalSkills> {
   void _removeSkill(String skill) {
     setState(() {
       skills.remove(skill);
+      widget.onSkillsUpdated(skills);
     });
   }
 
@@ -53,23 +66,32 @@ class _ProfessionalSkillsState extends State<ProfessionalSkills> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          controller: _skillController,
-                          decoration: InputDecoration(
-                            hintText: "Enter a skill (e.g., Design, Python)",
-                            hintStyle: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(
-                                  fontSize: 15,
-                                  letterSpacing: 0.5,
-                                  color: Colors.grey,
-                                ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
+                        child: Form(
+                          key: widget.formKey,
+                          child: TextFormField(
+                            validator: (value) {
+                              if (skills.isEmpty) {
+                                return 'Please provide all the required skills for job !';
+                              }
+                              return null;
+                            },
+                            controller: _skillController,
+                            decoration: InputDecoration(
+                              hintText: "Enter a skill (e.g., Design, Python)",
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    fontSize: 15,
+                                    letterSpacing: 0.5,
+                                    color: Colors.grey,
+                                  ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 16.0),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
                           ),
                         ),
                       ),

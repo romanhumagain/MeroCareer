@@ -16,12 +16,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   void _handleLogin() async {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ProfileSetupPage()));
+    if (_formKey.currentState?.validate() ?? false) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ProfileSetupPage()));
+    }
   }
 
   @override
@@ -69,68 +72,91 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 35,
                 ),
-                MyTextfield(
-                  controller: _emailController,
-                  labelText: 'E-mail',
-                  prefixIcon: Icons.email_rounded,
-                  verticalContentPadding: 14,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                MyPasswordfield(
-                  controller: _passwordController,
-                  verticalContentPadding: 14,
-                  labelText: "Password",
-                ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // CheckboxListTile(value: true, onChanged: (value){})
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: true,
-                          onChanged: (value) {},
-                          activeColor: Colors.blue,
-                        ),
-                        Text(
-                          "Remember Me",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(fontSize: 15),
-                        )
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ForgotPasswordPage()));
-                      },
-                      child: Text(
-                        "Forgot Password ?",
-                        style: Theme.of(context).textTheme.titleSmall,
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      MyTextfield(
+                        controller: _emailController,
+                        labelText: 'E-mail',
+                        prefixIcon: Icons.email_rounded,
+                        verticalContentPadding: 14,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email cannot be empty';
+                          } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                              .hasMatch(value)) {
+                            return 'Enter a valid registered email';
+                          }
+                          return null;
+                        },
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 28,
-                ),
-                MyButton(
-                    color: Colors.blue.shade600,
-                    width: size.width,
-                    onTap: _handleLogin,
-                    height: 45,
-                    text: "Sign In"),
-                const SizedBox(
-                  height: 25,
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      MyPasswordfield(
+                        controller: _passwordController,
+                        verticalContentPadding: 14,
+                        labelText: "Password",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please provide your valid password !';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // CheckboxListTile(value: true, onChanged: (value){})
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: true,
+                                onChanged: (value) {},
+                                activeColor: Colors.blue,
+                              ),
+                              Text(
+                                "Remember Me",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(fontSize: 15),
+                              )
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ForgotPasswordPage()));
+                            },
+                            child: Text(
+                              "Forgot Password ?",
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      MyButton(
+                          color: Colors.blue.shade600,
+                          width: size.width,
+                          onTap: _handleLogin,
+                          height: 45,
+                          text: "Sign In"),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

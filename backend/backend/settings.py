@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,15 +45,15 @@ CREATED_APPS = [
     'base',
     'applications',
     'jobs',
-    'user_profile'
-    
+    'job_seeker',
+    'recruiter',
 ]
 
 THIRD_PARTY_APPS = [
     'rest_framework',   
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    
+
 ]
 
 INSTALLED_APPS += CREATED_APPS 
@@ -248,3 +249,15 @@ JAZZMIN_SETTINGS = {
 JAZZMIN_UI_TWEAKS = {
     "theme": "flatly",
 }
+
+# ======== for handeling the image =========
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'blogify.connect@gmail.com'
+EMAIL_HOST_PASSWORD = 'phdqztblifzxocmq'
+EMAIL_USE_TLS = True
