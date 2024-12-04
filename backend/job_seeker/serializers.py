@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import JobSeekerProfile, CareerPreference
+from .models import JobSeeker, CareerPreference
 
-class JobSeekerProfileSerializer(ModelSerializer):
+class JobSeekerSerializer(ModelSerializer):
   class Meta:
-    model = JobSeekerProfile
+    model = JobSeeker
     fields = '__all__'

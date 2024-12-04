@@ -43,9 +43,9 @@ def send_email_for_otp(user):
     name = ""
     role = user.role
     if role == 'job_seeker':
-      name = user.job_seeker_profile.full_name
+      name = user.job_seeker.full_name
     elif role == 'recruiter':
-      name = user.recruiter_profile.company_name
+      name = user.recruiter.company_name
 
     if otp_code is not None:
         message = f"""

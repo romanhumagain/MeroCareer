@@ -1,11 +1,11 @@
 class JobCategory {
   final int? id;
-  final String name;
+  final String category;
   final String image;
 
   JobCategory({
     this.id,
-    required this.name,
+    required this.category,
     this.image = "",
   });
 
@@ -13,7 +13,7 @@ class JobCategory {
   factory JobCategory.fromJson(Map<String, dynamic> json) {
     return JobCategory(
       id: json['id'],
-      name: json['name'],
+      category: json['category'],
       image: json['image'] ?? "",
     );
   }
@@ -22,7 +22,7 @@ class JobCategory {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'category': category,
       'image': image,
     };
   }

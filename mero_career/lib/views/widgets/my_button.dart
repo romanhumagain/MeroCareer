@@ -5,16 +5,18 @@ class MyButton extends StatelessWidget {
   final double width;
   final double height;
   final String text;
-
   final Function onTap;
+  final bool? isLoading;
 
-  MyButton(
-      {super.key,
-      required this.color,
-      required this.width,
-      required this.height,
-      required this.text,
-      required this.onTap});
+  MyButton({
+    super.key,
+    required this.color,
+    required this.width,
+    required this.height,
+    required this.text,
+    required this.onTap,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +35,22 @@ class MyButton extends StatelessWidget {
             decoration: BoxDecoration(
                 color: color, borderRadius: BorderRadius.circular(12)),
             child: Center(
-                child: Text(
-              text,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 19.5,
-                  letterSpacing: 1.2),
-            )),
+                child: !isLoading!
+                    ? Text(
+                        text,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 19.5,
+                            letterSpacing: 1.2),
+                      )
+                    : SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      )),
           ),
         ),
       ),

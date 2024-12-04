@@ -7,8 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from .models import User, OTP
-from job_seeker.models import JobSeekerProfile, CareerPreference
-from recruiter.models import RecruiterProfile
+from job_seeker.models import JobSeeker, CareerPreference
+from recruiter.models import Recruiter
 from utils.otp_utils import send_email_for_otp
 
 
@@ -31,8 +31,7 @@ class LoginAPIView(generics.CreateAPIView):
       if user is not None:
         refresh = RefreshToken.for_user(user)
         refresh['id'] = user.id
-        refresh['slug'] = user.slug
-        refresh['email'] = user.slug
+        refresh['email'] = user.email
         
         access_token = str(refresh.access_token)
         
@@ -43,11 +42,11 @@ class LoginAPIView(generics.CreateAPIView):
         'role':user.role
         }
         if user.role == 'job_seeker':
-            return Response({"message": "Job Seeker Dashboard", **response_data}, status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
         elif user.role == 'recruiter':
-            return Response({"message": "Recruiter Dashboard", **response_data}, status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
         elif user.role == 'admin':
-            return Response({"message": "Admin Dashboard", **response_data}, status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid role."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -91,30 +90,36 @@ class SendOTPAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
               
-class VerifyOTP(generics.RetrieveUpdateAPIView):
-  serializer_class = OTPSerializer
-  lookup_field = 'otp'
-  
-  def get_queryset(self):
-    otp = self.kwargs.get('otp')
-    return OTP.objects.get(user = self.request.user, otp = otp)
-   
-   
-  def update(self, request, *args, **kwargs):
-    otp = self.get_queryset()
-    if not otp:
-      return Response(
-                {"detail": "OTP not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-    
-    if otp.has_expired or otp.is_expired:
+from rest_framework.exceptions import NotFound
+
+class VerifyOTP(generics.UpdateAPIView):
+    serializer_class = OTPSerializer
+    lookup_field = 'otp'
+
+    def get_object(self):
+        otp = self.kwargs.get(self.lookup_field)
+        try:
+            otp_instance = OTP.objects.get(user=self.request.user, otp=otp)
+        except OTP.DoesNotExist:
+            raise NotFound({"detail": "OTP doesn't exist."})
+        return otp_instance
+
+    def update(self, request, *args, **kwargs):
+        otp_instance = self.get_object()
+
+        # Check if OTP has expired or is marked as expired
+        if otp_instance.has_expired or otp_instance.is_expired:
             return Response(
                 {"detail": "OTP has expired."}, status=status.HTTP_400_BAD_REQUEST
             )
-    otp.user.is_verified = True;
-    otp.user.save()
-    
-    otp.delete()
-    return Response(
+
+        # Mark user as verified
+        otp_instance.user.is_verified = True
+        otp_instance.user.save()
+
+        # Delete the OTP instance after successful verification
+        otp_instance.delete()
+
+        return Response(
             {"detail": "User verified successfully."}, status=status.HTTP_200_OK
         )

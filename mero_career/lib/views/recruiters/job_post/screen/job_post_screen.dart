@@ -30,7 +30,7 @@ class _JobPostScreenState extends State<JobPostScreen> {
   JobPost jobPost = JobPost(
     jobTitle: '',
     noOfVacancies: 0,
-    jobCategory: JobCategory(id: 0, name: ''),
+    jobCategory: JobCategory(id: 0, category: ''),
     degree: '',
     deadline: DateTime.now(),
     jobType: '',
@@ -46,7 +46,7 @@ class _JobPostScreenState extends State<JobPostScreen> {
     print({
       "title": jobPost.jobTitle,
       "no of vacancies": jobPost.noOfVacancies,
-      "job category": jobPost.jobCategory.name,
+      "job category": jobPost.jobCategory.category,
       "degree": jobPost.degree,
       "deadline": jobPost.deadline,
       "job type": jobPost.jobType,

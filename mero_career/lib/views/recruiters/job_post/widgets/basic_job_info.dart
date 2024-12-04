@@ -89,7 +89,7 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
     _jobTitleController.text = widget.jobPost.jobTitle;
     _noOfVacancyController.text = widget.jobPost.noOfVacancies.toString();
     _deadlineController.text = formatDate(widget.jobPost.deadline);
-    _selectedCategory = widget.jobPost.jobCategory.name;
+    _selectedCategory = widget.jobPost.jobCategory.category;
     _selectedCategoryId = widget.jobPost.jobCategory.id.toString();
     _selectedDegree = widget.jobPost.degree;
     _selectedJobType = widget.jobPost.jobType;
@@ -342,7 +342,8 @@ class _BasicJobInfoState extends State<BasicJobInfo> {
 
                               widget.jobPost.jobCategory = JobCategory(
                                   id: _categoryList[index]['id'],
-                                  name: _categoryList[index]['categoryName']);
+                                  category: _categoryList[index]
+                                      ['categoryName']);
                             });
                             Navigator.pop(context);
                           },

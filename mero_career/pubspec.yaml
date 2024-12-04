@@ -46,6 +46,14 @@ dependencies:
   geolocator: ^13.0.2
   flutter_quill: ^10.8.5
   intl:
+  http: ^1.2.2
+
+  another_flushbar: ^1.12.30
+  awesome_dialog:
+  fluttertoast: ^8.2.8
+  shared_preferences: ^2.3.3
+  jwt_decoder: ^2.0.1
+
 
 dev_dependencies:
   flutter_test:

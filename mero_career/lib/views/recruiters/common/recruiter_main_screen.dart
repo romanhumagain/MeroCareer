@@ -4,6 +4,7 @@ import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
 import 'package:mero_career/views/recruiters/applicants/screen/view_applicants_screen.dart';
 import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
 import 'package:mero_career/views/recruiters/job_post/screen/job_post_screen.dart';
+import 'package:mero_career/views/recruiters/job_post/screen/recruiter_job_post_screen.dart';
 import 'package:mero_career/views/recruiters/menu/screen/recruiter_bottom_sheet_menu.dart';
 
 import '../profile/screen/profile_screen.dart';
@@ -21,7 +22,7 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     ViewApplicantsScreen(),
-    JobPostScreen(),
+    RecruiterJobPostScreen(),
     ChatScreen(),
     JobPostScreen(),
     RecruiterProfileScreen(),

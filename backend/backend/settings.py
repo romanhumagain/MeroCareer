@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-^d3ixp2sg6be=zpb65s8o5$294=(lm3ix9)tubeq#a%pqrhmms
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1']
 
 # Application definition
 
@@ -47,12 +47,14 @@ CREATED_APPS = [
     'jobs',
     'job_seeker',
     'recruiter',
+    
 ]
 
 THIRD_PARTY_APPS = [
     'rest_framework',   
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+     "corsheaders",
 
 ]
 
@@ -62,6 +64,7 @@ INSTALLED_APPS += THIRD_PARTY_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -261,3 +264,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'blogify.connect@gmail.com'
 EMAIL_HOST_PASSWORD = 'phdqztblifzxocmq'
 EMAIL_USE_TLS = True
+
+
+CORS_ALLOW_ALL_ORIGINS: True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    'http://10.0.2.2:8000'
+
+]

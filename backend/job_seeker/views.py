@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from .models import User
-from job_seeker.models import JobSeekerProfile, CareerPreference
+from job_seeker.models import JobSeeker, CareerPreference
 from base.serializers import RegisterUserSerializer
 from django.db import transaction
 from jobs.models import JobCategory
@@ -24,7 +24,7 @@ class RegisterJobSeekerAPIView(generics.CreateAPIView):
                     
                     user = serializer.save()
 
-                    JobSeekerProfile.objects.create(
+                    jobSeekerInst = JobSeeker.objects.create(
                         user=user,
                         full_name=data['full_name'],
                         username=data['username'],
@@ -36,7 +36,7 @@ class RegisterJobSeekerAPIView(generics.CreateAPIView):
                         jobCategory = JobCategory.objects.get(id=data['prefered_job_category'])
                         
                         CareerPreference.objects.create(
-                            user=user,
+                            user=jobSeekerInst,
                             prefered_job_category=jobCategory
                         )
                     except JobCategory.DoesNotExist:

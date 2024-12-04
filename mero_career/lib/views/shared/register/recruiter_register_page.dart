@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -5,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mero_career/providers/theme_provider.dart';
+import 'package:mero_career/services/recruiter_services.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
-import 'package:mero_career/views/shared/register/user_verification_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
 import 'package:mero_career/views/widgets/my_textfield.dart';
 import 'package:provider/provider.dart';
 
+import '../../widgets/custom_flushbar_message.dart';
 import '../login/login_page.dart';
 
 class RecruiterRegisterPage extends StatefulWidget {
@@ -23,6 +25,8 @@ class RecruiterRegisterPage extends StatefulWidget {
 
 class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -46,10 +50,90 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
     }
   }
 
+  void _clearFields() {
+    _companyNameController.clear();
+    _emailController.clear();
+    _phoneNumberController.clear();
+    _addressController.clear();
+    _companyTypeController.clear();
+    _registrationNumbeController.clear();
+    _panNumberController.clear();
+    _passwordController.clear();
+  }
+
   void _registerCompany() async {
     if (_formKey.currentState?.validate() ?? false) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => UserVerificationPage()));
+      setState(() {
+        _isLoading = true;
+      });
+
+      final recruiterData = {
+        'company_name': _companyNameController.text,
+        'email': _emailController.text,
+        'phone_number': _phoneNumberController.text,
+        'address': _addressController.text,
+        'company_type': _companyTypeController.text,
+        'registration_number': _registrationNumbeController.text,
+        'pan_number': _panNumberController.text,
+        'password': _passwordController.text,
+        'role': 'recruiter',
+      };
+
+      try {
+        RecruiterServices recruiterServices = RecruiterServices();
+        final response =
+            await recruiterServices.registerRecruiter(recruiterData);
+
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+
+        if (response.statusCode == 201) {
+          final responseData = json.decode(response.body);
+
+          showCustomFlushbar(
+            context: context,
+            message: "Successfully registered your company !",
+            type: MessageType.success,
+          );
+          _clearFields();
+        } else if (response.statusCode == 400) {
+          showCustomFlushbar(
+            context: context,
+            message: "Sorry, couldn't register your account.",
+            type: MessageType.error,
+          );
+        } else if (response.statusCode == 500) {
+          showCustomFlushbar(
+            context: context,
+            message: "Server error. Please try again later.",
+            type: MessageType.error,
+          );
+        } else {
+          showCustomFlushbar(
+            context: context,
+            message: "Unexpected error occurred. Please try again later.",
+            type: MessageType.error,
+          );
+        }
+      } catch (e) {
+        if (e is SocketException) {
+          showCustomFlushbar(
+            context: context,
+            message: "No internet connection. Please check your connection.",
+            type: MessageType.error,
+          );
+        } else {
+          showCustomFlushbar(
+            context: context,
+            message: "Something went wrong. Please try again later.",
+            type: MessageType.error,
+          );
+        }
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -325,6 +409,7 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                       color: Colors.blue,
                       width: size.width,
                       height: 44,
+                      isLoading: _isLoading,
                       text: "Register Company",
                       onTap: _registerCompany,
                     ),

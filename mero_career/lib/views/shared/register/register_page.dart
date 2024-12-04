@@ -1,16 +1,23 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:mero_career/views/shared/register/recruiter_register_page.dart';
+import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
 import 'package:provider/provider.dart';
 
-import '../../job_seekers/common/modal_top_bar.dart';
+import '../../../models/job/job_category_model.dart';
+import '../../../services/job_seeker_services.dart';
+import '../../../services/job_services.dart';
 import '../../widgets/validated_text_field.dart';
 import '../login/login_page.dart';
+import '../modal/show_job_category_modal.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({super.key});
@@ -21,6 +28,14 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  late Future<List<JobCategory>> _jobCategories;
+
+  @override
+  void initState() {
+    super.initState();
+    _jobCategories = JobServices().getJobCategories();
+  }
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -32,27 +47,112 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  final List<Map<String, dynamic>> _categoryList = [
-    {"id": 1, "categoryName": "IT & Telecommunication"},
-    {"id": 2, "categoryName": "Architecture & Design"},
-    {"id": 3, "categoryName": "Teaching & Education"},
-    {"id": 4, "categoryName": "Hospital"},
-    {"id": 5, "categoryName": "Banking & Insurance"},
-    {"id": 6, "categoryName": "Graphic Designing"},
-    {"id": 7, "categoryName": "Accounting & Finance"},
-    {"id": 8, "categoryName": "Construction"},
-    {"id": 9, "categoryName": "Others"},
-  ];
-
   String _selectedCategory = "";
   String _selectedCategoryId = "";
 
+  void _getCategory() {
+    print("category details: $_selectedCategory $_selectedCategoryId");
+  }
+
   void _registerUser() async {
     if (_formKey.currentState?.validate() ?? false) {
-      print("All fields are valid!");
+      if (_selectedCategoryId == "") {
+        showCustomFlushbar(
+          context: context,
+          message: "Please select your job preference !",
+          type: MessageType.warning,
+        );
+      } else {
+        setState(() {
+          _isLoading = true;
+        });
+
+        final jobSeekerData = {
+          'full_name':
+              '${_firstNameController.text} ${_lastNameController.text}',
+          'username': _usernameController.text,
+          'email': _emailController.text,
+          'phone_number': _phoneNumberController.text,
+          'address': _locationController.text,
+          'prefered_job_category': _selectedCategoryId,
+          'password': _passwordController.text,
+          'role': 'job_seeker'
+        };
+
+        try {
+          JobSeekerServices jobSeekerServices = JobSeekerServices();
+          final response = await jobSeekerServices.registerUser(jobSeekerData);
+
+          print('Status Code: ${response.statusCode}');
+          print('Response Body: ${response.body}');
+
+          if (response.statusCode == 201) {
+            final responseData = json.decode(response.body);
+
+            showCustomFlushbar(
+              context: context,
+              message:
+                  "Successfully registered your account. You can now Login!",
+              type: MessageType.success,
+            );
+            _clearFields();
+          } else if (response.statusCode == 400) {
+            final responseData = json.decode(response.body);
+            showCustomFlushbar(
+              context: context,
+              message: responseData['error'] ??
+                  "Sorry, couldn't register your account.",
+              type: MessageType.error,
+            );
+          } else if (response.statusCode == 500) {
+            showCustomFlushbar(
+              context: context,
+              message: "Server error. Please try again later.",
+              type: MessageType.error,
+            );
+          } else {
+            showCustomFlushbar(
+              context: context,
+              message: "Unexpected error occurred. Please try again later.",
+              type: MessageType.error,
+            );
+          }
+        } catch (e) {
+          if (e is SocketException) {
+            showCustomFlushbar(
+              context: context,
+              message: "No internet connection. Please check your connection.",
+              type: MessageType.error,
+            );
+          } else {
+            showCustomFlushbar(
+              context: context,
+              message: "Something went wrong. Please try again later.",
+              type: MessageType.error,
+            );
+          }
+        } finally {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
-    // Navigator.push(context,
-    //     MaterialPageRoute(builder: (context) => UserVerificationPage()));
+  }
+
+  void _clearFields() {
+    _firstNameController.clear();
+    _lastNameController.clear();
+    _usernameController.clear();
+    _emailController.clear();
+    _phoneNumberController.clear();
+    _locationController.clear();
+    _passwordController.clear();
+
+    setState(() {
+      _selectedCategory = "";
+      _selectedCategoryId = "";
+    });
   }
 
   @override
@@ -205,7 +305,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ? "Select Job Preference *"
                           : _selectedCategory,
                       onTap: () {
-                        _showJobCategoryModalSheet(context);
+                        _showJobCategoryModal(context);
                       },
                     ),
                     SizedBox(
@@ -273,6 +373,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: size.width,
                       height: 44,
                       text: "Sign Up",
+                      isLoading: _isLoading,
                       onTap: _registerUser,
                     ),
                   ],
@@ -349,106 +450,20 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _showJobCategoryModalSheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+  void _showJobCategoryModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Container(
-          height: size.height / 1.8,
-          decoration: BoxDecoration(
-            color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(26),
-              topRight: Radius.circular(26),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                SizedBox(height: 5),
-                ModalTopBar(),
-                SizedBox(height: 10),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Preferred Job Category",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(fontSize: 18.5),
-                      ),
-                      _selectedCategory == ""
-                          ? Text("")
-                          : GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedCategory = "";
-                                  Navigator.pop(context);
-                                });
-                              },
-                              child: Text("Clear",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.blue)),
-                            ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 12),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: ListView.builder(
-                      itemCount: _categoryList.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedCategory =
-                                  _categoryList[index]['categoryName'];
-                              _selectedCategoryId =
-                                  _categoryList[index]['id'].toString();
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            margin: EdgeInsets.only(bottom: 10),
-                            decoration: BoxDecoration(
-                              color: isDarkMode
-                                  ? Colors.grey.shade800
-                                  : Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  offset: Offset(2, 2),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              _categoryList[index]['categoryName'],
-                              style: TextStyle(fontSize: 16.4),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        return JobCategoryModal(
+          jobCategoriesFuture: _jobCategories,
+          selectedCategory: _selectedCategory,
+          onCategorySelected: (categoryName, categoryId) {
+            setState(() {
+              _selectedCategory = categoryName;
+              _selectedCategoryId = categoryId;
+            });
+          },
         );
       },
     );

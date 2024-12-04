@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return TextFormField(
       validator: validator,
       controller: controller,
@@ -23,7 +24,10 @@ class CustomTextField extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 8),
           label: Text(
             '$labelText*',
-            style: TextStyle(fontSize: 15),
+            style: TextStyle(
+                fontSize: 15,
+                color:
+                    isDarkMode ? Colors.grey.shade600 : Colors.grey.shade600),
             // softWrap: true,
             // overflow: TextOverflow.visible,
           )),
