@@ -25,16 +25,19 @@ class RecruiterSerializer(ModelSerializer):
 class JobSerializer(ModelSerializer):
     skills_display = serializers.SerializerMethodField()
     recruiter_details = RecruiterSerializer(read_only=True, source = 'recruiter')
-
+    category_name = serializers.SerializerMethodField(read_only = True)
     class Meta:
         model = Job
         fields = [
             'id', 'recruiter', 'category', 'job_title', 'no_of_vacancy', 'degree',
             'deadline', 'job_type', 'job_level', 'job_requirement', 'experience',
-            'salary_range', 'skills_display', 'recruiter_details'
+            'salary_range', 'skills_display', 'recruiter_details', 'is_active','category_name'
         ]
-        read_only_fields = ['id', 'skills_display', 'recruiter_details']
+        read_only_fields = ['id', 'skills_display', 'recruiter_details', 'is_active']
 
     def get_skills_display(self, obj):
         skills = RequiredSkill.objects.filter(job=obj)
         return [skill.name for skill in skills]
+      
+    def get_category_name(self, obj):
+      return obj.category.category

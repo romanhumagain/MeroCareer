@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/job_provider.dart';
 import 'package:mero_career/views/recruiters/home/screen/job_listing_screen.dart';
 import 'package:mero_career/views/recruiters/home/widgets/home_screen_heading.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/applicants_details.dart';
 import '../widgets/posted_job_details_card.dart';
@@ -196,7 +198,7 @@ class ClosingMessage extends StatelessWidget {
   }
 }
 
-class RecentJobsPosting extends StatelessWidget {
+class RecentJobsPosting extends StatefulWidget {
   const RecentJobsPosting({
     super.key,
     required this.size,
@@ -209,6 +211,17 @@ class RecentJobsPosting extends StatelessWidget {
   final Color tertiaryColor;
 
   @override
+  State<RecentJobsPosting> createState() => _RecentJobsPostingState();
+}
+
+class _RecentJobsPostingState extends State<RecentJobsPosting> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<JobProvider>(context, listen: false).getJobPosts();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -218,7 +231,7 @@ class RecentJobsPosting extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Recent Jobs Posting ",
+                "Recent Jobs Posting",
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 16.2,
@@ -241,52 +254,57 @@ class RecentJobsPosting extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           Align(
             alignment: Alignment.topLeft,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  PostedJobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "AI Engineer ",
-                    companyName: "F1 soft International pvt.ltd",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/f1.jpg',
-                  ),
-                  PostedJobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Software Engineer",
-                    companyName: "LeapFrog Technology LTD",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                  ),
-                  PostedJobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Backend Developer",
-                    companyName: "Cotiviti Nepal",
-                    deadline: "4 hours and 51",
-                    imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                  ),
-                  PostedJobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Flutter Developer ",
-                    companyName: "F1 soft International",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/f1.jpg',
-                  ),
-                ],
+              child: Consumer<JobProvider>(
+                builder: (context, jobProvider, child) {
+                  final jobPosts = jobProvider.postedJobLists;
+                  if (jobProvider.isLoading) {
+                    return const CircularProgressIndicator();
+                  }
+                  if (jobPosts == null || jobPosts.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "No Job Posts Found!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Start by creating your first job post\nto attract potential candidates.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Row(
+                    children: jobPosts.take(5).map((job) {
+                      return PostedJobDetailsCard(
+                        size: widget.size,
+                        cardColor: widget.cardColor,
+                        tertiaryColor: widget.tertiaryColor,
+                        job: job,
+                      );
+                    }).toList(),
+                  );
+                },
               ),
             ),
           ),

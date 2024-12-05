@@ -38,7 +38,7 @@ void showCustomFlushbar({
       size: 28.0,
       color: Colors.white,
     ),
-    duration: Duration(seconds: 2),
+    duration: Duration(seconds: 1),
     margin: EdgeInsets.all(12),
     padding: EdgeInsets.all(16),
     borderRadius: BorderRadius.circular(12),

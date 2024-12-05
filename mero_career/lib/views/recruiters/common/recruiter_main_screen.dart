@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/recruiter_provider.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
 import 'package:mero_career/views/recruiters/applicants/screen/view_applicants_screen.dart';
 import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
-import 'package:mero_career/views/recruiters/job_post/screen/job_post_screen.dart';
 import 'package:mero_career/views/recruiters/job_post/screen/recruiter_job_post_screen.dart';
 import 'package:mero_career/views/recruiters/menu/screen/recruiter_bottom_sheet_menu.dart';
+import 'package:provider/provider.dart';
 
 import '../profile/screen/profile_screen.dart';
 
 class RecruiterMainScreen extends StatefulWidget {
-  const RecruiterMainScreen({super.key});
+  final bool? isLoggedInNow;
+
+  const RecruiterMainScreen({super.key, this.isLoggedInNow = false});
 
   @override
   State<RecruiterMainScreen> createState() => _RecruiterMainScreenState();
@@ -24,7 +27,6 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
     ViewApplicantsScreen(),
     RecruiterJobPostScreen(),
     ChatScreen(),
-    JobPostScreen(),
     RecruiterProfileScreen(),
   ];
 
@@ -38,8 +40,22 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
 
   void _navigateToProfile() {
     setState(() {
-      _selectedIndex = 5;
+      _selectedIndex = 4;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchRecruiterProfileDetails();
+  }
+
+  void _fetchRecruiterProfileDetails() async {
+    if (!widget.isLoggedInNow!) {
+      Provider.of<RecruiterProvider>(context, listen: false)
+          .fetchRecruiterProfile();
+    }
   }
 
   @override
@@ -84,18 +100,25 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 18.0),
-            child: GestureDetector(
-              onTap: _navigateToProfile,
-              child: const CircleAvatar(
-                radius: 17,
-                backgroundImage: AssetImage(
-                  'assets/images/company_logo/f1.jpg',
-                ),
-              ),
-            ),
-          ),
+          Consumer<RecruiterProvider>(builder: (context, provider, child) {
+            final recruiterDetails = provider.recruiterProfileDetails;
+            return Padding(
+              padding: const EdgeInsets.only(right: 18.0),
+              child: GestureDetector(
+                  onTap: _navigateToProfile,
+                  child: CircleAvatar(
+                    radius: 17,
+                    backgroundImage: recruiterDetails?[
+                                'company_profile_image'] !=
+                            null
+                        ? NetworkImage(
+                            recruiterDetails?['company_profile_image'])
+                        : const AssetImage(
+                                'assets/images/company_logo/default_company_pic.png')
+                            as ImageProvider,
+                  )),
+            );
+          })
         ],
       ),
       body: _screens[_selectedIndex],

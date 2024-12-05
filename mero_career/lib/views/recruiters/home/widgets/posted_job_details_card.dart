@@ -2,27 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/theme_provider.dart';
+import '../../../../utils/date_formater.dart';
 import '../screen/posted_job_details_screen.dart';
 
 class PostedJobDetailsCard extends StatelessWidget {
-  final String jobTitle;
-  final String companyName;
-  final String imageUrl;
-  final String deadline;
+  final Map<String, dynamic> job;
   final Size size;
   final Color cardColor;
   final Color tertiaryColor;
 
-  const PostedJobDetailsCard({
-    super.key,
-    required this.size,
-    required this.tertiaryColor,
-    required this.cardColor,
-    required this.jobTitle,
-    required this.companyName,
-    required this.imageUrl,
-    required this.deadline,
-  });
+  const PostedJobDetailsCard(
+      {super.key,
+      required this.size,
+      required this.tertiaryColor,
+      required this.cardColor,
+      required this.job});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +33,8 @@ class PostedJobDetailsCard extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PostedJobDetailsScreen()));
+                        builder: (context) =>
+                            PostedJobDetailsScreen(id: job['id'])));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -55,11 +50,11 @@ class PostedJobDetailsCard extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                imageUrl,
+                              child: Image.network(
+                                job['recruiter_details']
+                                    ['company_profile_image'],
                                 height: 40,
-                                width: 45,
-                                fit: BoxFit.cover,
+                                width: 40,
                               ),
                             ),
                             SizedBox(
@@ -69,7 +64,7 @@ class PostedJobDetailsCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  jobTitle,
+                                  job['job_title'],
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -80,7 +75,7 @@ class PostedJobDetailsCard extends StatelessWidget {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Text(
-                                  "IT & Telecommunication",
+                                  job['category_name'],
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleSmall
@@ -126,9 +121,10 @@ class PostedJobDetailsCard extends StatelessWidget {
                         spacing: 6, // Horizontal spacing between children
                         runSpacing: 8, // Vertical spacing between rows
                         children: [
-                          _buildInfoChip("No. of Vacancy- ", "2"),
-                          _buildInfoChip("Full Time"),
-                          _buildInfoChip("Senior Level"),
+                          _buildInfoChip(
+                              "No. of Vacancy- ", "${job['no_of_vacancy']}"),
+                          _buildInfoChip("${job['job_type']}"),
+                          _buildInfoChip("${job['job_level']}"),
                         ],
                       ),
                     ),
@@ -148,7 +144,7 @@ class PostedJobDetailsCard extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                          "Deadline $deadline minutes from now",
+                          formatDeadline(job['deadline']),
                           style: TextStyle(
                               color: isDarkMode
                                   ? Colors.grey.shade300

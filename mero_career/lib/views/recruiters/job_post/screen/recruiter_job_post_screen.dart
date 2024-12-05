@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/job_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/shared/modal/show_degree_modal.dart';
 import 'package:mero_career/views/shared/modal/show_job_level_modal.dart';
 import 'package:mero_career/views/shared/modal/show_job_type_modal.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../models/job/job_category_model.dart';
 import '../../../../services/job_services.dart';
@@ -77,7 +79,6 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
 
     if (selectedDate != null) {
       setState(() {
-        // Format the selected date to ISO 8601 format (Django-compatible)
         _deadlineController.text = selectedDate.toIso8601String().split('.')[0];
       });
     }
@@ -105,7 +106,7 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
   void _handleJobPost() async {
     Map<String, dynamic> formData = generateJobPostData();
     AuthServices authServices = AuthServices();
-    authServices.logoutUser();
+
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedCategoryId == "") {
         showCustomFlushbar(
@@ -131,48 +132,48 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
             message: "Please select job level",
             type: MessageType.warning);
         return;
-      }
+      } else {
+        try {
+          final JobServices jobServices = JobServices();
+          final jobProvider = Provider.of<JobProvider>(context, listen: false);
+          final response = await jobProvider.postJob(formData);
+          if (response?.statusCode == 201) {
+            showCustomFlushbar(
+                context: context,
+                message: "Job posted successfully!",
+                type: MessageType.success);
+            clearJobPostFields();
+          } else if (response?.statusCode == 400) {
+            showCustomFlushbar(
+              context: context,
+              message: "Sorry, couldn't post job. please try again !",
+              type: MessageType.error,
+            );
+          } else if (response?.statusCode == 401) {
+            showCustomFlushbar(
+              context: context,
+              message: "Session expired! Please log in to continue.",
+              type: MessageType.error,
+            );
 
-      try {
-        final JobServices jobServices = JobServices();
-        final response = await jobServices.postJob(formData);
-
-        if (response.statusCode == 201) {
+            Timer(const Duration(seconds: 3), () {
+              authServices.logoutUser();
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginPage()));
+            });
+          } else {
+            final responseData = json.decode(response!.body);
+            showCustomFlushbar(
+                context: context,
+                message: responseData['message'] ?? "Failed to post job",
+                type: MessageType.error);
+          }
+        } catch (e) {
           showCustomFlushbar(
               context: context,
-              message: "Job posted successfully!",
-              type: MessageType.success);
-          clearJobPostFields();
-        } else if (response.statusCode == 400) {
-          showCustomFlushbar(
-            context: context,
-            message: "Sorry, couldn't post job. please try again !",
-            type: MessageType.error,
-          );
-        } else if (response.statusCode == 401) {
-          showCustomFlushbar(
-            context: context,
-            message: "Session expired! Please log in to continue.",
-            type: MessageType.error,
-          );
-
-          Timer(const Duration(seconds: 3), () {
-            authServices.logoutUser();
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => LoginPage()));
-          });
-        } else {
-          final responseData = json.decode(response.body);
-          showCustomFlushbar(
-              context: context,
-              message: responseData['message'] ?? "Failed to post job",
+              message: "An error occurred: $e",
               type: MessageType.error);
         }
-      } catch (e) {
-        showCustomFlushbar(
-            context: context,
-            message: "An error occurred: $e",
-            type: MessageType.error);
       }
     }
   }

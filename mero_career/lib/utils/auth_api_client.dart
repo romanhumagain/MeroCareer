@@ -73,4 +73,75 @@ class AuthAPIClient {
     );
     return response;
   }
+
+  // Main put method to update complete data
+  Future<http.Response> put(String endpoint, Map<String, dynamic> body) async {
+    String? accessToken = await authServices.getAccessToken();
+
+    if (accessToken != null && !await _isAccessTokenValid()) {
+      // Refresh the access token
+      await _refreshAccessToken();
+      accessToken = await authServices.getAccessToken();
+
+      if (accessToken == null) {
+        return http.Response('Unauthorized', 401);
+      }
+    }
+    final response = await http.put(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
+      },
+      body: json.encode(body),
+    );
+    return response;
+  }
+
+// Main patch method to update data partially
+  Future<http.Response> patch(
+      String endpoint, Map<String, dynamic> body) async {
+    String? accessToken = await authServices.getAccessToken();
+
+    if (accessToken != null && !await _isAccessTokenValid()) {
+      // Refresh the access token
+      await _refreshAccessToken();
+      accessToken = await authServices.getAccessToken();
+
+      if (accessToken == null) {
+        return http.Response('Unauthorized', 401);
+      }
+    }
+    final response = await http.patch(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
+      },
+      body: json.encode(body),
+    );
+    return response;
+  }
+
+// Main delete methid to delete the data
+  Future<http.Response> delete(String endpoint) async {
+    String? accessToken = await authServices.getAccessToken();
+
+    // Check if the access token is valid
+    if (accessToken != null && !await _isAccessTokenValid()) {
+      await _refreshAccessToken();
+      accessToken = await authServices.getAccessToken();
+
+      if (accessToken == null) {
+        return http.Response('Unauthorized', 401);
+      }
+    }
+    final response = await http.delete(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    return response;
+  }
 }

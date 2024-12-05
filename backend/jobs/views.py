@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet
 from .serializers import JobCategorySerializer, JobSerializer, RequiredSkillSerializer
 from .models import JobCategory, RequiredSkill, Job
@@ -6,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from recruiter.models import Recruiter
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class JobCategoryViewSet(ModelViewSet):
     serializer_class = JobCategorySerializer
@@ -14,6 +17,7 @@ class JobCategoryViewSet(ModelViewSet):
 class JobPostAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = JobSerializer
+    
 
     def get(self, request, *args, **kwargs):
         
@@ -23,7 +27,20 @@ class JobPostAPIView(ListCreateAPIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         recruiter = request.user.recruiter
-        jobsInst = Job.objects.filter(recruiter=recruiter)
+        jobsInst = Job.objects.filter(recruiter=recruiter).order_by('-id')
+        
+        filter_by = self.request.query_params.get('filter_by', None)
+        
+        if filter_by == 'all':
+            jobsInst = Job.objects.filter(recruiter=recruiter).order_by('-id')
+        
+        elif filter_by == 'active':
+            jobsInst = jobsInst.filter(deadline__gt = timezone.now())
+                
+        elif filter_by == "closed":
+            jobsInst = jobsInst.filter(deadline__lt = timezone.now())
+            
+        
         serializer = self.get_serializer(jobsInst, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

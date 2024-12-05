@@ -43,9 +43,10 @@ class _SplashScreenState extends State<SplashScreen> {
               message: "Unauthorized User",
               type: MessageType.error);
         }
+      } else {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => OnBoarding()));
       }
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => OnBoarding()));
     });
   }
 

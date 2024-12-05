@@ -1,6 +1,7 @@
 from django.db import models
 from base.models import User
 from recruiter.models import Recruiter
+from django.utils import timezone
 
 def category_image_upload_to(instance, filename):
   return f"job_category/{filename}"
@@ -25,6 +26,10 @@ class Job(models.Model):
   job_requirement = models.TextField()
   experience = models.PositiveIntegerField(null=True, blank=True)
   salary_range = models.CharField(max_length=255, null=True, blank=True)
+  
+  @property
+  def is_active(self):
+    return self.deadline > timezone.now()
   
   def __str__(self):
     return self.job_title

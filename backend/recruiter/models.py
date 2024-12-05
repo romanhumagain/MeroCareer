@@ -6,7 +6,7 @@ def profile_image_upload_to(instance, filename):
 
 class Recruiter(models.Model):
   user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='recruiter')
-  company_profile_image = models.ImageField(upload_to=profile_image_upload_to, default='profile/default_profile_pic.webp' )
+  company_profile_image = models.ImageField(upload_to=profile_image_upload_to, default='profile/default_company_pic.png' )
   company_name = models.CharField(max_length=200)
   phone_number = models.CharField(max_length=15)
   address = models.TextField()

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../providers/recruiter_provider.dart';
 
 class HomeScreenHeading extends StatelessWidget {
   const HomeScreenHeading({
@@ -30,12 +33,12 @@ class HomeScreenHeading extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             // This Column will take up the available space, pushing the icon to the far right
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Good Morning, ",
                   style: TextStyle(
                       color: Colors.white,
@@ -43,18 +46,22 @@ class HomeScreenHeading extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5),
                 ),
-                Text(
-                  "Team F1soft International Pvt.Ltd",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.4),
-                ),
-                SizedBox(
+                Consumer<RecruiterProvider>(
+                    builder: (context, provider, child) {
+                  final recruiterDetails = provider.recruiterProfileDetails;
+                  return Text(
+                    "Team ${recruiterDetails?['company_name'] ?? "...Loading"}",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.4),
+                  );
+                }),
+                const SizedBox(
                   height: 6,
                 ),
-                Text(
+                const Text(
                   "Find the perfect candidates that suites your company !",
                   maxLines: 2,
                   style: TextStyle(
@@ -66,7 +73,7 @@ class HomeScreenHeading extends StatelessWidget {
               ],
             ),
             // Notification Icon
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.0),
               child: Column(
                 children: [

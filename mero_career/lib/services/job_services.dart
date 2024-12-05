@@ -38,4 +38,43 @@ class JobServices {
       throw Exception('Failed to post job: $e');
     }
   }
+
+  // to get all the list of posted job
+  Future<http.Response> fetchJobPosts({String filer_by = "all"}) async {
+    try {
+      final response = await _authAPIClient.get('/jobs/?filter_by=$filer_by');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch posts $e');
+    }
+  }
+
+  // to retrive the selected job details
+  Future<http.Response> fetchJobDetails(int id) async {
+    try {
+      final response = await _authAPIClient.get('/jobs/$id');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch posts $e');
+    }
+  }
+
+  Future<http.Response> deleteJobPost(int id) async {
+    try {
+      final response = await _authAPIClient.delete('/jobs/$id/');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch posts $e');
+    }
+  }
+
+  Future<http.Response> updateJobPost(
+      int id, Map<String, dynamic> updatedData) async {
+    try {
+      final response = await _authAPIClient.patch('/jobs/$id/', updatedData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch posts $e');
+    }
+  }
 }

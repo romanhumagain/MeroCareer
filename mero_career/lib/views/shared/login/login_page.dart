@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mero_career/providers/recruiter_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/recruiters/common/recruiter_main_screen.dart';
 import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
@@ -13,6 +14,7 @@ import 'package:mero_career/views/shared/register/user_verification_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
 import 'package:mero_career/views/widgets/my_textfield.dart';
+import 'package:provider/provider.dart';
 
 import '../../job_seekers/common/main_screen.dart';
 import '../../widgets/custom_flushbar_message.dart';
@@ -63,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
             type: MessageType.success,
           );
 
-          Timer(const Duration(seconds: 3), () {
+          Timer(const Duration(seconds: 2), () async {
             if (!responseData['is_verified']) {
               Navigator.pushReplacement(
                   context,
@@ -76,10 +78,15 @@ class _LoginPageState extends State<LoginPage> {
                   MaterialPageRoute(builder: (context) => MainScreen()),
                 );
               } else if (responseData['role'] == "recruiter") {
+                await Provider.of<RecruiterProvider>(context, listen: false)
+                    .fetchRecruiterProfile();
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => RecruiterMainScreen()),
+                      builder: (context) => RecruiterMainScreen(
+                            isLoggedInNow: true,
+                          )),
                 );
               } else {
                 print("Unknown User!");

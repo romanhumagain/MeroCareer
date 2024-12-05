@@ -64,8 +64,11 @@ class AuthServices {
   Future<bool> isLoggedIn() async {
     String? token = await getAccessToken();
     if (token != null && !JwtDecoder.isExpired(token)) {
+      print("token is valid");
       return true;
     } else {
+      print("token is invalid");
+
       return false;
     }
   }

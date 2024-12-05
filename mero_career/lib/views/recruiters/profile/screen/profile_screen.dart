@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/recruiter_provider.dart';
 import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/views/recruiters/profile/widgets/about_company_details.dart';
 import 'package:mero_career/views/recruiters/profile/widgets/company_basic_details.dart';
@@ -54,40 +55,59 @@ class CompanyProfileHeadingSection extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: Column(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage('assets/images/company_logo/f1.jpg'),
-            radius: 30,
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            "F1soft International Pvt.Ltd",
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          Text(
-            "Software Company",
-            style:
-                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 15),
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.location_on,
-                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade600,
-              ),
-              Text("Kathmandu",
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontSize: 15,
+          Consumer<RecruiterProvider>(builder: (context, provider, child) {
+            final recruiterData = provider.recruiterProfileDetails;
+            return Column(
+              children: [
+                CircleAvatar(
+                  radius: 17,
+                  backgroundImage: recruiterData?['company_profile_image'] !=
+                          null
+                      ? NetworkImage(recruiterData?['company_profile_image'])
+                      : const AssetImage(
+                              'assets/images/company_logo/default_company_pic.png')
+                          as ImageProvider,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  recruiterData?['company_name'],
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  recruiterData?['company_type'],
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium
+                      ?.copyWith(fontSize: 15),
+                ),
+                SizedBox(
+                  height: 3,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.location_on,
                       color: isDarkMode
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600))
-            ],
-          ),
+                          ? Colors.grey.shade300
+                          : Colors.grey.shade600,
+                    ),
+                    Text(recruiterData?['address'],
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(
+                                fontSize: 15,
+                                color: isDarkMode
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600))
+                  ],
+                ),
+              ],
+            );
+          }),
           SizedBox(
             height: 5,
           ),
