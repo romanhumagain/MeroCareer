@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/shared/modal/show_degree_modal.dart';
 import 'package:mero_career/views/shared/modal/show_job_level_modal.dart';
 import 'package:mero_career/views/shared/modal/show_job_type_modal.dart';
@@ -7,7 +11,9 @@ import 'package:mero_career/views/widgets/my_divider.dart';
 
 import '../../../../models/job/job_category_model.dart';
 import '../../../../services/job_services.dart';
+import '../../../shared/login/login_page.dart';
 import '../../../shared/modal/show_job_category_modal.dart';
+import '../../../widgets/custom_flushbar_message.dart';
 import '../../../widgets/job_post_textfield.dart';
 
 class RecruiterJobPostScreen extends StatefulWidget {
@@ -19,11 +25,6 @@ class RecruiterJobPostScreen extends StatefulWidget {
 
 class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final GlobalKey<FormState> _basicInfoKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _skillsKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _requirementsKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _experienceKey = GlobalKey<FormState>();
 
   final TextEditingController _jobTitleController = TextEditingController();
   final TextEditingController _noOfVacancyController = TextEditingController();
@@ -76,12 +77,125 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
 
     if (selectedDate != null) {
       setState(() {
-        _deadlineController.text = "${selectedDate.toLocal()}".split(' ')[0];
+        // Format the selected date to ISO 8601 format (Django-compatible)
+        _deadlineController.text = selectedDate.toIso8601String().split('.')[0];
       });
     }
   }
 
-  void _handleJobPost() async {}
+  Map<String, dynamic> generateJobPostData() {
+    return {
+      "job_title": _jobTitleController.text,
+      "no_of_vacancy": int.tryParse(_noOfVacancyController.text) ?? 0,
+      "degree": _selectedDegree,
+      "deadline": _deadlineController.text,
+      "job_type": _selectedJobType,
+      "job_level": _selectedJobLevel,
+      "job_requirement": _jobRequirementsController.text,
+      "category": int.tryParse(_selectedCategoryId) ?? 0,
+      "required_skills": skills,
+      "salary_range": (_minSalaryController.text.isNotEmpty &&
+              _maxSalaryController.text.isNotEmpty)
+          ? "${_minSalaryController.text}-${_maxSalaryController.text}"
+          : "",
+      "experience": _experience,
+    };
+  }
+
+  void _handleJobPost() async {
+    Map<String, dynamic> formData = generateJobPostData();
+    AuthServices authServices = AuthServices();
+    authServices.logoutUser();
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_selectedCategoryId == "") {
+        showCustomFlushbar(
+            context: context,
+            message: "Please select job category",
+            type: MessageType.warning);
+        return;
+      } else if (_selectedDegree == "") {
+        showCustomFlushbar(
+            context: context,
+            message: "Please select degree required for job",
+            type: MessageType.warning);
+        return;
+      } else if (_selectedJobType == "") {
+        showCustomFlushbar(
+            context: context,
+            message: "Please select job type",
+            type: MessageType.warning);
+        return;
+      } else if (_selectedJobLevel == "") {
+        showCustomFlushbar(
+            context: context,
+            message: "Please select job level",
+            type: MessageType.warning);
+        return;
+      }
+
+      try {
+        final JobServices jobServices = JobServices();
+        final response = await jobServices.postJob(formData);
+
+        if (response.statusCode == 201) {
+          showCustomFlushbar(
+              context: context,
+              message: "Job posted successfully!",
+              type: MessageType.success);
+          clearJobPostFields();
+        } else if (response.statusCode == 400) {
+          showCustomFlushbar(
+            context: context,
+            message: "Sorry, couldn't post job. please try again !",
+            type: MessageType.error,
+          );
+        } else if (response.statusCode == 401) {
+          showCustomFlushbar(
+            context: context,
+            message: "Session expired! Please log in to continue.",
+            type: MessageType.error,
+          );
+
+          Timer(const Duration(seconds: 3), () {
+            authServices.logoutUser();
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          });
+        } else {
+          final responseData = json.decode(response.body);
+          showCustomFlushbar(
+              context: context,
+              message: responseData['message'] ?? "Failed to post job",
+              type: MessageType.error);
+        }
+      } catch (e) {
+        showCustomFlushbar(
+            context: context,
+            message: "An error occurred: $e",
+            type: MessageType.error);
+      }
+    }
+  }
+
+  void clearJobPostFields() {
+    _jobTitleController.clear();
+    _noOfVacancyController.clear();
+    _deadlineController.clear();
+    _jobRequirementsController.clear();
+    _minSalaryController.clear();
+    _maxSalaryController.clear();
+    _skillController.clear();
+
+    _selectedDegree = "";
+    _selectedCategory = "";
+    _selectedCategoryId = "";
+    _selectedJobType = "";
+    _selectedJobLevel = "";
+    _experience = 0;
+    skills.clear();
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -513,6 +627,7 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
 
                               // Experience Level Dropdown
                               DropdownButtonFormField<int>(
+                                value: _experience,
                                 validator: (value) {
                                   if (value == null) {
                                     return 'Please Select Experience';
@@ -675,7 +790,9 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
                             width: size.width / 1.2,
                             height: 45,
                             text: "Post Job",
-                            onTap: () {}),
+                            onTap: () {
+                              _handleJobPost();
+                            }),
                         SizedBox(
                           height: 26,
                         ),

@@ -16,10 +16,16 @@ class AuthServices {
     await preferences.setString('accessToken', accessToken);
   }
 
-  Future<void> saveRole(String role) async {
+  Future<void> saveUserRole(String role) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
-    await sharedPreferences.setString("role", role);
+    await sharedPreferences.setString("userRole", role);
+  }
+
+  Future<void> saveVerificationStatus(bool isVerified) async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    await sharedPreferences.setBool("isVerified", isVerified);
   }
 
   // to get access token
@@ -34,11 +40,24 @@ class AuthServices {
     return preferences.getString('refreshToken');
   }
 
+  // to get the user role
+  Future<String?> getUserRole() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('userRole');
+  }
+
+  // to get user verification status
+  Future<bool?> getUserVerificationStatus() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getBool('isVerified');
+  }
+
   // to clear tokens or to logout
   Future<void> logoutUser() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove('refreshToken');
     await preferences.remove('accessToken');
+    await preferences.remove('userRole');
   }
 
   // to check whether the token is valid or not and user is loggedin or not

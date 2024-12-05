@@ -9,6 +9,7 @@ import 'package:mero_career/views/recruiters/common/recruiter_main_screen.dart';
 import 'package:mero_career/views/recruiters/home/screen/home_screen.dart';
 import 'package:mero_career/views/shared/forgot_password/forgot_password_page.dart';
 import 'package:mero_career/views/shared/register/register_page.dart';
+import 'package:mero_career/views/shared/register/user_verification_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
 import 'package:mero_career/views/widgets/my_textfield.dart';
@@ -51,7 +52,9 @@ class _LoginPageState extends State<LoginPage> {
           // setting the tokens
           await authServices.saveTokens(
               responseData['refresh'], responseData['access']);
-          await authServices.saveRole(responseData['role']);
+          await authServices.saveUserRole(responseData['role']);
+          await authServices
+              .saveVerificationStatus(responseData['is_verified']);
 
           showCustomFlushbar(
             context: context,
@@ -61,18 +64,26 @@ class _LoginPageState extends State<LoginPage> {
           );
 
           Timer(const Duration(seconds: 3), () {
-            if (responseData['role'] == 'job_seeker') {
+            if (!responseData['is_verified']) {
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => MainScreen()),
-              );
-            } else if (responseData['role'] == "recruiter") {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => RecruiterMainScreen()),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserVerificationPage()));
             } else {
-              print("Unknown User!");
+              if (responseData['role'] == 'job_seeker') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
+              } else if (responseData['role'] == "recruiter") {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RecruiterMainScreen()),
+                );
+              } else {
+                print("Unknown User!");
+              }
             }
           });
         } else if (response.statusCode == 401) {

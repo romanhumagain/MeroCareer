@@ -6,11 +6,27 @@ import 'package:mero_career/views/job_seekers/menu/screen/contact_us.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/settings_page.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../services/auth_services.dart';
+import '../../../shared/login/login_page.dart';
+import '../../../widgets/custom_confirmation_message.dart';
+
 class RecruiterBottomSheetMenu extends StatelessWidget {
   const RecruiterBottomSheetMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
+    void handleUserLogout() async {
+      AuthServices authServices = AuthServices();
+      bool isConfirmed = await showCustomConfirmationDialog(
+          context, "Are you sure you want to logout ?");
+
+      if (isConfirmed) {
+        await authServices.logoutUser();
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      }
+    }
+
     final TextStyle style1 = TextStyle(color: Colors.grey.shade600);
     final isDarkMode = context.watch<ThemeProvider>().isDarkMode;
     return Container(
@@ -164,7 +180,7 @@ class RecruiterBottomSheetMenu extends StatelessWidget {
                     ),
                     title: const Text("Logout"),
                     onTap: () {
-                      // Perform Logout
+                      handleUserLogout();
                     },
                   ),
                 ),

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/services/auth_services.dart';
+import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
+
+import '../../job_seekers/common/main_screen.dart';
+import '../../recruiters/common/recruiter_main_screen.dart';
 
 class UserVerificationPage extends StatefulWidget {
   const UserVerificationPage({super.key});
@@ -15,7 +20,24 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
   final TextEditingController _thirdDigitController = TextEditingController();
   final TextEditingController _fourthDigitController = TextEditingController();
 
-  void _verifyCode() async {}
+  AuthServices authServices = AuthServices();
+
+  void _verifyCode() async {
+    String? userRole = await authServices.getUserRole();
+    if (userRole == "job_seeker") {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
+    } else if (userRole == "recruiter") {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => RecruiterMainScreen()));
+    } else if (userRole == "admin") {
+    } else {
+      showCustomFlushbar(
+          context: context,
+          message: "You are not authorized user !",
+          type: MessageType.error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

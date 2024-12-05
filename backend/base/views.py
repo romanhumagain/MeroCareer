@@ -39,7 +39,8 @@ class LoginAPIView(generics.CreateAPIView):
         'detail':'User loggedin successfully !',
         'refresh':str(refresh),
         'access':access_token,
-        'role':user.role
+        'role':user.role, 
+        'is_verified':user.is_verified
         }
         if user.role == 'job_seeker':
             return Response(response_data, status=status.HTTP_200_OK)
