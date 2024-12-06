@@ -2,18 +2,140 @@ from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet
 from .serializers import JobCategorySerializer, JobSerializer, RequiredSkillSerializer
 from .models import JobCategory, RequiredSkill, Job
-from rest_framework.generics import GenericAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView, RetrieveAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from recruiter.models import Recruiter
 from django_filters.rest_framework import DjangoFilterBackend
+from .serializers import JobSerializer
+from rest_framework.exceptions import NotFound, PermissionDenied
+from datetime import timedelta
+from django.utils import timezone
+from job_seeker.models import JobSeeker, CareerPreference
+from rest_framework.views import APIView
+from recruiter.serializers import RecruiterSerializer
+from job_seeker.serializers import JobSeekerJobSerializer
 
+# --------------------------------J O B  S E E K E R--------------------------------
 
+#  ===== API VIEW FOR JOB CATEGORY =======
 class JobCategoryViewSet(ModelViewSet):
     serializer_class = JobCategorySerializer
     queryset = JobCategory.objects.all()
     
+ 
+# ======= TO BROWSE THE JOB BASED ON TEH JOB CATEGORY ========   
+class JobListByCategoryView(ListAPIView):
+    serializer_class = JobSeekerJobSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        job_cat_id = self.kwargs.get('id')
+        
+        try:
+            jobCategoryInst = JobCategory.objects.get(id=job_cat_id)
+        except JobCategory.DoesNotExist:
+            return Response({'detail': "Job Category doesn't exist."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        jobInst = Job.objects.filter(category=jobCategoryInst)
+        
+        serializer = self.get_serializer(jobInst, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_serializer_context(self):
+     return {'request':self.request}
+
+# ======== TO GET ALL ACTIVE JOBS OF ALL CATEGORY =========
+class ActiveJobListAPIView(ListAPIView):
+    serializer_class = JobSeekerJobSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        jobInst = Job.objects.filter(deadline__gt= timezone.now()).order_by('-id')
+        
+        serializer = self.get_serializer(jobInst, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_serializer_context(self):
+     return {'request':self.request}
+
+
+# ========= TO GET THE SELECTED JOB DETAILS BY THE JOB SEEKER =========
+class JobRetriveAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = JobSeekerJobSerializer
+    lookup_field = 'id'
+    
+    def get_queryset(self):
+        return Job.objects.all()
+    
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            jobInst = self.get_queryset().get(id=kwargs.get('id'))
+            serializer = self.get_serializer(jobInst)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Job.DoesNotExist:
+            return Response({'detail': "Job doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
+        
+    def get_serializer_context(self):
+     return {'request':self.request}
+
+
+# ========= TO GET THE EXPIRING JOB DETAILS (USER PREFERENCE JOB CATEGORY) =====================
+class ExpiringJobAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = JobSeekerJobSerializer
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            job_seeker = request.user.job_seeker
+        except JobSeeker.DoesNotExist:
+            return Response({'detail': 'Job Seeker profile not found!'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            preferred_category = job_seeker.job_seeker_career_preference.prefered_job_category
+        except CareerPreference.DoesNotExist:
+            return Response({'detail': 'Preferred job category not set for this Job Seeker!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        current_time = timezone.now()
+        soon_expiry_time = current_time + timedelta(days=10)
+        
+        jobs = Job.objects.filter(category=preferred_category, deadline__gte=current_time, deadline__lte=soon_expiry_time)
+
+        # Serialize and return the filtered jobs
+        serializer = self.get_serializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_serializer_context(self):
+     return {'request':self.request}
+
+# ========= TO GET ALL THE JOBS BASED ON THE ORGANIZATION =========
+class OrganizationBasedJob(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        response_data = []
+        
+        categories = JobCategory.objects.all()
+        
+        for category in categories:
+            recruiters = Recruiter.objects.filter(recruiter_job_posts__category=category).distinct()
+            
+            category_data = {
+                'category':category.category,
+                'recruiters':RecruiterSerializer(recruiters, many=True).data
+            }
+            response_data.append(category_data)
+    
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+    
+# ----------------------------------R E C R U I T E R-------------------------------------
+
+
+#  ====== JOB POST VIEW FOR RECRUITER ===========
 class JobPostAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = JobSerializer
@@ -83,14 +205,18 @@ class JobPostAPIView(ListCreateAPIView):
             )
 
 
+#  ===== JOB RETRIVE UPDATE DELETE API VIEW FOR RECRUITER
 class JobRetrieveUpdateDeleteAPI(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = JobSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
+        if self.request.user.role != "recruiter":
+            raise PermissionDenied("You are not associated with a recruiter.")
         return Job.objects.filter(recruiter=self.request.user.recruiter)
-
+      
+    
     def retrieve(self, request, *args, **kwargs):
         try:
             jobInst = self.get_queryset().get(id=kwargs.get('id'))
@@ -130,3 +256,4 @@ class JobRetrieveUpdateDeleteAPI(RetrieveUpdateDestroyAPIView):
             return Response({'detail': 'Successfully deleted your job!'}, status=status.HTTP_200_OK)
         except Job.DoesNotExist:
             return Response({'detail': "Job doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
+

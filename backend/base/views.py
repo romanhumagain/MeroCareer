@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from .serializers import (RegisterUserSerializer, LoginSerializer, OTPSerializer)
+from .serializers import (RegisterUserSerializer, LoginSerializer, OTPSerializer, ChangePasswordSerializer)
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
@@ -124,3 +124,24 @@ class VerifyOTP(generics.UpdateAPIView):
         return Response(
             {"detail": "User verified successfully."}, status=status.HTTP_200_OK
         )
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        data = request.data
+        serializer = ChangePasswordSerializer(data=data)
+        
+        if serializer.is_valid():
+            user = request.user
+            
+            current_password = serializer.validated_data['current_password']
+            
+            if not user.check_password(current_password):
+                return Response({"detail": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            new_password = serializer.validated_data['new_password']
+            user.set_password(new_password)
+            user.save()
+
+            return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

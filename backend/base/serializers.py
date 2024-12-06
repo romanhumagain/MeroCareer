@@ -46,3 +46,15 @@ class OTPSerializer(serializers.ModelSerializer):
   class Meta:
     model = OTP
     fields = ['otp']
+    
+    
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    confirm_new_password = serializers.CharField(write_only=True)
+    
+    def validate(self, data):
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError("New password and confirm password do not match.")
+      
+        return data

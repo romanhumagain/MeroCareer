@@ -20,7 +20,6 @@ class RecruiterSerializer(ModelSerializer):
   class Meta:
     model = Recruiter
     fields = ['company_profile_image','company_name','address','company_type','company_summary', 'linkedin_link','website_link']
-    
 
 class JobSerializer(ModelSerializer):
     skills_display = serializers.SerializerMethodField()
@@ -41,3 +40,12 @@ class JobSerializer(ModelSerializer):
       
     def get_category_name(self, obj):
       return obj.category.category
+    
+    
+# ====== OrganizationBasedJob =============
+class OrganizationBasedJob(serializers.ModelSerializer):
+  
+  class Meta:
+    model = JobCategory
+    fields = ['id', 'name']
+    

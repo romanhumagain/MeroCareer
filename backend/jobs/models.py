@@ -26,6 +26,7 @@ class Job(models.Model):
   job_requirement = models.TextField()
   experience = models.PositiveIntegerField(null=True, blank=True)
   salary_range = models.CharField(max_length=255, null=True, blank=True)
+  posted_on = models.DateTimeField(auto_now_add=True, null=True, blank=True)
   
   @property
   def is_active(self):
