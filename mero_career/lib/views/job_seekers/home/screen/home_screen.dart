@@ -235,7 +235,7 @@ class HomeScreen extends StatelessWidget {
               color: Theme.of(context).colorScheme.surfaceContainer,
             ),
             SizedBox(height: 15),
-            Container(
+            SizedBox(
               width: size.width,
               child: Column(
                 children: [

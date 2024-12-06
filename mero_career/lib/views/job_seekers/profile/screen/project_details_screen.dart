@@ -15,9 +15,9 @@ class ProjectDetailsScreen extends StatefulWidget {
 }
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
-  TextEditingController _projectTitleController = TextEditingController();
-  TextEditingController __projectRoleController = TextEditingController();
-  TextEditingController _projectDescriptionController = TextEditingController();
+  final TextEditingController _projectTitleController = TextEditingController();
+  final TextEditingController __projectRoleController = TextEditingController();
+  final TextEditingController _projectDescriptionController = TextEditingController();
 
   bool hasProjectDone = false;
 

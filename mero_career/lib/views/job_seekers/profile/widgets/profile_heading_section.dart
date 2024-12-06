@@ -155,16 +155,16 @@ class ProfileHeadingSection extends StatelessWidget {
   }
 
   void showHeadingTopScreen(BuildContext context) {
-    TextEditingController _fullNameController =
+    TextEditingController fullNameController =
         TextEditingController(text: "Roman Humagain");
-    TextEditingController _profileHeadlineController = TextEditingController();
-    final ImagePicker _picker = ImagePicker();
-    XFile? _selectedImage;
+    TextEditingController profileHeadlineController = TextEditingController();
+    final ImagePicker picker = ImagePicker();
+    XFile? selectedImage;
 
-    Future<void> _pickImage() async {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    Future<void> pickImage() async {
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        _selectedImage = image;
+        selectedImage = image;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Profile image updated!"),
         ));
@@ -217,17 +217,17 @@ class ProfileHeadingSection extends StatelessWidget {
                       child: Column(
                         children: [
                           GestureDetector(
-                            onTap: _pickImage,
+                            onTap: pickImage,
                             child: CircleAvatar(
                               radius: 50,
                               backgroundColor: isDarkMode
                                   ? Colors.grey.shade800
                                   : Colors.grey.shade300,
-                              backgroundImage: _selectedImage != null
-                                  ? FileImage(File(_selectedImage!.path))
+                              backgroundImage: selectedImage != null
+                                  ? FileImage(File(selectedImage!.path))
                                       as ImageProvider
                                   : null,
-                              child: _selectedImage == null
+                              child: selectedImage == null
                                   ? Icon(
                                       Icons.camera_alt,
                                       size: 30,
@@ -255,12 +255,12 @@ class ProfileHeadingSection extends StatelessWidget {
                       child: Column(
                         children: [
                           CustomTextField(
-                            controller: _fullNameController,
+                            controller: fullNameController,
                             labelText: "Full Name",
                           ),
                           SizedBox(height: 15),
                           CustomTextField(
-                            controller: _profileHeadlineController,
+                            controller: profileHeadlineController,
                             labelText: "Profile Headline",
                           ),
                           SizedBox(height: 5),

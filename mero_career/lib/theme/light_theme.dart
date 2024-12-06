@@ -7,8 +7,6 @@ ThemeData lightMode = ThemeData(
     colorScheme: ColorScheme.light(
       primary: Colors.blue.shade600,
       onPrimary: Colors.white,
-      background: Colors.white,
-      onBackground: Colors.black,
       surface: Colors.grey.shade200,
       surfaceContainer: Colors.grey.shade300,
       onSurface: Colors.black87,

@@ -55,7 +55,7 @@ class _ProfileSetupPageviewState extends State<ProfileSetupPageview> {
               onPageChanged: (index) {
                 setState(() {});
               },
-              children: [
+              children: const [
                 PersonalInfoSection(),
                 EducationInfoSection(),
                 WorkExperienceConfirmation(),

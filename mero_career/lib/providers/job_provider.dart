@@ -79,6 +79,7 @@ class JobProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+    return null;
   }
 
   Future<http.Response?> updateJob(
@@ -99,6 +100,7 @@ class JobProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+    return null;
   }
 
   Future<http.Response?> deleteJobPost(int id) async {
@@ -115,5 +117,6 @@ class JobProvider extends ChangeNotifier {
     } catch (e) {
       print('Error posting job: $e');
     }
+    return null;
   }
 }

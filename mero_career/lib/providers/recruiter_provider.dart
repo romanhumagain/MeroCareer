@@ -53,5 +53,6 @@ class RecruiterProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+    return null;
   }
 }

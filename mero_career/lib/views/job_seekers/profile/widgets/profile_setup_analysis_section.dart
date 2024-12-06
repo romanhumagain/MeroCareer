@@ -46,9 +46,9 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
                     lineWidth: 5.0,
                     animation: true,
                     percent: 0.7,
-                    center: new Text(
+                    center: Text(
                       "20.0%",
-                      style: new TextStyle(
+                      style: TextStyle(
                           fontWeight: FontWeight.w500, fontSize: 12.0),
                     ),
                     circularStrokeCap: CircularStrokeCap.round,
@@ -217,7 +217,7 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
       builder: (BuildContext context) {
         bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-        void _pickResume() async {
+        void pickResume() async {
           // Using FilePicker to select the resume
           FilePickerResult? result = await FilePicker.platform.pickFiles(
             type: FileType.custom,
@@ -297,7 +297,7 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
                       // Upload Button
                       Center(
                         child: ElevatedButton.icon(
-                          onPressed: _pickResume,
+                          onPressed: pickResume,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             padding: EdgeInsets.symmetric(

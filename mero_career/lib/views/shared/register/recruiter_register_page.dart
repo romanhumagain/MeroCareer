@@ -17,7 +17,7 @@ import '../../widgets/custom_flushbar_message.dart';
 import '../login/login_page.dart';
 
 class RecruiterRegisterPage extends StatefulWidget {
-  RecruiterRegisterPage({super.key});
+  const RecruiterRegisterPage({super.key});
 
   @override
   State<RecruiterRegisterPage> createState() => _RecruiterRegisterPageState();

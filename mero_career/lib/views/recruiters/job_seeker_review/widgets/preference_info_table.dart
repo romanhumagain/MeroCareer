@@ -12,7 +12,7 @@ class PreferenceInfoTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
+        SizedBox(
           width: size.width / 2.5,
           child: Text(
             data,

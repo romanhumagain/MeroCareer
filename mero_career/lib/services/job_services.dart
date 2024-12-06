@@ -12,7 +12,7 @@ class JobServices {
 
     try {
       final response = await http.get(
-        Uri.parse('${baseUrl}/jobs-category/'),
+        Uri.parse('$baseUrl/jobs-category/'),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {

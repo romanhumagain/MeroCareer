@@ -7,7 +7,7 @@ class ShowJobLevelModal extends StatelessWidget {
   final String selectedJobLevel;
   final Function(String) onValueSelected;
 
-  ShowJobLevelModal({
+  ShowJobLevelModal({super.key, 
     required this.selectedJobLevel,
     required this.onValueSelected,
   });

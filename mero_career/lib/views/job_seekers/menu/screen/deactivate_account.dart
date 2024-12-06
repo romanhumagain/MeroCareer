@@ -9,7 +9,7 @@ class DeactivateAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    TextEditingController _passwordController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +46,7 @@ class DeactivateAccount extends StatelessWidget {
               MyPasswordfield(
                 labelText: "Password",
                 verticalContentPadding: 13.5,
-                controller: _passwordController,
+                controller: passwordController,
               ),
             ],
           ),

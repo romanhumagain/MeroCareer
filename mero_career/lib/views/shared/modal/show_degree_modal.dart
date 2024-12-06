@@ -8,7 +8,7 @@ class ShowDegreeModal extends StatelessWidget {
   final String selectedValue;
   final Function(String) onValueSelected;
 
-  ShowDegreeModal({
+  ShowDegreeModal({super.key, 
     required this.title,
     required this.selectedValue,
     required this.onValueSelected,

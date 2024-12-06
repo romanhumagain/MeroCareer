@@ -444,7 +444,7 @@ class JobInfoTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
+        SizedBox(
           width: size.width / 3,
           child: Text(
             data,
@@ -457,7 +457,7 @@ class JobInfoTable extends StatelessWidget {
         SizedBox(
           width: 6,
         ),
-        Container(
+        SizedBox(
           width: size.width / 2,
           child: Text(
             value,

@@ -52,7 +52,7 @@ class JobsByCategoryScreen extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      "Latest job vacancy in ${category} in Nepal. Click on the job that interests you, and apply on jobs.",
+                      "Latest job vacancy in $category in Nepal. Click on the job that interests you, and apply on jobs.",
                       style: Theme.of(context)
                           .textTheme
                           .titleSmall

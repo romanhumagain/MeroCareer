@@ -75,7 +75,7 @@ class AuthServices {
 
   // to refresh the access token through accesstoken
   Future<void> refreshAccessToken() async {
-    const url = "${baseURL}/token/refresh/";
+    const url = "$baseURL/token/refresh/";
     final refreshToken = await getRefreshToken();
 
     if (refreshToken != null) {

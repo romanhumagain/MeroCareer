@@ -16,7 +16,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _searchController = TextEditingController();
+    final TextEditingController searchController = TextEditingController();
 
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -45,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: _searchController,
+                      controller: searchController,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 12, horizontal: 8.0),

@@ -7,8 +7,6 @@ ThemeData darkMode = ThemeData(
     colorScheme: ColorScheme.dark(
       primary: Colors.blue,
       onPrimary: Colors.white,
-      background: Colors.black,
-      onBackground: Colors.white,
       surface: Colors.grey.shade900.withOpacity(0.4),
       surfaceContainer: Colors.grey.shade900,
       onSurface: Colors.white70,

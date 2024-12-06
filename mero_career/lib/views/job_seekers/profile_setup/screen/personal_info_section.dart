@@ -3,7 +3,7 @@ import 'package:mero_career/views/job_seekers/profile_setup/widget/continue_skip
 import 'package:mero_career/views/widgets/my_profile_textfield.dart';
 
 class PersonalInfoSection extends StatefulWidget {
-  PersonalInfoSection({super.key});
+  const PersonalInfoSection({super.key});
 
   @override
   State<PersonalInfoSection> createState() => _PersonalInfoSectionState();
@@ -15,7 +15,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
   TextEditingController emailAddressController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController dateOfBirthController = TextEditingController();
-  TextEditingController _languageController = TextEditingController();
+  final TextEditingController _languageController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
@@ -161,7 +161,7 @@ class _PersonalInfoSectionState extends State<PersonalInfoSection> {
                         _selectDate(context);
                       },
                       child: Icon(Icons.calendar_today,
-                          color: Theme.of(context).colorScheme.onBackground),
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ],
                 ),

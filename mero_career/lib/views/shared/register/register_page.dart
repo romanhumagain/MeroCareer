@@ -20,7 +20,7 @@ import '../login/login_page.dart';
 import '../modal/show_job_category_modal.dart';
 
 class RegisterPage extends StatefulWidget {
-  RegisterPage({super.key});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();

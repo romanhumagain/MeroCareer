@@ -86,7 +86,7 @@ class CompanyJobLists extends StatelessWidget {
                   ]),
               Expanded(
                 child: TabBarView(
-                  children: [AboutCompany(), JobOpeningLists()],
+                  children: const [AboutCompany(), JobOpeningLists()],
                 ),
               )
             ],

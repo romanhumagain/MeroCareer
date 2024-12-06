@@ -15,9 +15,9 @@ class ExperienceDetailsScreen extends StatefulWidget {
 }
 
 class _ExperienceDetailsScreenState extends State<ExperienceDetailsScreen> {
-  TextEditingController _jobTitleController = TextEditingController();
-  TextEditingController _jobRoleController = TextEditingController();
-  TextEditingController _instituteNameController = TextEditingController();
+  final TextEditingController _jobTitleController = TextEditingController();
+  final TextEditingController _jobRoleController = TextEditingController();
+  final TextEditingController _instituteNameController = TextEditingController();
   final TextEditingController _startedDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 

@@ -13,6 +13,8 @@ import '../../../../services/auth_services.dart';
 import '../../../../utils/date_formater.dart';
 
 class JobListingsScreen extends StatefulWidget {
+  const JobListingsScreen({super.key});
+
   @override
   State<JobListingsScreen> createState() => _JobListingsScreenState();
 }
@@ -262,7 +264,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
   }
 }
 
-Widget _buildInfoChip(String label, [String? value]) {
+Widget _buildInfoChip(String label) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
     decoration: BoxDecoration(

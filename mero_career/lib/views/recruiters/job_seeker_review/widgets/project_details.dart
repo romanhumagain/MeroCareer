@@ -132,7 +132,7 @@ class ProjcetDetailsTimeline extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4),
-                Container(
+                SizedBox(
                   width: size.width / 1.5,
                   child: Text(
                     description,

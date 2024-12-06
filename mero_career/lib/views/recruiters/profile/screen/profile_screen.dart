@@ -122,6 +122,8 @@ class CompanyProfileHeadingSection extends StatelessWidget {
 }
 
 class KeyMetricsCards extends StatelessWidget {
+  const KeyMetricsCards({super.key});
+
   @override
   Widget build(BuildContext context) {
     final metrics = [
@@ -178,6 +180,8 @@ class KeyMetricsCards extends StatelessWidget {
 }
 
 class MotivationalMessage extends StatelessWidget {
+  const MotivationalMessage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

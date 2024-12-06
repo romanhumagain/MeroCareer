@@ -196,7 +196,7 @@ class _AboutCompanyDetailsState extends State<AboutCompanyDetails> {
     TextEditingController websiteController = TextEditingController(
         text: recruiterProvider.recruiterProfileDetails?['website_link']);
 
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
       isScrollControlled: true,
@@ -216,7 +216,7 @@ class _AboutCompanyDetailsState extends State<AboutCompanyDetails> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -331,7 +331,7 @@ class _AboutCompanyDetailsState extends State<AboutCompanyDetails> {
                                 Provider.of<RecruiterProvider>(context,
                                     listen: false);
 
-                            if (_formKey.currentState?.validate() ?? false) {
+                            if (formKey.currentState?.validate() ?? false) {
                               final aboutCompany = aboutCompanyController.text;
                               final linkedinLink = linkedinController.text;
                               final websiteLink = websiteController.text;
@@ -450,7 +450,7 @@ class FinalSocialLinkOptionCard extends StatelessWidget {
   final IconData icon;
   final String? url;
 
-  const FinalSocialLinkOptionCard({
+  const FinalSocialLinkOptionCard({super.key, 
     required this.size,
     required this.isDarkMode,
     required this.text,

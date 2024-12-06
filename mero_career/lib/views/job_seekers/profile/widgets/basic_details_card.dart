@@ -52,7 +52,7 @@ class BasicDetailsCard extends StatelessWidget {
             Column(
               children: const [
                 Row(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.person,
                       size: 18,
@@ -65,7 +65,7 @@ class BasicDetailsCard extends StatelessWidget {
                   height: 5,
                 ),
                 Row(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.email_outlined,
                       size: 18,
@@ -78,7 +78,7 @@ class BasicDetailsCard extends StatelessWidget {
                   height: 5,
                 ),
                 Row(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.location_on,
                       size: 18,
@@ -91,7 +91,7 @@ class BasicDetailsCard extends StatelessWidget {
                   height: 5,
                 ),
                 Row(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.phone,
                       size: 18,

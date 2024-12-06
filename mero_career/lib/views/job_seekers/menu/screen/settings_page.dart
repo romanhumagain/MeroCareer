@@ -58,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16.6,
-                            color: Theme.of(context).colorScheme.onBackground),
+                            color: Theme.of(context).colorScheme.onSurface),
                       ),
                       SizedBox(
                         height: 5,
@@ -84,7 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16.6,
-                            color: Theme.of(context).colorScheme.onBackground),
+                            color: Theme.of(context).colorScheme.onSurface),
                       ),
                       SizedBox(
                         height: 5,
@@ -110,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16.6,
-                            color: Theme.of(context).colorScheme.onBackground),
+                            color: Theme.of(context).colorScheme.onSurface),
                       ),
                       SizedBox(
                         height: 5,

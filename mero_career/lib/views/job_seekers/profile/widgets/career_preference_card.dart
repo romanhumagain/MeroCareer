@@ -117,10 +117,10 @@ class CareerPreferenceCard extends StatelessWidget {
   }
 
   void showCareerPreferenceScreen(BuildContext context) {
-    TextEditingController _jobTitleController = TextEditingController();
-    TextEditingController _jobLevelController = TextEditingController();
-    TextEditingController _jobLocationController = TextEditingController();
-    TextEditingController _jobTypeController = TextEditingController();
+    TextEditingController jobTitleController = TextEditingController();
+    TextEditingController jobLevelController = TextEditingController();
+    TextEditingController jobLocationController = TextEditingController();
+    TextEditingController jobTypeController = TextEditingController();
 
     showModalBottomSheet(
         context: context,
@@ -171,21 +171,21 @@ class CareerPreferenceCard extends StatelessWidget {
                           child: Column(
                             children: [
                               PreferenceTextField(
-                                controller: _jobTitleController,
+                                controller: jobTitleController,
                                 labelText: "Prefered Job Title",
                               ),
                               SizedBox(
                                 height: 15,
                               ),
                               PreferenceTextField(
-                                controller: _jobLocationController,
+                                controller: jobLocationController,
                                 labelText: "Prefered Job Location",
                               ),
                               SizedBox(
                                 height: 15,
                               ),
                               PreferenceTextField(
-                                controller: _jobLocationController,
+                                controller: jobLocationController,
                                 labelText: "Expected Salary (/Month)",
                               ),
                               SizedBox(

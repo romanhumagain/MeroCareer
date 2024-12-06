@@ -5,7 +5,9 @@ import 'package:http/http.dart' as http;
 
 class CompanyMap extends StatelessWidget {
   final String apiKey =
-      "09fa90be675b4c0a8194a8443531ca20"; // Replace with your API key
+      "09fa90be675b4c0a8194a8443531ca20";
+
+  const CompanyMap({super.key}); // Replace with your API key
 
   Future<Map<String, dynamic>> getCoordinates(String location) async {
     final url = Uri.parse(

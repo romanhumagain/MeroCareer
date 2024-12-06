@@ -10,11 +10,11 @@ class JobCategoryModal extends StatelessWidget {
       onCategorySelected;
 
   const JobCategoryModal({
-    Key? key,
+    super.key,
     required this.jobCategoriesFuture,
     required this.onCategorySelected,
     this.selectedCategory,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

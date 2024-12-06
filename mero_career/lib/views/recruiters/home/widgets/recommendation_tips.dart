@@ -4,9 +4,9 @@ class RecommendationsTipsWidget extends StatelessWidget {
   final List<String> recommendations;
 
   const RecommendationsTipsWidget({
-    Key? key,
+    super.key,
     required this.recommendations,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class RecommendationsTipsWidget extends StatelessWidget {
                         ],
                       ),
                     ))
-                .toList(),
+                ,
 
             const SizedBox(height: 16),
 
