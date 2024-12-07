@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/utils/date_formater.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/theme_provider.dart';
 
 class WorkExperience extends StatelessWidget {
-  const WorkExperience({
-    super.key,
-  });
+  final List<dynamic> data;
+
+  const WorkExperience({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +37,15 @@ class WorkExperience extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 4.0),
             child: Column(
-              children: const [
-                ExperienceTimeline(
-                  date: "Dec 2020 - Dec 2024",
-                  jobTitle: "Backend Developer",
-                  industryName: "Cedar Gate Technology",
-                  role: "Developer",
-                ),
-                SizedBox(
-                  height: 18,
-                ),
-                ExperienceTimeline(
-                  date: "Dec 2020 - now",
-                  jobTitle: "Full Stack Developer",
-                  industryName: "F1soft Pvt.Ltd",
-                  role: "Developer",
-                ),
-              ],
+              children: data.map((experience) {
+                return ExperienceTimeline(
+                  date:
+                      "${formatEduDate(experience['start_date'])} - ${experience['end_date'] != null ? formatEduDate(experience['end_date']) : "Now"}",
+                  jobTitle: experience['job_title'] ?? "N/A",
+                  industryName: experience['institute_name'] ?? "N/A",
+                  role: experience['job_role'] ?? "N/A",
+                );
+              }).toList(),
             ),
           ),
         ],

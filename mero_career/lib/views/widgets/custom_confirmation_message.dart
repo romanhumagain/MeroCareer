@@ -10,7 +10,7 @@ Future<bool> showCustomConfirmationDialog(
         title: Text("Confirm"),
         content: Text(message),
         backgroundColor:
-            isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+            isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
         actions: [
           TextButton(
             onPressed: () {

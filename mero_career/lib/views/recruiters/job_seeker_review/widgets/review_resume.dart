@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ReviewResume extends StatelessWidget {
-  const ReviewResume({
-    super.key,
-    required this.size,
-  });
+  final Map<String, dynamic> data;
+
+  const ReviewResume({super.key, required this.size, required this.data});
 
   final Size size;
 

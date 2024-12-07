@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
 import 'package:mero_career/views/job_seekers/mock_interview/screen/mock_interview_prep.dart';
 import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../home/screen/home_screen.dart';
 import '../menu/bottom_sheet_menu.dart';
 import '../profile/screen/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final bool isLoggedInNow;
+  const MainScreen({super.key,  this.isLoggedInNow = false});
 
   @override
   State<MainScreen> createState() => _NavigationMenuState();
@@ -39,6 +42,19 @@ class _NavigationMenuState extends State<MainScreen> {
     setState(() {
       _selectedIndex = 5;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _fetchJobSeekeProfileDetails();
+  }
+
+  void _fetchJobSeekeProfileDetails() async {
+    if (!widget.isLoggedInNow!) {
+      Provider.of<JobSeekerProvider>(context, listen: false)
+          .fetchJobSeekerProfileDetails();
+    }
   }
 
   @override

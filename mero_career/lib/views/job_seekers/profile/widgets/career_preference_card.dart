@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
+import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/views/job_seekers/profile/screen/career_preference_screen.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/preference_badge.dart';
+import 'package:provider/provider.dart';
 
 class CareerPreferenceCard extends StatelessWidget {
   const CareerPreferenceCard({
@@ -14,7 +16,7 @@ class CareerPreferenceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showCareerPreferenceScreen(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>CareerPreferenceScreen()));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
@@ -40,23 +42,42 @@ class CareerPreferenceCard extends StatelessWidget {
                     SizedBox(
                       width: 10,
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade300,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.arrow_upward,
-                              color: Colors.green.shade100),
-                          Text(
-                            "Boost 12 %",
-                            style: TextStyle(color: Colors.green.shade100),
-                          ),
-                        ],
-                      ),
-                    ),
+
+                    Consumer<JobSeekerProvider>(builder: (context, provider, child){
+                      final jobSeekerDetails = provider.careerPreference;
+                      final isAllPrefAdded = jobSeekerDetails?['is_all_pref_added'] ?? false;
+
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isAllPrefAdded ? Colors.blue.shade300 :Colors.green.shade200,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          children: [
+                            isAllPrefAdded ?
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                "View Details",
+                                style: TextStyle(color: Colors.green.shade100, fontWeight: FontWeight.w500),
+                              ),
+                            ):
+                            Row(
+                              children: [
+                                Icon(Icons.arrow_upward,
+                                    color: Colors.green.shade100),Text(
+                                  "Boost 12 %",
+                                  style: TextStyle(color: Colors.green.shade100),
+                                ),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      );
+                    })
+
                   ],
                 ),
                 Icon(
@@ -114,169 +135,6 @@ class CareerPreferenceCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void showCareerPreferenceScreen(BuildContext context) {
-    TextEditingController jobTitleController = TextEditingController();
-    TextEditingController jobLevelController = TextEditingController();
-    TextEditingController jobLocationController = TextEditingController();
-    TextEditingController jobTypeController = TextEditingController();
-
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-          return Container(
-            height: size.height / 1.15,
-            width: size.width,
-            decoration: BoxDecoration(
-                color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ModalTopBar(),
-                        SizedBox(
-                          height: 25,
-                        ),
-                        Text("Career Preference",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.copyWith(fontSize: 21)),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          "Add details about your prefered job profile. This helps us personalise your job recommendations",
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 18.0),
-                          child: Column(
-                            children: [
-                              PreferenceTextField(
-                                controller: jobTitleController,
-                                labelText: "Prefered Job Title",
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              PreferenceTextField(
-                                controller: jobLocationController,
-                                labelText: "Prefered Job Location",
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              PreferenceTextField(
-                                controller: jobLocationController,
-                                labelText: "Expected Salary (/Month)",
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              PreferenceDropdownButton(
-                                items: const [
-                                  "Entry Level",
-                                  "Mid Level",
-                                  "Senior Level",
-                                  "Expert Level",
-                                ],
-                                labelText: "Prefered Job Level",
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              PreferenceDropdownButton(
-                                items: const [
-                                  "Part-Time",
-                                  "Full-Time",
-                                  "Remote",
-                                  "Freelance",
-                                  "Internship",
-                                  "Other",
-                                ],
-                                labelText: "Prefered Job Type",
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              PreferenceDropdownButton(
-                                items: const [
-                                  "IT & Telecommunication",
-                                  "Banking",
-                                  "Education",
-                                  "Construction",
-                                  "Design"
-                                ],
-                                labelText: "Prefered Job Category",
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0, vertical: 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                                color: Colors.blue),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 25,
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.blue,
-                          ),
-                          child: Text(
-                            "Save",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18.5,
-                                color: Colors.white),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        });
   }
 }
 

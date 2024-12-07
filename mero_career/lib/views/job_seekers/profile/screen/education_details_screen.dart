@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../widgets/my_button.dart';
 import '../../../widgets/my_custom_textfield.dart';
@@ -21,6 +23,7 @@ class _EducationDetailsScreenState extends State<EducationDetailsScreen> {
       TextEditingController();
   final TextEditingController _startedDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
+  String _selectedDegree = "";
 
   final List<Map<String, dynamic>> _degreeNameList = [
     {"id": 1, "degreeName": "Doctorate (Ph.D)"},
@@ -31,10 +34,10 @@ class _EducationDetailsScreenState extends State<EducationDetailsScreen> {
     {"id": 6, "degreeName": "School (SEE)"},
     {"id": 7, "degreeName": "Other"},
   ];
-  String _selectedDegree = "";
 
   bool isCurrentlyStudying = false;
   bool hasEducationData = false;
+  bool isLoading = true;
 
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
@@ -53,9 +56,70 @@ class _EducationDetailsScreenState extends State<EducationDetailsScreen> {
     }
   }
 
+  void clearEducationDetails() {
+    _educationProgramController.clear();
+    _instituteNameController.clear();
+    _startedDateController.clear();
+    _endDateController.clear();
+    _selectedDegree = "";
+  }
+
+  void _handleEducationDetails() async {
+    Map<String, dynamic> educationDetails = {
+      'education_program': _educationProgramController.text.trim(),
+      'institute_name': _instituteNameController.text.trim(),
+      'start_date': _startedDateController.text.trim(),
+      'end_date': _endDateController.text.trim(),
+      'degree_type': _selectedDegree,
+    };
+    if (_endDateController.text.trim() == "") {
+      educationDetails.remove("end_date");
+    }
+
+    final profileSetupProvider =
+        Provider.of<ProfileSetupProvider>(context, listen: false);
+    final response = await profileSetupProvider.addEducationDetails(
+        context, educationDetails);
+    if (response?.statusCode == 201) {
+      clearEducationDetails();
+      setState(() {
+        hasEducationData = true;
+      });
+    }
+    print(response?.body);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchEducationDetails();
+  }
+
+  // void fetchEducationDetails
+  void fetchEducationDetails() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final provider = Provider.of<ProfileSetupProvider>(context, listen: false);
+    await provider.fetchEducationDetails();
+    setState(() {
+      isLoading = false;
+      hasEducationData = provider.educationDetails != null &&
+          provider.educationDetails!.isNotEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    if (isLoading) {
+      return Scaffold(
+        appBar: MyAppBar(),
+      );
+    }
+
     return Scaffold(
       appBar: MyAppBar(),
       body: Padding(
@@ -213,9 +277,7 @@ class _EducationDetailsScreenState extends State<EducationDetailsScreen> {
                               height: size.height / 18,
                               text: "Save Changes",
                               onTap: () {
-                                setState(() {
-                                  hasEducationData = true;
-                                });
+                                _handleEducationDetails();
                               }),
                         )
                       ],
@@ -232,7 +294,6 @@ class _EducationDetailsScreenState extends State<EducationDetailsScreen> {
               SizedBox(
                 height: 10,
               ),
-              EducationDetailsData(),
             ],
           ),
         ),

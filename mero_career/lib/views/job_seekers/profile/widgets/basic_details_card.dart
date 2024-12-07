@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
+import 'package:provider/provider.dart';
 
 class BasicDetailsCard extends StatelessWidget {
   const BasicDetailsCard({
@@ -49,59 +51,62 @@ class BasicDetailsCard extends StatelessWidget {
             SizedBox(
               height: 8,
             ),
-            Column(
-              children: const [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 18,
-                    ),
-                    SizedBox(width: 10),
-                    Text("romanhumagin")
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.email_outlined,
-                      size: 18,
-                    ),
-                    SizedBox(width: 10),
-                    Text("romanhumagian@gmail.com")
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 18,
-                    ),
-                    SizedBox(width: 10),
-                    Text("Panauti, Kavre")
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      size: 18,
-                    ),
-                    SizedBox(width: 10),
-                    Text("9840617106")
-                  ],
-                ),
-              ],
-            ),
+            Consumer<JobSeekerProvider>(builder: (context, provider, child){
+              final jobSeekerDetails = provider.jobSeekerProfileDetails;
+              return Column(
+                children:  [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        size: 18,
+                      ),
+                      SizedBox(width: 10),
+                      Text(jobSeekerDetails?['full_name'])
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.email_outlined,
+                        size: 18,
+                      ),
+                      SizedBox(width: 10),
+                      Text(jobSeekerDetails?['email'])
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 18,
+                      ),
+                      SizedBox(width: 10),
+                      Text(jobSeekerDetails?['address'])
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        size: 18,
+                      ),
+                      SizedBox(width: 10),
+                      Text(jobSeekerDetails?['phone_number'])
+                    ],
+                  ),
+                ],
+              );
+            })
           ],
         ),
       ),
@@ -109,16 +114,18 @@ class BasicDetailsCard extends StatelessWidget {
   }
 
   void _showBasicDetailsBottomSheet(BuildContext context) {
+    final jobSeekerProvider = Provider.of<JobSeekerProvider>(context, listen:false);
+
     TextEditingController fullNameController =
-        TextEditingController(text: "Roman Humagain");
+        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['full_name']);
     TextEditingController usernameController =
-        TextEditingController(text: "romanhumagain");
+        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['username']);
     TextEditingController phoneNummberController =
-        TextEditingController(text: "9840617106");
+        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['phone_number']);
     TextEditingController emailController =
-        TextEditingController(text: "romanhumagain@gmail.com");
+        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['email']);
     TextEditingController locationController =
-        TextEditingController(text: "Bhaktapur");
+        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['address']);
 
     showModalBottomSheet(
         context: context,
@@ -226,19 +233,32 @@ class BasicDetailsCard extends StatelessWidget {
                         SizedBox(
                           width: 25,
                         ),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.blue,
-                          ),
-                          child: Text(
-                            "Update",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18.5,
-                                color: Colors.white),
+                        GestureDetector(
+                          onTap: () async{
+                            Map<String, dynamic> profileData = {
+                              'full_name': fullNameController.text,
+                              'username': usernameController.text,
+                              'phone_number': phoneNummberController.text,
+                              'email': emailController.text,
+                              'address': locationController.text,
+                            };
+                            await jobSeekerProvider.updateJobSeekerProfileDetails(context, profileData);
+
+                          },
+                          child: Container(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.blue,
+                            ),
+                            child: Text(
+                              "Save Changes",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18.5,
+                                  color: Colors.white),
+                            ),
                           ),
                         )
                       ],

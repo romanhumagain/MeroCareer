@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/providers/recruiter_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/recruiters/common/recruiter_main_screen.dart';
@@ -65,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
             type: MessageType.success,
           );
 
-          Timer(const Duration(seconds: 2), () async {
+          Timer(const Duration(milliseconds: 1500), () async {
             if (!responseData['is_verified']) {
               Navigator.pushReplacement(
                   context,
@@ -73,9 +74,13 @@ class _LoginPageState extends State<LoginPage> {
                       builder: (context) => UserVerificationPage()));
             } else {
               if (responseData['role'] == 'job_seeker') {
+                await Provider.of<JobSeekerProvider>(context, listen: false)
+                    .fetchJobSeekerProfileDetails();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => MainScreen(
+                    isLoggedInNow: true,
+                  )),
                 );
               } else if (responseData['role'] == "recruiter") {
                 await Provider.of<RecruiterProvider>(context, listen: false)

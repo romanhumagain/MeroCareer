@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
 import 'package:mero_career/views/job_seekers/profile/screen/education_details_screen.dart';
 import 'package:mero_career/views/job_seekers/profile/screen/experience_details_screen.dart';
@@ -9,8 +10,9 @@ import 'package:mero_career/views/job_seekers/profile/widgets/profile_heading_se
 import 'package:mero_career/views/job_seekers/profile/widgets/profile_recommendation_card.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/profile_summary_card.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
-import 'career_preference_card.dart';
+import '../screen/career_preference_screen.dart';
 
 class ProfileSetupAnalysisSection extends StatelessWidget {
   const ProfileSetupAnalysisSection({
@@ -19,6 +21,18 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
   });
 
   final Size size;
+
+  Color _getAnalysisColor(int percentage) {
+    if (percentage < 50) {
+      return Colors.red;
+    } else if (percentage >= 50 && percentage < 100) {
+      return Colors.orange;
+    } else if (percentage == 80) {
+      return Colors.green;
+    } else {
+      return Colors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,180 +45,204 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(12), bottomLeft: Radius.circular(12))),
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: size.height,
-              width: size.width / 2.5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircularPercentIndicator(
-                    radius: 26.0,
-                    lineWidth: 5.0,
-                    animation: true,
-                    percent: 0.7,
-                    center: Text(
-                      "20.0%",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 12.0),
-                    ),
-                    circularStrokeCap: CircularStrokeCap.round,
-                    progressColor: Colors.red,
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    "MeroCareer experts suggest you to have a complete profile",
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    "10 Missing details !",
-                    style: TextStyle(color: Colors.blue),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "10",
-              icon: Icons.file_copy,
-              heading: "Never miss adding your resume ",
-              buttonTitle: "Upload Resume",
-              onTap: () {
-                _showResumeUploadModalScreen(context);
-              },
-              hasData: false,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "10",
-              icon: Icons.camera_alt,
-              heading: "Upload your profile picture ",
-              buttonTitle: "Upload Photo",
-              onTap: () {
-                ProfileHeadingSection headingSection = ProfileHeadingSection();
-                headingSection.showHeadingTopScreen(context);
-              },
-              hasData: true,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "10",
-              icon: Icons.person,
-              heading: "Add your profile summary ",
-              buttonTitle: "Personal Details",
-              onTap: () {
-                ProfileSummary profileSummary = ProfileSummary(size: size);
-                profileSummary.showAddProfileSummarySection(context);
-              },
-              hasData: true,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "10",
-              icon: Icons.school,
-              heading: "Add your education details ",
-              buttonTitle: "Education details",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EducationDetailsScreen()));
-              },
-              hasData: true,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "0",
-              icon: Icons.work,
-              heading: "Add your experience details ",
-              buttonTitle: "Project Details",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ExperienceDetailsScreen()));
-              },
-              hasData: false,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "0",
-              icon: Icons.folder,
-              heading: "Add your project details ",
-              buttonTitle: "Project Details",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ProjectDetailsScreen()));
-              },
-              hasData: false,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "10",
-              icon: Icons.auto_awesome,
-              heading: "Add your skills details ",
-              buttonTitle: "Skills details",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SkillDetailsPage()));
-              },
-              hasData: true,
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            ProfileRecommendationCard(
-              size: size,
-              percentageCover: "15",
-              icon: Icons.work_outline,
-              heading: "Add career preference ",
-              buttonTitle: "Add Preference",
-              onTap: () {
-                CareerPreferenceCard career = CareerPreferenceCard(
-                  size: MediaQuery.of(context).size,
-                );
-                career.showCareerPreferenceScreen(context);
-              },
-              hasData: true,
-            ),
-          ],
-        ),
-      ),
+          scrollDirection: Axis.horizontal,
+          child: Consumer<ProfileSetupProvider>(
+              builder: (context, provider, child) {
+            final analysisData = provider.profileAnalysisData;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                    height: size.height,
+                    width: size.width / 2.5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircularPercentIndicator(
+                          radius: 26.0,
+                          lineWidth: 5.0,
+                          animation: true,
+                          percent: analysisData?['percentage'] / 100,
+                          center: Text(
+                            "${analysisData?['percentage']}.0%",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 12.0),
+                          ),
+                          circularStrokeCap: CircularStrokeCap.round,
+                          progressColor:
+                              _getAnalysisColor(analysisData?['percentage']),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          "MeroCareer experts suggest you to have a complete profile",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(
+                                  fontSize: 14,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          "${analysisData?['missing_details']} Missing details !",
+                          style: TextStyle(color: Colors.blue),
+                        )
+                      ],
+                    )),
+                SizedBox(
+                  width: 20,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "20",
+                  icon: Icons.file_copy,
+                  heading: "Never miss adding your resume ",
+                  buttonTitle: analysisData?['has_resume_uploaded']
+                      ? "View Resume"
+                      : "Upload Resume",
+                  onTap: () {
+                    _showResumeUploadModalScreen(context);
+                  },
+                  hasData: analysisData?['has_resume_uploaded'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.camera_alt,
+                  heading: "Upload your profile picture ",
+                  buttonTitle: analysisData?['has_profile_image']
+                      ? "View Image"
+                      : "Upload Photo",
+                  onTap: () {
+                    ProfileHeadingSection headingSection =
+                        ProfileHeadingSection();
+                    headingSection.showHeadingTopScreen(context);
+                  },
+                  hasData: analysisData?['has_profile_image'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.person,
+                  heading: "Add your profile summary ",
+                  buttonTitle: analysisData?['has_profile_summary']
+                      ? "View Profile"
+                      : "Add About Yourself",
+                  onTap: () {
+                    ProfileSummary profileSummary = ProfileSummary(size: size);
+                    profileSummary.showAddProfileSummarySection(context);
+                  },
+                  hasData: analysisData?['has_profile_summary'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.school,
+                  heading: "Add your education details ",
+                  buttonTitle: analysisData?['has_education_details']
+                      ? "View Details"
+                      : "Add Education",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EducationDetailsScreen()));
+                  },
+                  hasData: analysisData?['has_education_details'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.work,
+                  heading: "Add your experience details ",
+                  buttonTitle: analysisData?['has_experience_details']
+                      ? "View Details"
+                      : "Add Details",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExperienceDetailsScreen()));
+                  },
+                  hasData: analysisData?['has_experience_details'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.folder,
+                  heading: "Add your project details ",
+                  buttonTitle: analysisData?['has_project_details']
+                      ? "View Project"
+                      : "Add Project",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProjectDetailsScreen()));
+                  },
+                  hasData: analysisData?['has_project_details'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.auto_awesome,
+                  heading: "Add your skills details ",
+                  buttonTitle: analysisData?['has_skills']
+                      ? "View Skills"
+                      : "Add Skills",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SkillDetailsPage()));
+                  },
+                  hasData: analysisData?['has_skills'],
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                ProfileRecommendationCard(
+                  size: size,
+                  percentageCover: "10",
+                  icon: Icons.work_outline,
+                  heading: "Add career preference ",
+                  buttonTitle: analysisData?['has_career_preference']
+                      ? "View Preference"
+                      : "Add Preference",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CareerPreferenceScreen()));
+                  },
+                  hasData: analysisData?['has_career_preference'],
+                ),
+              ],
+            );
+          })),
     );
   }
 

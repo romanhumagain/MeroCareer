@@ -862,7 +862,6 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
       },
     );
   }
-
   void _showJobLevelModalSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -880,6 +879,7 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
     );
   }
 }
+
 
 class SelectContainer extends StatelessWidget {
   final String selectText;

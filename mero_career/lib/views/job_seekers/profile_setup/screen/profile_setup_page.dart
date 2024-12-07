@@ -82,8 +82,8 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
             // Skip option with clear design
             GestureDetector(
               onTap: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => MainScreen()));
+                // Navigator.pushReplacement(context,
+                //     MaterialPageRoute(builder: (context) => MainScreen(i)));
               },
               child: Text(
                 "Skip for now? You can complete it later.",

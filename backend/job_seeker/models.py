@@ -28,7 +28,7 @@ class CareerPreference(models.Model):
   prefered_job_category = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
   prefered_job_title = models.CharField(max_length=225, null=True,blank=True)
   prefered_job_location = models.CharField(max_length=225, null=True,blank=True)
-  expected_salary = models.PositiveIntegerField(null=True,blank=True)
+  expected_salary = models.CharField(max_length=225, null=True,blank=True)
   prefered_job_level = models.CharField(max_length=225, null=True,blank=True)
   prefered_job_type = models.CharField(max_length=225, null=True,blank=True)
   

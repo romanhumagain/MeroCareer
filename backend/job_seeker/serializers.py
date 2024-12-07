@@ -52,7 +52,7 @@ class JobSeekerSerializer(ModelSerializer):
   
   class Meta:
     model = JobSeeker
-    fields = ['user', 'profile_image','full_name','username','phone_number','address', 'profile_headline', 'profile_summary', 'email', 'prefered_job_category']
+    fields = ['id','user', 'profile_image','full_name','username','phone_number','address', 'profile_headline', 'profile_summary', 'email', 'prefered_job_category']
     read_only_fields = ['user', 'email']
 
   def get_email(self, obj):
@@ -64,13 +64,16 @@ class JobSeekerSerializer(ModelSerializer):
     if obj is not None:
       return obj.job_seeker_career_preference.prefered_job_category.id
     return None
+  
+
     
 class CareerPreferenceSerializer(ModelSerializer):
   prefered_job_category_name = serializers.SerializerMethodField(read_only = True)
+  is_all_pref_added = serializers.SerializerMethodField(read_only = True)
   
   class Meta:
     model = CareerPreference
-    fields = ['id', 'prefered_job_category', 'prefered_job_title', 'prefered_job_location', 'expected_salary', 'prefered_job_level', 'prefered_job_type', 'prefered_job_category_name']
+    fields = ['id', 'prefered_job_category', 'prefered_job_title', 'prefered_job_location', 'expected_salary', 'prefered_job_level', 'prefered_job_type', 'prefered_job_category_name', 'is_all_pref_added']
     
     read_only_fields = ['prefered_job_category','prefered_job_category_name' ]
     
@@ -78,6 +81,18 @@ class CareerPreferenceSerializer(ModelSerializer):
     if obj is not None:
       return obj.prefered_job_category.category
     return None
+  
+  def get_is_all_pref_added(self, obj):
+   
+    all_pref_added = all([
+        obj.prefered_job_title is not None and obj.prefered_job_title != '',
+        obj.prefered_job_location is not None and obj.prefered_job_location != '',
+        obj.expected_salary is not None and obj.expected_salary != '',
+        obj.prefered_job_level is not None and obj.prefered_job_level != '',
+        obj.prefered_job_type is not None and obj.prefered_job_type != ''
+    ])
+    
+    return all_pref_added
   
   
 class EducationDetailSerializer(serializers.ModelSerializer):
@@ -118,3 +133,28 @@ class AccountSettingSerializer(serializers.ModelSerializer):
     model = AccountSetting
     fields = ['id','user','new_job_alert', 'job_application_status_alert', 'job_recommendation_alert', 'updated_at' ]
     read_only_fields = ['id', 'updated_at', 'user']
+    
+    
+    
+#  serializer to get all user linked details for profile preview
+class JobSeekerDetailedSerializer(serializers.ModelSerializer):
+    email = serializers.SerializerMethodField(read_only=True)
+    prefered_job_category = CareerPreferenceSerializer(read_only=True, source='job_seeker_career_preference')
+    job_seeker_education_details = EducationDetailSerializer(read_only=True, many=True)
+    job_seeker_experience_details = ExperienceDetailSerializer(read_only=True, many=True)
+    job_seeker_project_details = ProjectDetailSerializer(read_only=True, many=True)
+    job_seeker_skill_details = SkillSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = JobSeeker
+        fields = [
+            'id', 'user', 'profile_image', 'full_name', 'username', 'phone_number',
+            'address', 'profile_headline', 'profile_summary', 'email',
+            'prefered_job_category', 'job_seeker_education_details', 
+            'job_seeker_experience_details', 'job_seeker_project_details',
+            'job_seeker_skill_details'
+        ]
+        read_only_fields = ['user', 'email']
+
+    def get_email(self, obj):
+        return obj.user.email if obj else None

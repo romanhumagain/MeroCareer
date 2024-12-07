@@ -64,3 +64,11 @@ String formatPostedDate(String dateString) {
   // Return the formatted string
   return '$day$suffix $month, $year';
 }
+
+String formatEduDate(String dateString) {
+  DateTime date = DateTime.parse(dateString);
+
+  String formattedDate = DateFormat("MMM, yyyy").format(date);
+
+  return formattedDate;
+}

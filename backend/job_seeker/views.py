@@ -22,7 +22,8 @@ from .serializers import (JobSeekerSerializer,
                           ProjectDetailSerializer,
                           SkillSerializer, 
                           ResumeSerializer,
-                          AccountSettingSerializer)
+                          AccountSettingSerializer, 
+                          JobSeekerDetailedSerializer)
 from rest_framework.exceptions import NotFound, PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
@@ -111,6 +112,23 @@ class JobSeekerRetriveUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView)
         
         return Response({'detail':'Successfully deactivated your account !'}, status=status.HTTP_200_OK)
 
+
+class JobSeekerRetriveAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = JobSeekerDetailedSerializer
+    lookup_field = 'id'
+    
+    def retrieve(self, request, *args, **kwargs):
+        id = self.kwargs.get('id')
+        
+        try:
+            jobSeekerInst = JobSeeker.objects.get(id = id)
+        except JobSeeker.DoesNotExist:
+            return Response({'detail':"Job seeker doesn't exists !"})
+            
+        serializer = self.get_serializer(jobSeekerInst)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+     
              
 class CareerPreferenceAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -138,6 +156,7 @@ class CareerPreferenceAPIView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         careerPrefInst = self.get_object()
         data = request.data
+        print(data)
         
         prefered_job_category = data.get('prefered_job_category', None)
         
@@ -163,7 +182,7 @@ class EducationDetailViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
-        return EducationDetail.objects.filter(user=self.request.user.job_seeker)
+        return EducationDetail.objects.filter(user=self.request.user.job_seeker).order_by('-start_date')
         
 
     def perform_create(self, serializer):
@@ -176,7 +195,7 @@ class ExperienceDetailViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
-        return ExperienceDetail.objects.filter(user=self.request.user.job_seeker)
+        return ExperienceDetail.objects.filter(user=self.request.user.job_seeker).order_by('-start_date')
        
     def perform_create(self, serializer):
         serializer.save(user=self.request.user.job_seeker)
@@ -190,7 +209,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
-        return ProjectDetail.objects.filter(user=self.request.user.job_seeker)
+        return ProjectDetail.objects.filter(user=self.request.user.job_seeker).order_by('-id')
        
     def perform_create(self, serializer):
         serializer.save(user=self.request.user.job_seeker)
@@ -320,31 +339,83 @@ class ProfileSetupAnalysis(APIView):
             return Response({'detail': "Job Seeker doesn't exist."}, status=404)
 
         percentage_count = 10
+        missing_details_count = 0
 
-        if hasattr(job_seeker, 'resume') and job_seeker.resume.resume:
+        # Check for resume
+        has_resume_uploaded = hasattr(job_seeker, 'resume') and job_seeker.resume.resume
+        if has_resume_uploaded:
             percentage_count += 20
+        else:
+            missing_details_count += 1
 
-        if job_seeker.profile_image and job_seeker.profile_image.name not in [
+        # Check for profile image
+        has_profile_image = job_seeker.profile_image and job_seeker.profile_image.name not in [
             'profile/default_profile_pic.webp', 
             'profile/default_profile_pic.png'
-        ]:
+        ]
+        if has_profile_image:
             percentage_count += 10
+        else:
+            missing_details_count += 1
 
-        if job_seeker.profile_summary:
+        # Check for profile summary
+        has_profile_summary = bool(job_seeker.profile_summary)
+        if has_profile_summary:
             percentage_count += 10
+        else:
+            missing_details_count += 1
 
-        if EducationDetail.objects.filter(user=job_seeker).exists():
+        # Check for education details
+        has_education_details = EducationDetail.objects.filter(user=job_seeker).exists()
+        if has_education_details:
             percentage_count += 10
+        else:
+            missing_details_count += 1
+        
+        # Check for experience details
+        has_experience_details = ExperienceDetail.objects.filter(user=job_seeker).exists()
+        if has_experience_details:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
+            
+        # Check for project details
+        has_project_details = ProjectDetail.objects.filter(user=job_seeker).exists()
+        if has_project_details:
+            percentage_count += 10  
+        else:
+            missing_details_count += 1
 
-        if Skill.objects.filter(user=job_seeker).exists():
-            percentage_count += 20
+        # Check for skills
+        has_skills = Skill.objects.filter(user=job_seeker).exists()
+        if has_skills:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
 
+        # Check for career preferences
+        has_career_preference = False
         career_preference = job_seeker.job_seeker_career_preference
         if career_preference:
             if career_preference.prefered_job_title and career_preference.prefered_job_location and career_preference.expected_salary and career_preference.prefered_job_level and career_preference.prefered_job_type:
-                percentage_count += 30
+                has_career_preference = True
+                percentage_count += 10
+        else:
+            missing_details_count += 1
 
+        # Ensure the percentage does not exceed 100
         if percentage_count > 100:
             percentage_count = 100
 
-        return Response({'percentage': percentage_count}, status=200)
+        return Response({
+            'percentage': percentage_count,
+            'missing_details': missing_details_count,
+            'has_resume_uploaded': has_resume_uploaded,
+            'has_profile_image': has_profile_image,
+            'has_profile_summary': has_profile_summary,
+            'has_education_details': has_education_details,
+            'has_experience_details': has_experience_details,
+            'has_project_details': has_project_details,
+            'has_skills': has_skills,
+            'has_career_preference': has_career_preference,
+        }, status=200)

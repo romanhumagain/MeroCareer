@@ -4,29 +4,58 @@ import 'package:mero_career/views/recruiters/job_seeker_review/widgets/preferenc
 import 'package:provider/provider.dart';
 
 class JobPreference extends StatelessWidget {
+  final Map<String, dynamic> data;
+  final Size size;
+
   const JobPreference({
     super.key,
     required this.size,
+    required this.data,
   });
-
-  final Size size;
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
+    final isDarkMode = context.read<ThemeProvider>().isDarkMode;
+
+    // List of job preference data for better scalability
+    final preferences = [
+      {
+        'label': 'Preferred Job Title',
+        'value': data['jobTitle'] ?? 'Backend Developer'
+      },
+      {
+        'label': 'Preferred Job Level',
+        'value': data['jobLevel'] ?? 'Entry Level'
+      },
+      {
+        'label': 'Expected Salary',
+        'value': data['expectedSalary'] ?? 'NRs 20000 Monthly'
+      },
+      {
+        'label': 'Preferred Job Location',
+        'value': data['jobLocation'] ?? 'Kathmandu'
+      },
+      {
+        'label': 'Preferred Job Category',
+        'value': data['jobCategory'] ?? 'IT & Telecommunication'
+      },
+    ];
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.all(10.0),
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12)),
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header Row
               Row(
                 children: [
                   Text(
@@ -36,51 +65,24 @@ class JobPreference extends StatelessWidget {
                         .titleLarge
                         ?.copyWith(fontSize: 19, letterSpacing: 0.2),
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Icon(
-                    Icons.keyboard_arrow_down_outlined,
-                    size: 26,
-                  )
+                  const SizedBox(width: 5),
+                  const Icon(Icons.keyboard_arrow_down_outlined, size: 26),
                 ],
               ),
-              SizedBox(
-                height: 14,
-              ),
-              PreferenceInfoTable(
-                  data: "Prefered Job Title",
-                  value: "Backend Developer",
-                  size: size),
-              SizedBox(
-                height: 8,
-              ),
-              PreferenceInfoTable(
-                  data: "Prefered Job Level", value: "Entry Level", size: size),
-              SizedBox(
-                height: 8,
-              ),
-              PreferenceInfoTable(
-                  data: "Expected Salary",
-                  value: "NRs 20000 Monthly",
-                  size: size),
-              SizedBox(
-                height: 8,
-              ),
-              PreferenceInfoTable(
-                  data: "Prefered Job Location",
-                  value: "Kathmandu",
-                  size: size),
-              SizedBox(
-                height: 8,
-              ),
-              PreferenceInfoTable(
-                  data: "Prefered Job Category",
-                  value: "IT & Telecommunication",
-                  size: size),
-              SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 14),
+
+              // Preferences List
+              ...preferences.map((preference) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: PreferenceInfoTable(
+                      data: preference['label']!,
+                      value: preference['value']!,
+                      size: size,
+                    ),
+                  )),
+
+              // Ensure spacing at the bottom
+              const SizedBox(height: 5),
             ],
           ),
         ),

@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
 
 class ProjectDetails extends StatelessWidget {
-  const ProjectDetails({
-    super.key,
-  });
+  final List<dynamic> data;
+
+  const ProjectDetails({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +36,18 @@ class ProjectDetails extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 4.0),
             child: Column(
-              children: const [
-                ProjcetDetailsTimeline(
-                  projectName: "Blogify",
-                  projectUrl: "www.blogify.com.np",
-                  description:
-                      "Blogify is a social blogging platform developed with Django and React",
-                  role: "Developer",
-                ),
-                SizedBox(
-                  height: 18,
-                ),
-              ],
+              children: data.map((project) {
+                return Column(
+                  children: [
+                    ProjectDetailsTimeline(
+                      projectName: project['project_title'],
+                      description: project['project_description'],
+                      role: project['role'],
+                    ),
+                    SizedBox(height: 18),
+                  ],
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -56,16 +56,14 @@ class ProjectDetails extends StatelessWidget {
   }
 }
 
-class ProjcetDetailsTimeline extends StatelessWidget {
+class ProjectDetailsTimeline extends StatelessWidget {
   final String projectName;
-  final String projectUrl;
   final String description;
   final String role;
 
-  const ProjcetDetailsTimeline({
+  const ProjectDetailsTimeline({
     super.key,
     required this.projectName,
-    required this.projectUrl,
     required this.description,
     required this.role,
   });
@@ -101,7 +99,7 @@ class ProjcetDetailsTimeline extends StatelessWidget {
                 ),
                 Container(
                   width: 2,
-                  height: 60,
+                  height: 40,
                   color: Colors.red.shade300,
                 ),
               ],
@@ -118,17 +116,6 @@ class ProjcetDetailsTimeline extends StatelessWidget {
                     color: isDarkMode
                         ? Colors.grey.shade300
                         : Colors.grey.shade800,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  projectUrl,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: isDarkMode
-                        ? Colors.grey.shade400
-                        : Colors.grey.shade700,
                   ),
                 ),
                 SizedBox(height: 4),

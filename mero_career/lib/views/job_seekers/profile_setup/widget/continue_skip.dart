@@ -28,8 +28,8 @@ class _ContinueSkipState extends State<ContinueSkip> {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MainScreen()));
+            // Navigator.pushReplacement(
+            //     context, MaterialPageRoute(builder: (context) => MainScreen()));
           },
           child: Text(
             "Skip For Now ?",

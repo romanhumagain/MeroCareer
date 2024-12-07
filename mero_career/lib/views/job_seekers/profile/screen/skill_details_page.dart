@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../providers/profile_setup_provider.dart';
 
 class SkillDetailsPage extends StatefulWidget {
   const SkillDetailsPage({super.key});
@@ -27,6 +30,29 @@ class _SkillDetailsPageState extends State<SkillDetailsPage> {
     setState(() {
       skills.remove(skill);
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchSkillsDetails();
+  }
+
+  void _fetchSkillsDetails() async {
+    final provider = Provider.of<ProfileSetupProvider>(context, listen: false);
+    final response = await provider.fetchSkillsData();
+    if (response?.statusCode == 200) {
+      List? fetchedSkills = provider.skillsDetails;
+
+      if (fetchedSkills != null) {
+        setState(() {
+          skills = fetchedSkills.map((item) {
+            return item['name'] as String;
+          }).toList();
+        });
+      }
+    }
   }
 
   @override
@@ -162,7 +188,12 @@ class _SkillDetailsPageState extends State<SkillDetailsPage> {
                   width: size.width / 1.3,
                   height: 43,
                   text: "Save Changes",
-                  onTap: () {})
+                  onTap: () async {
+                    final Map<String, dynamic> skillsData = {'skills': skills};
+                    await Provider.of<ProfileSetupProvider>(context,
+                            listen: false)
+                        .updateSkillsData(context, skillsData);
+                  })
             ],
           ),
         )

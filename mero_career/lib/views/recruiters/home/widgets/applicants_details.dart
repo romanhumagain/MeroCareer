@@ -20,7 +20,9 @@ class ApplicantsDetails extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => JobSeekerProfilePreview()));
+                      builder: (context) => JobSeekerProfilePreview(
+                            jobSeekerId: 1,
+                          )));
             },
             child: Container(
               padding: EdgeInsets.all(10),

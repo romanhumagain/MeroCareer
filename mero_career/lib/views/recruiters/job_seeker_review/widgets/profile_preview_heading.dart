@@ -3,7 +3,11 @@ import 'package:mero_career/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePreviewHeading extends StatefulWidget {
-  const ProfilePreviewHeading({super.key});
+  final String role;
+  final Map<String, dynamic> profileData;
+
+  const ProfilePreviewHeading(
+      {super.key, required this.profileData, required this.role});
 
   @override
   State<ProfilePreviewHeading> createState() => _ProfilePreviewHeadingState();
@@ -21,6 +25,14 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
     "Shortlisted",
   ];
 
+  // Map for badge colors based on job status
+  final Map<String, Color> _statusColors = {
+    "Under Review": Colors.blue.shade300,
+    "Accepted": Colors.green.shade400,
+    "Rejected": Colors.red.shade400,
+    "Shortlisted": Colors.orange.shade400,
+  };
+
   void _openStatusModal(BuildContext context) {
     bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     showDialog(
@@ -34,8 +46,8 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
                 size: 24,
                 color: Colors.blue.shade300,
               ),
-              SizedBox(width: 8), // Spacing between icon and text
-              Text(
+              const SizedBox(width: 8), // Spacing between icon and text
+              const Text(
                 "Change Job Status",
                 style: TextStyle(
                   fontSize: 20,
@@ -70,7 +82,7 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
           ],
         );
@@ -78,8 +90,36 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
     );
   }
 
+  Widget _buildJobStatusBadge() {
+    return GestureDetector(
+      onTap: () => _openStatusModal(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+        decoration: BoxDecoration(
+          color: _statusColors[_jobStatus] ?? Colors.blue.shade300,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          _jobStatus,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profileImage = widget.profileData['profile_image'] ??
+        'https://via.placeholder.com/150';
+    final fullName = widget.profileData['full_name'] ?? 'Unknown';
+    final email = widget.profileData['email'] ?? 'N/A';
+    final location = widget.profileData['address'] ?? 'Unknown';
+    final phoneNumber = widget.profileData['phone_number'] ?? 'N/A';
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 14),
       child: Row(
@@ -87,42 +127,43 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundImage: AssetImage('assets/images/pp.jpg'),
+                backgroundImage: NetworkImage(profileImage),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Roman Humagain",
+                    fullName,
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
                         ?.copyWith(fontSize: 18),
                   ),
                   Text(
-                    "romanhumagain@gmail.com",
+                    email,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium
                         ?.copyWith(fontSize: 13.5, fontWeight: FontWeight.w400),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Row(
                     children: [
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.location_on,
                             size: 16.5,
                             color: Colors.grey,
                           ),
+                          const SizedBox(width: 4),
                           Text(
-                            "Bhaktapur",
+                            location,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall
@@ -132,16 +173,17 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
                           ),
                         ],
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.phone,
                             size: 16.5,
                             color: Colors.grey,
                           ),
+                          const SizedBox(width: 4),
                           Text(
-                            "9840617105",
+                            phoneNumber,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall
@@ -157,22 +199,7 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
               )
             ],
           ),
-          GestureDetector(
-            onTap: () => _openStatusModal(context), // Open the modal dialog
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-              decoration: BoxDecoration(
-                  color: Colors.blue.shade300,
-                  borderRadius: BorderRadius.circular(12)),
-              child: Text(
-                _jobStatus,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14),
-              ),
-            ),
-          ),
+          widget.role == "recruiter" ? _buildJobStatusBadge() : SizedBox(),
         ],
       ),
     );

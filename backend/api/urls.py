@@ -23,7 +23,8 @@ from job_seeker.views import (RegisterJobSeekerAPIView,
                               ProjectDetailViewSet,
                               SkillAPIView,
                               ResumeViewSet,
-                              ProfileSetupAnalysis
+                              ProfileSetupAnalysis,
+                              JobSeekerRetriveAPIView
                               )
 
 from recruiter.views import (RegisterRecruiterAPIView, RetrieveUpdateDeleteRecruiterAPI)
@@ -44,6 +45,7 @@ urlpatterns = [
   path('recruiter/register/', RegisterRecruiterAPIView.as_view(), name='register_recruiter'),
   path('recruiter/', RetrieveUpdateDeleteRecruiterAPI.as_view(), name='retrive_update_delete_recruiter'),
   path('jobseeker/', JobSeekerRetriveUpdateDeleteAPIView.as_view(), name='retrive_update_delete_jobseeker'),
+  path('jobseeker-details/<int:id>/', JobSeekerRetriveAPIView.as_view(), name='retrive_jobseeker'),
   path('career-preference/', CareerPreferenceAPIView.as_view(), name='career_preference'),
   path('skill/', SkillAPIView.as_view(), name='skill_api'),
   path('profile-setup-analysis/', ProfileSetupAnalysis.as_view(), name='profile_setup_analysis'),

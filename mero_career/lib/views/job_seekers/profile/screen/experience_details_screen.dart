@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:mero_career/views/widgets/my_custom_textfield.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../providers/profile_setup_provider.dart';
 import '../../../widgets/my_button.dart';
 import '../widgets/experience_details_data.dart';
 
@@ -17,12 +19,14 @@ class ExperienceDetailsScreen extends StatefulWidget {
 class _ExperienceDetailsScreenState extends State<ExperienceDetailsScreen> {
   final TextEditingController _jobTitleController = TextEditingController();
   final TextEditingController _jobRoleController = TextEditingController();
-  final TextEditingController _instituteNameController = TextEditingController();
+  final TextEditingController _instituteNameController =
+      TextEditingController();
   final TextEditingController _startedDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
   bool isCurrentlyWorking = false;
   bool hasExperienceData = false;
+  bool isLoading = true;
 
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
@@ -41,9 +45,67 @@ class _ExperienceDetailsScreenState extends State<ExperienceDetailsScreen> {
     }
   }
 
+  void _handleAddingExperience() async {
+    Map<String, dynamic> jobDetails = {
+      'job_title': _jobTitleController.text.trim(),
+      'job_role': _jobRoleController.text.trim(),
+      'institute_name': _instituteNameController.text.trim(),
+      'start_date': _startedDateController.text.trim(),
+    };
+    if (_endDateController.text.trim() == "") {
+      jobDetails.remove("end_date");
+    }
+
+    final profileSetupProvider =
+        Provider.of<ProfileSetupProvider>(context, listen: false);
+    final response =
+        await profileSetupProvider.addExperienceDetails(context, jobDetails);
+    print(response?.body);
+    if (response?.statusCode == 201) {
+      clearJobDetails();
+      setState(() {
+        hasExperienceData = true;
+      });
+    }
+  }
+
+  void clearJobDetails() {
+    _jobTitleController.clear();
+    _jobRoleController.clear();
+    _instituteNameController.clear();
+    _startedDateController.clear();
+    _endDateController.clear();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchExperienceDetails();
+  }
+
+  void fetchExperienceDetails() async {
+    setState(() {
+      isLoading = true;
+    });
+    final provider = Provider.of<ProfileSetupProvider>(context, listen: false);
+    await provider.fetchExperienceDetails();
+    setState(() {
+      isLoading = false;
+      hasExperienceData = provider.experienceDetails != null &&
+          provider.experienceDetails!.isNotEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    if (isLoading) {
+      return Scaffold(
+        appBar: MyAppBar(),
+      );
+    }
+
     return Scaffold(
       appBar: MyAppBar(),
       body: Padding(
@@ -185,9 +247,7 @@ class _ExperienceDetailsScreenState extends State<ExperienceDetailsScreen> {
                               height: size.height / 18,
                               text: "Save Changes",
                               onTap: () {
-                                setState(() {
-                                  hasExperienceData = true;
-                                });
+                                _handleAddingExperience();
                               }),
                         )
                       ],

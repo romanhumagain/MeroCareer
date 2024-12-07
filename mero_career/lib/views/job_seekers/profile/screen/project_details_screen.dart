@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/project_details_data.dart';
 import 'package:mero_career/views/widgets/my_profile_text_area.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../providers/profile_setup_provider.dart';
 import '../../../widgets/my_button.dart';
 import '../../../widgets/my_custom_textfield.dart';
 import '../../../widgets/my_divider.dart';
@@ -16,14 +18,66 @@ class ProjectDetailsScreen extends StatefulWidget {
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   final TextEditingController _projectTitleController = TextEditingController();
-  final TextEditingController __projectRoleController = TextEditingController();
-  final TextEditingController _projectDescriptionController = TextEditingController();
+  final TextEditingController _projectRoleController = TextEditingController();
+  final TextEditingController _projectDescriptionController =
+      TextEditingController();
 
   bool hasProjectDone = false;
+  bool isLoading = true;
+
+  void _handleProjectSubmission() async {
+    Map<String, dynamic> projectDetails = {
+      'project_title': _projectTitleController.text.trim(),
+      'role': _projectRoleController.text.trim(),
+      'project_description': _projectDescriptionController.text.trim(),
+    };
+    final profileSetupProvider =
+        Provider.of<ProfileSetupProvider>(context, listen: false);
+    final response =
+        await profileSetupProvider.addProjectDetails(context, projectDetails);
+    if (response?.statusCode == 201) {
+      clearProjectDetails();
+      setState(() {
+        hasProjectDone = true;
+      });
+    }
+    print(response?.body);
+  }
+
+  void clearProjectDetails() {
+    _projectTitleController.clear();
+    _projectRoleController.clear();
+    _projectDescriptionController.clear();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchExperienceDetails();
+  }
+
+  void fetchExperienceDetails() async {
+    setState(() {
+      isLoading = true;
+    });
+    final provider = Provider.of<ProfileSetupProvider>(context, listen: false);
+    await provider.fetchProjectDetails();
+    setState(() {
+      isLoading = false;
+      hasProjectDone = provider.projectDetails != null &&
+          provider.projectDetails!.isNotEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    if (isLoading) {
+      return Scaffold(
+        appBar: MyAppBar(),
+      );
+    }
     return Scaffold(
       appBar: MyAppBar(),
       body: Padding(
@@ -87,7 +141,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         ),
                         MyCustomTextfield(
                             labelText: "Role",
-                            controller: __projectRoleController),
+                            controller: _projectRoleController),
                         SizedBox(
                           height: 15,
                         ),
@@ -108,9 +162,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               height: size.height / 18,
                               text: "Save Changes",
                               onTap: () {
-                                setState(() {
-                                  hasProjectDone = true;
-                                });
+                                _handleProjectSubmission();
                               }),
                         )
                       ],

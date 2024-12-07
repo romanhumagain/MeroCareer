@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/screen/job_seeker_profile_preview.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../providers/theme_provider.dart';
 import '../../../widgets/custom_textfield.dart';
 import '../../common/modal_top_bar.dart';
 
@@ -15,6 +18,7 @@ class ProfileHeadingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     final headingTextStyle = Theme.of(context)
         .textTheme
         .titleMedium
@@ -25,39 +29,51 @@ class ProfileHeadingSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 28.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: CircleAvatar(
-                      radius: 32,
-                      backgroundImage: AssetImage(
-                        'assets/images/pp.jpg',
-                      ),
+            Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+              final jobSeekerDetails = provider.jobSeekerProfileDetails;
+              return Padding(
+                padding: const EdgeInsets.only(left: 28.0),
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(right: 8.0, bottom: 8),
+                        child: CircleAvatar(
+                          radius: 32,
+                          backgroundImage: jobSeekerDetails?['profile_image'] !=
+                                  null
+                              ? NetworkImage(jobSeekerDetails?['profile_image'])
+                              : AssetImage('assets/images/blank_pp.png')
+                                  as ImageProvider, // Cast AssetImage to ImageProvider
+                        )),
+                    Text(
+                      jobSeekerDetails?['full_name'] ?? '...Loading',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(fontSize: 18, letterSpacing: 0.4),
                     ),
-                  ),
-                  Text(
-                    "Roman Humagain",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontSize: 18, letterSpacing: 0.4),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "Mobile App Developer",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontSize: 15, letterSpacing: 0.4),
-                  ),
-                ],
-              ),
-            ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    jobSeekerDetails?['profile_headline']?.isNotEmpty ?? false
+                        ? Text(
+                            jobSeekerDetails?['profile_headline'],
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(fontSize: 15, letterSpacing: 0.4),
+                          )
+                        : Text(
+                            'Add short profile headline...',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(fontSize: 11, letterSpacing: 0.2),
+                          ),
+                  ],
+                ),
+              );
+            }),
             SizedBox(
               width: 10,
             ),
@@ -141,7 +157,9 @@ class ProfileHeadingSection extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => JobSeekerProfilePreview()));
+                        builder: (context) => JobSeekerProfilePreview(
+                              jobSeekerId: 1,
+                            )));
               },
               child: Text(
                 "Preview Profile",
@@ -155,19 +173,31 @@ class ProfileHeadingSection extends StatelessWidget {
   }
 
   void showHeadingTopScreen(BuildContext context) {
-    TextEditingController fullNameController =
-        TextEditingController(text: "Roman Humagain");
-    TextEditingController profileHeadlineController = TextEditingController();
+    final jobSeekerProvider =
+        Provider.of<JobSeekerProvider>(context, listen: false);
+
+    // Text controllers
+    TextEditingController fullNameController = TextEditingController(
+      text: jobSeekerProvider.jobSeekerProfileDetails?['full_name'] ??
+          '..Loading',
+    );
+    TextEditingController profileHeadlineController = TextEditingController(
+      text: jobSeekerProvider.jobSeekerProfileDetails?['profile_headline'] ??
+          '..Loading',
+    );
+
     final ImagePicker picker = ImagePicker();
     XFile? selectedImage;
 
-    Future<void> pickImage() async {
+    Future<void> pickImage(StateSetter setModalState) async {
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        selectedImage = image;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Profile image updated!"),
-        ));
+        setModalState(() {
+          selectedImage = image;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Profile image updated!")),
+        );
       }
     }
 
@@ -177,149 +207,176 @@ class ProfileHeadingSection extends StatelessWidget {
       builder: (BuildContext context) {
         bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
         final size = MediaQuery.of(context).size;
-        return Container(
-          height: size.height / 1.15,
-          width: size.width,
-          decoration: BoxDecoration(
-            color: isDarkMode ? Color(0xFF121212) : Colors.grey.shade50,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(26),
-              topRight: Radius.circular(26),
+
+        return StatefulBuilder(builder: (context, setModalState) {
+          return Container(
+            height: size.height / 1.15,
+            width: size.width,
+            decoration: BoxDecoration(
+              color: isDarkMode ? const Color(0xFF121212) : Colors.grey.shade50,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(26),
+                topRight: Radius.circular(26),
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 4),
-                    ModalTopBar(),
-                    SizedBox(height: 25),
-                    Text(
-                      "Introduction",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
-                          ?.copyWith(fontSize: 21.5, letterSpacing: 0.4),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Add details about your preferred job profile. This helps us personalize your job recommendations.",
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    SizedBox(height: 30),
-                    // Image Upload Section
-                    Center(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: pickImage,
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundColor: isDarkMode
-                                  ? Colors.grey.shade800
-                                  : Colors.grey.shade300,
-                              backgroundImage: selectedImage != null
-                                  ? FileImage(File(selectedImage!.path))
-                                      as ImageProvider
-                                  : null,
-                              child: selectedImage == null
-                                  ? Icon(
-                                      Icons.camera_alt,
-                                      size: 30,
-                                      color: isDarkMode
-                                          ? Colors.grey.shade400
-                                          : Colors.grey.shade600,
-                                    )
-                                  : null,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            "Upload Profile Image",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.blue,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 25),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 18.0),
-                      child: Column(
-                        children: [
-                          CustomTextField(
-                            controller: fullNameController,
-                            labelText: "Full Name",
-                          ),
-                          SizedBox(height: 15),
-                          CustomTextField(
-                            controller: profileHeadlineController,
-                            labelText: "Profile Headline",
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            "Write a concise headline introducing yourself to employers",
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(fontSize: 12),
-                          ),
-                          SizedBox(height: 15),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0, vertical: 25),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Colors.blue,
-                          ),
+                      const SizedBox(height: 4),
+                      ModalTopBar(),
+                      const SizedBox(height: 25),
+                      Text(
+                        "Introduction",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(fontSize: 21.5, letterSpacing: 0.4),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Add details about your preferred job profile. This helps us personalize your job recommendations.",
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 30),
+                      // Image Upload Section
+                      Center(
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () => pickImage(setModalState),
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundColor: isDarkMode
+                                    ? Colors.grey.shade800
+                                    : Colors.grey.shade300,
+                                backgroundImage: selectedImage != null
+                                    ? FileImage(File(selectedImage!.path))
+                                    : (jobSeekerProvider
+                                                    .jobSeekerProfileDetails?[
+                                                'profile_image'] !=
+                                            null
+                                        ? NetworkImage(
+                                            jobSeekerProvider
+                                                    .jobSeekerProfileDetails![
+                                                'profile_image'],
+                                          )
+                                        : null),
+                                child: (selectedImage == null &&
+                                        jobSeekerProvider
+                                                    .jobSeekerProfileDetails?[
+                                                'profile_image'] ==
+                                            null)
+                                    ? Icon(
+                                        Icons.camera_alt,
+                                        size: 30,
+                                        color: isDarkMode
+                                            ? Colors.grey.shade400
+                                            : Colors.grey.shade600,
+                                      )
+                                    : null,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              "Upload Profile Image",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 25),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.blue,
-                        ),
-                        child: Text(
-                          "Save",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18.5,
-                            color: Colors.white,
-                          ),
+                      const SizedBox(height: 25),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 18.0),
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              controller: fullNameController,
+                              labelText: "Full Name",
+                            ),
+                            const SizedBox(height: 15),
+                            CustomTextField(
+                              controller: profileHeadlineController,
+                              labelText: "Profile Headline",
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Write a concise headline introducing yourself to employers",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(fontSize: 12),
+                            ),
+                            const SizedBox(height: 15),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            "Cancel",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 25),
+                        GestureDetector(
+                          onTap: () async {
+                            Map<String, dynamic> profileData = {
+                              'full_name': fullNameController.text,
+                              'profile_headline':
+                                  profileHeadlineController.text,
+                            };
+                            await jobSeekerProvider
+                                .updateJobSeekerProfileDetails(
+                                    context, profileData);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 7),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.blue,
+                            ),
+                            child: const Text(
+                              "Save Changes",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }

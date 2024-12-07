@@ -60,6 +60,7 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,

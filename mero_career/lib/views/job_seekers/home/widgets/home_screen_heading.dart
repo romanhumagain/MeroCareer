@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../providers/job_seeker_provider.dart';
 
 class HomeScreenHeading extends StatelessWidget {
   const HomeScreenHeading({
@@ -7,6 +10,18 @@ class HomeScreenHeading extends StatelessWidget {
   });
 
   final Size size;
+  String getGreetingMessage() {
+    int currentHour = DateTime.now().hour;
+
+    if (currentHour < 12) {
+      return "Good Morning";
+    } else if (currentHour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,43 +45,46 @@ class HomeScreenHeading extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            // This Column will take up the available space, pushing the icon to the far right
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Good Morning, ",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 19.8,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5),
-                ),
-                Text(
-                  "Roman Humagain",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.4),
-                ),
-                Text(
-                  "Find the perfect jobs that suites your interest !",
-                  maxLines: 2,
-                  style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12.5,
-                      overflow: TextOverflow.ellipsis,
-                      fontWeight: FontWeight.w400),
-                )
-              ],
-            ),
+          children:  [
+            Consumer<JobSeekerProvider>(builder: (context, provider, child){
+              final jobSeekerData = provider.jobSeekerProfileDetails;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                  Text(
+                    getGreetingMessage(),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5),
+                  ),
+                  Text(
+                    jobSeekerData?['full_name'] ?? "...Loading",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.4),
+                  ),
+                  Text(
+                    "Find the perfect jobs that suites your interest !",
+                    maxLines: 2,
+                    style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12.5,
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.w400),
+                  )
+                ],
+              );
+            }),
+
             // Notification Icon
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: Column(
-                children: [
+                children:  const [
                   Icon(
                     Icons.notifications_active,
                     size: 25,

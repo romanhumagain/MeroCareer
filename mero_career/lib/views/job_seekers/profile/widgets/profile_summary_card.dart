@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../providers/job_seeker_provider.dart';
 
 class ProfileSummary extends StatelessWidget {
   const ProfileSummary({
@@ -17,50 +20,70 @@ class ProfileSummary extends StatelessWidget {
       },
       child: Container(
         width: size.width / 1.15,
-        height: size.height / 8,
+        // height: size.height / 8,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
           padding: const EdgeInsets.all(14.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Profile Summary",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontSize: 17.2),
-                  ),
-                  Text(
-                    "Add",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+          child:
+              Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+            final profileDetails = provider.jobSeekerProfileDetails;
+            final isProfileSummaryAdded =
+                profileDetails?['profile_summary']?.isNotEmpty ?? false;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Profile Summary",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(fontSize: 17.2),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                "Highlight your key career achievements to help recruiters know your potential",
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ],
-          ),
+                    !isProfileSummaryAdded
+                        ? Text(
+                            "Add",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          )
+                        : Icon(
+                            Icons.edit,
+                            color: Colors.blue,
+                          )
+                  ],
+                ),
+                SizedBox(height: 10),
+                !isProfileSummaryAdded
+                    ?
+                Text(
+                  "Highlight your key career achievements to help recruiters know your potential",
+                  style: Theme.of(context).textTheme.titleSmall,
+                ):
+                Text(profileDetails?['profile_summary'], style: Theme.of(context).textTheme.titleSmall,),
+              ],
+            );
+          }),
         ),
       ),
     );
   }
 
   void showAddProfileSummarySection(BuildContext context) {
+    final jobSeekerProfileProvider =
+        Provider.of<JobSeekerProvider>(context, listen: false);
+
     final TextEditingController profileSummaryController =
-        TextEditingController();
+        TextEditingController(
+            text: jobSeekerProfileProvider
+                .jobSeekerProfileDetails?['profile_summary']);
 
     showModalBottomSheet(
       isScrollControlled: true,
@@ -101,16 +124,18 @@ class ProfileSummary extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 18),
-                    TextField(
+                    TextFormField(
                       controller: profileSummaryController,
                       maxLength: 1000,
+                      minLines: 1,
+                      maxLines: null,
                       decoration: const InputDecoration(
                         label: Text(
                           "Profile Summary*",
                           style: TextStyle(fontSize: 15.5),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
                 Padding(
@@ -135,21 +160,31 @@ class ProfileSummary extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 25),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.blue,
-                        ),
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18.5,
-                            color: Colors.white,
+                      GestureDetector(
+                        onTap: () async {
+                          Map<String, dynamic> profileData = {
+                            'profile_summary': profileSummaryController.text
+                          };
+                          await jobSeekerProfileProvider
+                              .updateJobSeekerProfileDetails(
+                                  context, profileData);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 7,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.blue,
+                          ),
+                          child: const Text(
+                            "Save Changes",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.5,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
