@@ -52,7 +52,6 @@ class JobSeekerProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         _jobSeekerProfileDetails = responseData;
-        print(responseData);
         notifyListeners();
       }
       return response;

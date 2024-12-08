@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../providers/job_seeker_job_provider.dart';
 import '../../../../providers/theme_provider.dart';
 import '../../common/app_bar.dart';
 import '../widgets/job_details_card.dart';
 
-class JobsExpiringScreen extends StatelessWidget {
+class JobsExpiringScreen extends StatefulWidget {
   const JobsExpiringScreen({super.key});
+
+  @override
+  State<JobsExpiringScreen> createState() => _JobsExpiringScreenState();
+}
+
+class _JobsExpiringScreenState extends State<JobsExpiringScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchExpiringJobs();
+    });
+  }
+
+  void _fetchExpiringJobs() async {
+    await Provider.of<JobSeekerJobProvider>(context, listen: false)
+        .fetchExipringJobs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,46 +92,37 @@ class JobsExpiringScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 15),
                       Divider(
                         color: Theme.of(context).colorScheme.surfaceContainer,
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 5),
                     ],
                   ),
                 ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    JobDetailsCard(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Consumer<JobSeekerJobProvider>(
+                  builder: (context, provider, child) {
+                final expiringJobList = provider.expiringJobs;
+                if (expiringJobList!.isEmpty) {
+                  return Center(
+                    child: Text("No expiring jobs found ! "),
+                  );
+                }
+                return Column(
+                  children: expiringJobList.map((job) {
+                    return JobDetailsCard(
                       size: size,
                       cardColor: cardColor,
                       tertiaryColor: tertiaryColor,
-                      jobTitle: "AI Engineer ",
-                      companyName: "F1 soft International pvt.ltd",
-                      deadline: "2 hours and 51",
-                      imageUrl: 'assets/images/company_logo/f1.jpg',
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    JobDetailsCard(
-                      size: size,
-                      cardColor: cardColor,
-                      tertiaryColor: tertiaryColor,
-                      jobTitle: "Senior Software Engineer",
-                      companyName: "LeapFrog Technology LTD",
-                      deadline: "2 hours and 51",
-                      imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                  ]),
+                      job: job,
+                    );
+                  }).toList(),
+                );
+              }),
             ),
           ],
         ),

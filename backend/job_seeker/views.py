@@ -23,12 +23,14 @@ from .serializers import (JobSeekerSerializer,
                           SkillSerializer, 
                           ResumeSerializer,
                           AccountSettingSerializer, 
-                          JobSeekerDetailedSerializer)
+                          JobSeekerDetailedSerializer, 
+                          RecruiterDetailedSerializer)
 from rest_framework.exceptions import NotFound, PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from job_seeker.permissions   import IsJobSeeker
 from .models import AccountSetting
+from recruiter.models import Recruiter
 
 class RegisterJobSeekerAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
@@ -419,3 +421,22 @@ class ProfileSetupAnalysis(APIView):
             'has_skills': has_skills,
             'has_career_preference': has_career_preference,
         }, status=200)
+
+
+#  ============ to fetch the selected recruiter detials ===============
+class GetRecruiterDetailsAPI(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RecruiterDetailedSerializer
+    lookup_field ='id'
+    
+    def get_object(self):
+        try:
+            return Recruiter.objects.all()
+        except Recruiter.DoesNotExist:
+            raise NotFound("Recruiter not found!")
+
+    def retrieve(self, request, *args, **kwargs):
+        recruiterInst = self.get_object().get(id = self.kwargs.get('id'))
+        serializer = self.get_serializer(recruiterInst)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    

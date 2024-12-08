@@ -12,7 +12,8 @@ import '../profile/screen/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final bool isLoggedInNow;
-  const MainScreen({super.key,  this.isLoggedInNow = false});
+
+  const MainScreen({super.key, this.isLoggedInNow = false});
 
   @override
   State<MainScreen> createState() => _NavigationMenuState();
@@ -47,7 +48,9 @@ class _NavigationMenuState extends State<MainScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    _fetchJobSeekeProfileDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchJobSeekeProfileDetails();
+    });
   }
 
   void _fetchJobSeekeProfileDetails() async {

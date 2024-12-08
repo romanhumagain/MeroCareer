@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/services/job_services.dart';
 import 'package:mero_career/views/job_seekers/home/screen/jobs_by_category_screen.dart';
 import 'package:mero_career/views/job_seekers/home/screen/jobs_by_organization/view_jobs_by_company.dart';
 
+import '../../../../models/job/job_category_model.dart';
 import 'category_card.dart';
 
 class JobCategorySection extends StatefulWidget {
@@ -21,8 +23,17 @@ class JobCategorySection extends StatefulWidget {
 class _JobCategorySectionState extends State<JobCategorySection> {
   bool _setViewAll = false;
 
+  late Future<List<JobCategory>> _jobCategories;
+
+  @override
+  void initState() {
+    super.initState();
+    _jobCategories = JobServices().getJobCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Center(
       child: Material(
         elevation: 1,
@@ -72,149 +83,40 @@ class _JobCategorySectionState extends State<JobCategorySection> {
               SizedBox(
                 height: 10,
               ),
-              Wrap(
-                spacing: 15,
-                runSpacing: 15,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => JobsByCategoryScreen(
-                                  category: 'IT & Telecommunication')));
-                    },
-                    child: CategoryCard(
-                      size: widget.size,
-                      category: "IT & Telecommunication",
-                      categoryIconUrl: 'assets/images/category/IT.png',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => JobsByCategoryScreen(
-                                  category: 'Architecture & Design')));
-                    },
-                    child: CategoryCard(
-                      size: widget.size,
-                      category: "Architecture/ Design",
-                      categoryIconUrl:
-                          'assets/images/category/architecture.png',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => JobsByCategoryScreen(
-                                  category: 'Teaching & Education')));
-                    },
-                    child: CategoryCard(
-                      size: widget.size,
-                      category: "Teaching/ Education",
-                      categoryIconUrl: 'assets/images/category/teaching.png',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  JobsByCategoryScreen(category: 'Hospital')));
-                    },
-                    child: CategoryCard(
-                      size: widget.size,
-                      category: "Hospital",
-                      categoryIconUrl: 'assets/images/category/hospital.png',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => JobsByCategoryScreen(
-                                  category: 'Banking & Insurance')));
-                    },
-                    child: CategoryCard(
-                      size: widget.size,
-                      category: "Banking/ Insurance",
-                      categoryIconUrl: 'assets/images/category/banking.png',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => JobsByCategoryScreen(
-                                  category: 'Graphic / Designing')));
-                    },
-                    child: CategoryCard(
-                      size: widget.size,
-                      category: "Graphic/ Designing",
-                      categoryIconUrl: 'assets/images/category/graphic.png',
-                    ),
-                  ),
-                  _setViewAll
-                      ? Wrap(spacing: 15, runSpacing: 15, children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          JobsByCategoryScreen(
-                                              category: 'Accounting')));
-                            },
-                            child: CategoryCard(
-                              size: widget.size,
-                              category: "Accounting",
-                              categoryIconUrl:
-                                  'assets/images/category/accounting.png',
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          JobsByCategoryScreen(
-                                              category: 'Construction')));
-                            },
-                            child: CategoryCard(
-                              size: widget.size,
-                              category: "Construction",
-                              categoryIconUrl:
-                                  'assets/images/category/construction.png',
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          JobsByCategoryScreen(
-                                              category: 'Others')));
-                            },
-                            child: CategoryCard(
-                              size: widget.size,
-                              category: "Others",
-                              categoryIconUrl:
-                                  'assets/images/category/others.png',
-                            ),
-                          ),
-                        ])
-                      : SizedBox()
-                ],
-              ),
+              FutureBuilder(
+                  future: _jobCategories,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        height: 50,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          "Error: ${snapshot.error}",
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      );
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text("No Categories Found !"),
+                      );
+                    } else {
+                      final categories = snapshot.data;
+                      return Wrap(
+                        spacing: 15,
+                        runSpacing: 15,
+                        children: categories!
+                            .take(_setViewAll ? categories.length : 6)
+                            .map((category) {
+                          return CategoryCard(size: size, category: category);
+                        }).toList(),
+                      );
+                    }
+                  }),
               SizedBox(
                 height: 25,
               ),

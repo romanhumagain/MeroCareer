@@ -1,10 +1,10 @@
 class JobCategory {
-  final int? id;
+  final int id;
   final String category;
   final String image;
 
   JobCategory({
-    this.id,
+    required this.id,
     required this.category,
     this.image = "",
   });

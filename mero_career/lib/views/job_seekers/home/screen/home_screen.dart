@@ -8,17 +8,23 @@ import 'package:mero_career/views/job_seekers/home/screen/jobs_expiring_screen.d
 import 'package:mero_career/views/job_seekers/home/screen/top_jobs.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/expiring_jobs.dart';
 import '../widgets/home_screen_heading.dart';
 import '../widgets/job_category_section.dart';
 import '../widgets/job_details_card.dart';
+import '../widgets/matched_jobs.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final primaryColor = Theme.of(context).colorScheme.primary;
     final cardColor = Theme.of(context).colorScheme.surface;
     final tertiaryColor = Theme.of(context).colorScheme.tertiary;
 
@@ -37,163 +43,73 @@ class HomeScreen extends StatelessWidget {
             ),
             JobCategorySection(size: size, cardColor: cardColor),
             SizedBox(
-              height: 10,
+              height: 14,
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 10),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+            Divider(
+              color: Theme.of(context).colorScheme.surfaceContainer,
+            ),
+            SizedBox(height: 2),
+            // recent jobs for you
+
+            MatchedJobs(
+                size: size, cardColor: cardColor, tertiaryColor: tertiaryColor),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AllJobs()));
+              },
+              child: Container(
+                width: size.width / 1.2,
+                padding: EdgeInsets.all(9.5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                      colors: [Colors.blue.shade300, Colors.blue.shade600]),
+                  border: Border.all(
+                    color: isDarkMode
+                        ? Colors.grey.shade900
+                        : Colors.grey.shade300, // Set the border color to blue
+                    width: 2.0, // Optional: Set the border width
+                  ),
+                ),
                 child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => TopJobs()));
-                      },
-                      child: TopJobSections(
-                        cardColor: cardColor,
-                        iconColor: Colors.green,
-                        title: "Top Jobs",
-                        subTitle: "69 vacancies",
-                        icon: Icons.star,
-                      ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      "View All Jobs ",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
                     ),
                     SizedBox(
-                      width: 20,
+                      width: 5,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => HotJobs()));
-                      },
-                      child: TopJobSections(
-                        cardColor: cardColor,
-                        iconColor: Colors.red,
-                        title: "Hot Jobs",
-                        subTitle: "9 vacancies",
-                        icon: Icons.local_fire_department,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AllJobs()));
-                      },
-                      child: TopJobSections(
-                        cardColor: cardColor,
-                        iconColor: Colors.blue,
-                        title: "All Jobs",
-                        subTitle: "9 vacancies",
-                        icon: Icons.all_inbox,
-                      ),
+                    Icon(
+                      Icons.all_inbox,
+                      color: Colors.white,
                     ),
                   ],
                 ),
               ),
             ),
-
-            SizedBox(height: 20),
+            SizedBox(height: 12),
 
             Divider(
               color: Theme.of(context).colorScheme.surfaceContainer,
             ),
             SizedBox(height: 15),
-            // recent jobs for you
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Recent Jobs for you ",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16.2,
-                            letterSpacing: 0.4),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AllRecentJobsScreen()));
-                        },
-                        child: Text(
-                          "View All",
-                          style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-
-            // job details
+            ExpiringJobs(size: size),
             SizedBox(
-              height: 5,
+              height: 8,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    JobDetailsCard(
-                      size: size,
-                      cardColor: cardColor,
-                      tertiaryColor: tertiaryColor,
-                      jobTitle: "AI Engineer ",
-                      companyName: "F1 soft International pvt.ltd",
-                      deadline: "2 hours and 51",
-                      imageUrl: 'assets/images/company_logo/f1.jpg',
-                    ),
-                    JobDetailsCard(
-                      size: size,
-                      cardColor: cardColor,
-                      tertiaryColor: tertiaryColor,
-                      jobTitle: "Senior Software Engineer",
-                      companyName: "LeapFrog Technology LTD",
-                      deadline: "2 hours and 51",
-                      imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                    ),
-                    JobDetailsCard(
-                      size: size,
-                      cardColor: cardColor,
-                      tertiaryColor: tertiaryColor,
-                      jobTitle: "Senior Backend Developer",
-                      companyName: "Cotiviti Nepal",
-                      deadline: "4 hours and 51",
-                      imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                    ),
-                    JobDetailsCard(
-                      size: size,
-                      cardColor: cardColor,
-                      tertiaryColor: tertiaryColor,
-                      jobTitle: "Flutter Developer ",
-                      companyName: "F1 soft International",
-                      deadline: "2 hours and 51",
-                      imageUrl: 'assets/images/company_logo/f1.jpg',
-                    ),
-                  ],
-                ),
-              ),
+            Divider(
+              color: Theme.of(context).colorScheme.surfaceContainer,
             ),
-
             SizedBox(
-              height: 25,
+              height: 10,
             ),
-
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -224,118 +140,18 @@ class HomeScreen extends StatelessWidget {
                           MaterialPageRoute(
                               builder: (context) => ViewJobsByCompany()));
                     },
-                    child: Text("Explore Companies"),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-
-            Divider(
-              color: Theme.of(context).colorScheme.surfaceContainer,
-            ),
-            SizedBox(height: 15),
-            SizedBox(
-              width: size.width,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 26, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Jobs Expiring Soon ! ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16.2,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              letterSpacing: 0.4),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        JobsExpiringScreen()));
-                          },
-                          child: Text(
-                            "View All",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 14.2,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          JobDetailsCard(
-                            size: size,
-                            cardColor: cardColor,
-                            tertiaryColor: tertiaryColor,
-                            jobTitle: "Senior Backend Developer",
-                            companyName: "Cotiviti Nepal",
-                            deadline: "4 hours and 51",
-                            imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                          ),
-                          JobDetailsCard(
-                            size: size,
-                            cardColor: cardColor,
-                            tertiaryColor: tertiaryColor,
-                            jobTitle: "Senior Software Engineer",
-                            companyName: "LeapFrog Technology LTD",
-                            deadline: "2 hours and 51",
-                            imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                          ),
-                        ],
-                      ),
+                    child: Text(
+                      "Explore Companies",
+                      style: TextStyle(
+                          color:
+                              isDarkMode ? Colors.white : Colors.grey.shade700,
+                          fontSize: 16),
                     ),
                   )
                 ],
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: cardColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "Never Miss an Opportunity!",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.4,
-                      color: Colors.blue.shade800,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Subscribe to job alerts and get notified about the latest openings.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-                  ),
-                  SizedBox(height: 15),
-                  ElevatedButton(
-                    onPressed: () {
-                      showSubscriptionDialog(context);
-                    },
-                    child: Text("Subscribe Now"),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),

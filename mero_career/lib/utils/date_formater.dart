@@ -72,3 +72,31 @@ String formatEduDate(String dateString) {
 
   return formattedDate;
 }
+
+String formatSavedAt(String savedAt) {
+  try {
+    // Parse the `saved_at` string into a DateTime object
+    DateTime savedAtDate = DateTime.parse(savedAt);
+    DateTime now = DateTime.now();
+
+    // Calculate the difference in time
+    Duration difference = now.difference(savedAtDate);
+
+    if (difference.inSeconds < 60) {
+      return "${difference.inSeconds} seconds ago";
+    } else if (difference.inMinutes < 60) {
+      return "${difference.inMinutes} minutes ago";
+    } else if (difference.inHours < 24) {
+      return "${difference.inHours} hours ago";
+    } else if (difference.inDays == 1) {
+      return "Yesterday";
+    } else if (difference.inDays < 7) {
+      return "${difference.inDays} days ago";
+    } else {
+      // Format as "MMM dd, yyyy" for older dates
+      return DateFormat('MMM dd, yyyy').format(savedAtDate);
+    }
+  } catch (e) {
+    return "Invalid date"; // Handle parsing errors gracefully
+  }
+}

@@ -13,6 +13,8 @@ from rest_framework import serializers
 from recruiter.serializers import RecruiterSerializer
 from jobs.models import Job, RequiredSkill
 from applications.models import SavedJob
+from recruiter.serializers import UserSerializer
+from recruiter.models import Recruiter
 
 
 class JobSeekerJobSerializer(serializers.ModelSerializer):
@@ -158,3 +160,37 @@ class JobSeekerDetailedSerializer(serializers.ModelSerializer):
 
     def get_email(self, obj):
         return obj.user.email if obj else None
+
+
+# ====== serializer to fetch the recruiter details along with the job posting by the recruiter
+class RecruiterJobSerializer(serializers.ModelSerializer):
+  
+    is_saved = serializers.SerializerMethodField(read_only=True)
+  
+    class Meta:
+        model = Job
+        fields = [
+            'id', 'category', 'job_title', 'no_of_vacancy', 'degree',
+            'deadline', 'job_type', 'job_level', 'job_requirement', 'experience',
+            'salary_range', 'is_active', 'is_saved'
+        ]
+        read_only_fields = ['id', 'is_active']
+    
+    def get_is_saved(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+          user = request.user 
+          return SavedJob.objects.filter(user=user.job_seeker, job=obj).exists()
+        return False
+
+
+class RecruiterDetailedSerializer(ModelSerializer):
+  user_details = UserSerializer(read_only = True, source = 'user')
+  recruiter_job_posts = RecruiterJobSerializer(read_only = True, many = True)
+  class Meta:
+    model = Recruiter
+    fields = ['id','user','company_profile_image','company_name','phone_number', 'address','company_type', 'registration_number','pan_number','company_summary', 'linkedin_link','website_link' ,'is_approved', 'user_details', 'recruiter_job_posts']
+    
+    read_only_fields = [
+      'id', 'is_approved', 'user', 'recruiter_job_posts'
+    ]

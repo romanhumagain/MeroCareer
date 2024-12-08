@@ -1,9 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/views/job_seekers/map/screen/company_map.dart';
 import 'package:mero_career/views/job_seekers/map/screen/company_map_screen.dart';
+import 'package:mero_career/views/widgets/my_divider.dart';
+import 'package:provider/provider.dart';
+import '../../../../utils/date_formater.dart';
 
-class JobDetailsScreen extends StatelessWidget {
-  const JobDetailsScreen({super.key});
+class JobDetailsScreen extends StatefulWidget {
+  final int jobId;
+  final String jobTitle;
+
+  const JobDetailsScreen(
+      {super.key, required this.jobId, required this.jobTitle});
+
+  @override
+  State<JobDetailsScreen> createState() => _JobDetailsScreenState();
+}
+
+class _JobDetailsScreenState extends State<JobDetailsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchJobDetails();
+  }
+
+  void _fetchJobDetails() async {
+    await Provider.of<JobSeekerJobProvider>(context, listen: false)
+        .getJobDetails(widget.jobId);
+  }
+
+  void handleSave(Map<String, dynamic> jobData) async {
+    final response =
+        await Provider.of<JobSeekerJobProvider>(context, listen: false)
+            .saveJob(context, jobData);
+
+    if (response?.statusCode == 201) {
+      await Provider.of<JobSeekerJobProvider>(context, listen: false)
+          .getJobDetails(widget.jobId);
+      setState(() {});
+    }
+  }
+
+  void handleUnsave() async {
+    final response =
+        await Provider.of<JobSeekerJobProvider>(context, listen: false)
+            .unSaveJob(context, widget.jobId);
+
+    if (response?.statusCode == 204) {
+      await Provider.of<JobSeekerJobProvider>(context, listen: false)
+          .getJobDetails(widget.jobId);
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,328 +69,536 @@ class JobDetailsScreen extends StatelessWidget {
               },
               child: Icon(Icons.arrow_back_ios)),
           toolbarHeight: 70,
-          title: const Text(
-            "Flutter Developer ",
+          title: Text(
+            widget.jobTitle,
             style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 20.5,
                 letterSpacing: 0.4),
           ),
         ),
-        body: Stack(children: [
-          Column(
-            children: [
-              // Job image at the top
-              SizedBox(
-                width: size.width,
-                height: size.height / 6.9,
-                child: Image.asset(
-                  'assets/images/job_details/hiring2.webp',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Company info
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 20),
-                  Container(
-                    height: 40,
-                    width: 40,
-                    color: Colors.grey,
+        body:
+            Consumer<JobSeekerJobProvider>(builder: (context, provider, child) {
+          final jobDetails = provider.jobDetails;
+          if (jobDetails!.isEmpty) {
+            return Center(
+              child: Text("Job details not found !"),
+            );
+          }
+          return Stack(children: [
+            Column(
+              children: [
+                SizedBox(
+                  width: size.width,
+                  height: size.height / 7.5,
+                  child: ClipRRect(
                     child: Image.asset(
-                      'assets/images/company_logo/leapfrog.jpg',
+                      'assets/images/job_details/hiring2.webp',
                       fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 18.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "F1soft International pvt.ltd",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "Software Companies",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
+                ),
+                const SizedBox(height: 10),
 
-              // Job title and save button
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                // Company info
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Flutter Developer",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(fontSize: 20.5),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(
-                            Icons.bookmark_border,
-                            size: 28,
-                          ),
-                        )
-                      ],
+                    const SizedBox(width: 20),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: jobDetails!['recruiter_details']
+                                  ['company_profile_image'] !=
+                              null
+                          ? Image.network(
+                              jobDetails['recruiter_details']
+                                  ['company_profile_image'],
+                              height: 47,
+                              width: 45,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              'assets/images/company_logo/leapfrog.jpg',
+                              fit: BoxFit.cover,
+                              height: 45,
+                              width: 45,
+                            ),
                     ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: const [
-                        Text("Apply Before: "),
-                        Text(
-                          "5 days from now !",
-                          style: TextStyle(color: Colors.red),
-                        )
-                      ],
+                    const SizedBox(width: 6),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            jobDetails['recruiter_details']['company_name'],
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            jobDetails['recruiter_details']['company_type'],
+                            style: TextStyle(color: Colors.grey, fontSize: 15),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 10),
 
-              // TabBar and TabBarView
-              Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12),
+                // Job title and save button
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 20),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const TabBar(
-                        labelColor: Colors.blue,
-                        unselectedLabelColor: Colors.grey,
-                        indicatorColor: Colors.blue,
-                        tabs: [
-                          Tab(
-                            icon: Icon(Icons.info_outline),
-                            text: "Job Info",
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            jobDetails['job_title'],
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(fontSize: 20.8),
                           ),
-                          Tab(
-                            icon: Icon(Icons.list_alt),
-                            text: "Requirements",
-                          ),
-                          Tab(
-                            icon: Icon(Icons.business),
-                            text: "Company Profile",
-                          ),
-                          Tab(
-                            icon: Icon(Icons.monetization_on),
-                            text: "Salary",
-                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: jobDetails['is_saved']
+                                ? GestureDetector(
+                                    onTap: () {
+                                      handleUnsave();
+                                    },
+                                    child: Icon(
+                                      Icons.bookmark,
+                                      size: 28,
+                                      color: Colors.blue,
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      handleSave({'job': jobDetails['id']});
+                                    },
+                                    child: Icon(
+                                      Icons.bookmark_border,
+                                      size: 28,
+                                    ),
+                                  ),
+                          )
                         ],
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 14),
-                          child: TabBarView(
-                            children: [
-                              Column(
-                                children: [
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  BasicJobInfo(size: size),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  RequirementSkills(),
-                                ],
-                              ),
-                              RequirementSkills(),
-                              const Text("Company Profile"),
-                              Wrap(
-                                spacing: 15,
-                                // Horizontal spacing between children
-                                runSpacing: 8,
-                                // Vertical spacing between rows
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.school, color: tertiaryColor),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        "Under Graduate (Bachelor)",
-                                        style: TextStyle(color: tertiaryColor),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.card_giftcard,
-                                          color: tertiaryColor),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        "Mid Level",
-                                        style: TextStyle(color: tertiaryColor),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.roller_shades_closed_outlined,
-                                          color: tertiaryColor),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        "Not Disclosed",
-                                        style: TextStyle(color: tertiaryColor),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.location_on,
-                                          color: tertiaryColor),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        "Pulchowk, Lalitpur",
-                                        style: TextStyle(color: tertiaryColor),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Text("Apply Before: "),
+                          Text(
+                            formatDeadline(jobDetails['deadline'])
+                                .split(' ')
+                                .sublist(1)
+                                .join(
+                                  " ",
+                                ),
+                            style: TextStyle(color: Colors.red, fontSize: 15),
+                          )
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: size.height / 13.5,
-              width: size.width,
-              decoration:
-                  BoxDecoration(color: Theme.of(context).colorScheme.surface),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.5),
-                    child: Container(
-                      width: size.width / 1.4,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Apply Now",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18),
+
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6.0, horizontal: 12),
+                    child: Column(
+                      children: [
+                        const TabBar(
+                          labelColor: Colors.blue,
+                          unselectedLabelColor: Colors.grey,
+                          indicatorColor: Colors.blue,
+                          tabs: [
+                            Tab(
+                              icon: Icon(Icons.info_outline),
+                              text: "Job Info",
+                            ),
+                            Tab(
+                              icon: Icon(Icons.list_alt),
+                              text: "Requirements",
+                            ),
+                            Tab(
+                              icon: Icon(Icons.business),
+                              text: "Company Profile",
+                            ),
+                            Tab(
+                              icon: Icon(Icons.monetization_on),
+                              text: "Salary",
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 14),
+                            child: TabBarView(
+                              children: [
+                                Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    BasicJobInfo(
+                                      size: size,
+                                      jobDetails: jobDetails,
+                                    ),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                  ],
+                                ),
+                                RequirementSkills(
+                                  jobRequirements:
+                                      jobDetails['job_requirement'],
+                                  requiredSkills: jobDetails['skills_display'],
+                                ),
+                                CompanyProfile(
+                                    recruiterDetails:
+                                        jobDetails['recruiter_details']),
+                                // for salary
+                                SalaryDetails(jobDetails: jobDetails)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              child: Container(
+                height: size.height / 13.5,
+                width: size.width,
+                decoration:
+                    BoxDecoration(color: Theme.of(context).colorScheme.surface),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.5),
+                      child: Container(
+                        width: size.width / 1.4,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Apply Now",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CompanyMap()));
-                    },
-                    child: GestureDetector(
+                    SizedBox(
+                      width: 20,
+                    ),
+                    GestureDetector(
                       onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => CompanyMapScreen(
-                                    companyAddress: "Kathmandu",
-                                    companyName: "Cotiviti Nepal")));
+                                builder: (context) => CompanyMap()));
                       },
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Theme.of(context).colorScheme.surfaceContainer,
-                        ),
-                        child: Icon(
-                          Icons.location_on,
-                          size: 30,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CompanyMapScreen(
+                                      companyAddress:
+                                          jobDetails['recruiter_details']
+                                              ['address'],
+                                      companyName:
+                                          jobDetails['recruiter_details']
+                                              ['company_name'])));
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color:
+                                Theme.of(context).colorScheme.surfaceContainer,
+                          ),
+                          child: Icon(
+                            Icons.location_on,
+                            size: 30,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          )
-        ]),
+            )
+          ]);
+        }),
       ),
     );
   }
 }
 
-class RequirementSkills extends StatelessWidget {
-  const RequirementSkills({
+class CompanyProfile extends StatefulWidget {
+  const CompanyProfile({
     super.key,
+    required this.recruiterDetails,
   });
+
+  final Map<String, dynamic>? recruiterDetails;
+
+  @override
+  State<CompanyProfile> createState() => _CompanyProfileState();
+}
+
+class _CompanyProfileState extends State<CompanyProfile> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final recruiter = widget.recruiterDetails;
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Company Profile Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                recruiter?['company_profile_image'] ??
+                    'https://via.placeholder.com/150',
+                height: 60,
+                width: 60,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 16),
+
+            // Company Name
+            Text(
+              recruiter?['company_name'] ?? 'Company Name',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
+            ),
+            SizedBox(height: 8),
+
+            // Company Type & Phone Number
+            Row(
+              children: [
+                Icon(Icons.business, size: 18, color: Colors.grey),
+                SizedBox(width: 5),
+                Text(
+                  recruiter?['company_type'] ?? 'Company Type',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.phone, size: 18, color: Colors.grey),
+                SizedBox(width: 5),
+                Text(
+                  recruiter?['phone_number'] ?? 'Phone Number',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.location_on, size: 18, color: Colors.grey),
+                SizedBox(width: 5),
+                Text(
+                  recruiter?['address'] ?? 'Address',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+
+            // Links (LinkedIn & Website)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // LinkedIn Link
+                if (recruiter?['linkedin_link'] != null)
+                  IconButton(
+                    icon: Icon(Icons.account_box, color: Colors.blue),
+                    onPressed: () {},
+                  ),
+                // Website Link
+                if (recruiter?['website_link'] != null)
+                  IconButton(
+                    icon: Icon(Icons.language, color: Colors.blue),
+                    onPressed: () {},
+                  ),
+              ],
+            ),
+            SizedBox(height: 16),
+            // Company Summary
+            Text(
+              _isExpanded
+                  ? (recruiter?['company_summary'] ??
+                      'Company Summary not available.')
+                  : (recruiter?['company_summary']?.length ?? 0) > 100
+                      ? "${recruiter?['company_summary']?.substring(0, 100)}..."
+                      : (recruiter?['company_summary'] ??
+                          'Company Summary not available.'),
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 8),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              child: Text(
+                _isExpanded ? "Read Less" : "Read More",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+
+            SizedBox(height: 26),
+
+            if (recruiter?['user_details']['is_verified'] == true)
+              Row(
+                children: const [
+                  Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  SizedBox(width: 5),
+                  Text(
+                    'Verified Recruiter',
+                    style: TextStyle(fontSize: 16, color: Colors.green),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SalaryDetails extends StatelessWidget {
+  const SalaryDetails({
+    super.key,
+    required this.jobDetails,
+  });
+
+  final Map<String, dynamic>? jobDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Salary",
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(fontSize: 18),
+        ),
+        SizedBox(
+          height: 2,
+        ),
+        MyDivider(),
+        SizedBox(
+          height: 5,
+        ),
+        Text(
+          jobDetails?['salary_range'] != null
+              ? "Salary Range: ${jobDetails?['salary_range']} K/month"
+              : "Salary information not disclosed by the recruiter.",
+          style: TextStyle(fontSize: 17, letterSpacing: 0.2),
+        )
+      ],
+    );
+  }
+}
+
+class RequirementSkills extends StatelessWidget {
+  final String jobRequirements;
+  final List<dynamic> requiredSkills;
+
+  const RequirementSkills(
+      {super.key, required this.jobRequirements, required this.requiredSkills});
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topLeft,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Professional Skill Required",
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium
-                ?.copyWith(fontSize: 17.5),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Wrap(
-            alignment: WrapAlignment.start, // Aligns children to the start
-            spacing: 10, // Horizontal spacing between skill cards
-            runSpacing: 10, // Vertical spacing between rows of skill cards
-            children: const [
-              SkillCard(skill: "Dart"),
-              SkillCard(skill: "Flutter"),
-              SkillCard(skill: "RESTful API"),
-              SkillCard(skill: "Django"),
-            ],
-          ),
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Basic Requirement",
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 18.4),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              jobRequirements,
+              style: TextStyle(fontSize: 15),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            MyDivider(),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Professional Skill Required",
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 17.6),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 10,
+                runSpacing: 10,
+                children: requiredSkills.map((skill) {
+                  return SkillCard(skill: skill);
+                }).toList()),
+          ],
+        ),
       ),
     );
   }
@@ -388,9 +645,11 @@ class BasicJobInfo extends StatelessWidget {
   const BasicJobInfo({
     super.key,
     required this.size,
+    required this.jobDetails,
   });
 
   final Size size;
+  final Map<String, dynamic> jobDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -410,23 +669,47 @@ class BasicJobInfo extends StatelessWidget {
         JobInfoTable(
           size: size,
           data: "No. of Vacency",
-          value: "2",
+          value: jobDetails['no_of_vacancy'].toString(),
         ),
         SizedBox(
-          height: 2,
+          height: 5,
         ),
         JobInfoTable(
           size: size,
           data: "Available for ",
-          value: "Part Time",
+          value: jobDetails['job_type'],
         ),
         SizedBox(
-          height: 2,
+          height: 5,
         ),
         JobInfoTable(
           size: size,
           data: "Category",
-          value: "IT & Telecommunication",
+          value: jobDetails['category_name'],
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        JobInfoTable(
+          size: size,
+          data: "Degree",
+          value: jobDetails['degree'],
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        JobInfoTable(
+          size: size,
+          data: "Job Level",
+          value: jobDetails['job_level'],
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        JobInfoTable(
+          size: size,
+          data: "Experience",
+          value: "${jobDetails['experience'].toString()} Years",
         ),
         SizedBox(
           height: 10,
@@ -446,14 +729,12 @@ class SkillCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.blue.shade300,
       ),
       child: Text(
         skill,
-        style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w500),
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
       ),
     );
   }
@@ -478,20 +759,20 @@ class JobInfoTable extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .titleSmall
-                ?.copyWith(fontSize: 16, fontWeight: FontWeight.w400),
+                ?.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
         SizedBox(
           width: 6,
         ),
         SizedBox(
-          width: size.width / 2,
+          // width: size.width / 2,
           child: Text(
             value,
             style: Theme.of(context)
                 .textTheme
                 .titleSmall
-                ?.copyWith(fontSize: 16, fontWeight: FontWeight.w400),
+                ?.copyWith(fontSize: 16.5, fontWeight: FontWeight.w500),
           ),
         )
       ],

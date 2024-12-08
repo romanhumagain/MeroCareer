@@ -16,6 +16,7 @@ from job_seeker.models import JobSeeker, CareerPreference
 from rest_framework.views import APIView
 from recruiter.serializers import RecruiterSerializer
 from job_seeker.serializers import JobSeekerJobSerializer
+from .filters import JobFilter
 
 # --------------------------------J O B  S E E K E R--------------------------------
 
@@ -38,8 +39,41 @@ class JobListByCategoryView(ListAPIView):
         except JobCategory.DoesNotExist:
             return Response({'detail': "Job Category doesn't exist."}, status=status.HTTP_400_BAD_REQUEST)
         
+        
         jobInst = Job.objects.filter(category=jobCategoryInst)
         
+        job_status = self.request.query_params.get('status', None)
+        if job_status == "active":
+            jobInst = jobInst.filter(deadline__gte = timezone.now())
+        
+        elif job_status == "closed":
+            jobInst = jobInst.filter(deadline__lt = timezone.now())
+        
+        serializer = self.get_serializer(jobInst, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_serializer_context(self):
+     return {'request':self.request}
+
+
+# ======= TO BROWSE THE JOB BASED ON The JOB SEEKER PREFERENCE ========   
+class MatchedJobAPIView(ListAPIView):
+    serializer_class = JobSeekerJobSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        
+        jobSeekerPreCatInst = user.job_seeker.job_seeker_career_preference.prefered_job_category
+    
+        # try:
+        #     jobCategoryInst = JobCategory.objects.get()
+        # except JobCategory.DoesNotExist:
+        #     return Response({'detail': "Job Category doesn't exist."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        jobInst = Job.objects.filter(category=jobSeekerPreCatInst,deadline__gte = timezone.now() )
         serializer = self.get_serializer(jobInst, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -132,6 +166,20 @@ class OrganizationBasedJob(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
     
     
+    
+# ======== TO SEARCH FOR ALL ACTIVE JOBS OF ALL CATEGORY =========
+class ActiveJobSearchAPIView(ListAPIView):
+    serializer_class = JobSeekerJobSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        jobInst = Job.objects.filter(deadline__gt= timezone.now()).order_by('-id')
+        
+        serializer = self.get_serializer(jobInst, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+ 
 # ----------------------------------R E C R U I T E R-------------------------------------
 
 
@@ -257,3 +305,41 @@ class JobRetrieveUpdateDeleteAPI(RetrieveUpdateDestroyAPIView):
         except Job.DoesNotExist:
             return Response({'detail': "Job doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
 
+
+# ========== JOB POST LIST OF SPCEIFIC RECRUTIER ========
+class ListRecruiterJobPost(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = JobSeekerJobSerializer
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        recruiterId = self.kwargs.get('id')
+
+        # Assuming you want to filter by recruiter_id, not the job id
+        jobsInst = Job.objects.filter(recruiter_id=recruiterId).order_by('-id')
+
+        filter_by = self.request.query_params.get('filter_by', None)
+
+        # Apply filtering if the filter_by parameter is present
+        if filter_by is not None:
+            if filter_by == 'active':
+                jobsInst = jobsInst.filter(deadline__gt=timezone.now())
+
+            elif filter_by == "closed":
+                thirty_days_ago = timezone.now() - timedelta(days=30)
+                jobsInst = jobsInst.filter(
+                    deadline__lt=timezone.now(),
+                    deadline__gte=thirty_days_ago
+                )
+
+        # Return serialized job data
+        serializer = self.get_serializer(jobsInst, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+
+class JobViewSet(ModelViewSet):
+    queryset = Job.objects.filter(deadline__gte = timezone.now())
+    serializer_class = JobSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = JobFilter

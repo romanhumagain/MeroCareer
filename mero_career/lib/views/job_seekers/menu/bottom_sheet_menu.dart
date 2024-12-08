@@ -4,6 +4,7 @@ import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/account_security_management.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/contact_us.dart';
+import 'package:mero_career/views/job_seekers/menu/screen/saved_post_screen.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/settings_page.dart';
 import 'package:mero_career/views/shared/login/login_page.dart';
 import 'package:mero_career/views/widgets/custom_confirmation_message.dart';
@@ -91,7 +92,12 @@ class BottomSheetMenu extends StatelessWidget {
                 SizedBox(
                   height: 50,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SavedPostScreen()));
+                    },
                     child: ListTile(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),

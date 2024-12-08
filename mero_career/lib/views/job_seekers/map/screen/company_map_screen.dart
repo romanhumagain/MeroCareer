@@ -74,8 +74,14 @@ class _CompanyMapScreenState extends State<CompanyMapScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: Icon(Icons.arrow_back_ios)),
-          title: Text("Location of ${widget.companyName}"),
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 20,
+              )),
+          title: Text(
+            "Location of ${widget.companyName}",
+            style: TextStyle(fontSize: 18, letterSpacing: 0.2),
+          ),
         ),
         body: _isLoading
             ? Center(

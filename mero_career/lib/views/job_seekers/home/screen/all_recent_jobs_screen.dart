@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../providers/job_seeker_job_provider.dart';
 import '../../../../providers/theme_provider.dart';
 import '../../common/app_bar.dart';
 import '../widgets/job_details_card.dart';
 
-class AllRecentJobsScreen extends StatelessWidget {
+class AllRecentJobsScreen extends StatefulWidget {
   const AllRecentJobsScreen({super.key});
+
+  @override
+  State<AllRecentJobsScreen> createState() => _AllRecentJobsScreenState();
+}
+
+class _AllRecentJobsScreenState extends State<AllRecentJobsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchMatchedJob();
+    });
+  }
+
+  void _fetchMatchedJob() async {
+    await Provider.of<JobSeekerJobProvider>(context, listen: false)
+        .fetchMatchedJob();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +49,7 @@ class AllRecentJobsScreen extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
               child: Container(
                 width: size.width,
-                height: size.height / 7,
+                height: size.height / 8.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   gradient: LinearGradient(
@@ -44,6 +64,7 @@ class AllRecentJobsScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Looking for your next opportunity?",
@@ -69,98 +90,47 @@ class AllRecentJobsScreen extends StatelessWidget {
               ),
             ),
             // Introductory Header
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/images/job_details/jobs_illustration.png',
-                    height: 230,
-                  )
-                ],
+            SizedBox(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/job_details/jobs_illustration.png',
+                      height: 180,
+                    )
+                  ],
+                ),
               ),
             ),
 
             SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                children: [
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "AI Engineer ",
-                    companyName: "F1 soft International pvt.ltd",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/f1.jpg',
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Software Engineer",
-                    companyName: "LeapFrog Technology LTD",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Backend Developer",
-                    companyName: "Cotiviti Nepal",
-                    deadline: "4 hours and 51",
-                    imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Flutter Developer ",
-                    companyName: "F1 soft International",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/f1.jpg',
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Backend Developer",
-                    companyName: "Cotiviti Nepal",
-                    deadline: "4 hours and 51",
-                    imageUrl: 'assets/images/company_logo/cotiviti.jpg',
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  JobDetailsCard(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor,
-                    jobTitle: "Senior Software Engineer",
-                    companyName: "LeapFrog Technology LTD",
-                    deadline: "2 hours and 51",
-                    imageUrl: 'assets/images/company_logo/leapfrog.jpg',
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                ],
-              ),
+              child: Consumer<JobSeekerJobProvider>(
+                  builder: (context, provider, child) {
+                final matchedJobLists = provider.matchedJobs;
+                final isLoading = provider.isLoading;
+                if (matchedJobLists!.isEmpty) {
+                  return Center(
+                    child: Text("No recent jobs found ! "),
+                  );
+                }
+                return Column(
+                  children: matchedJobLists.map((job) {
+                    return JobDetailsCard(
+                      size: size,
+                      cardColor: cardColor,
+                      tertiaryColor: tertiaryColor,
+                      job: job,
+                    );
+                  }).toList(),
+                );
+              }),
+            ),
+            SizedBox(
+              height: 40,
             )
           ],
         ),

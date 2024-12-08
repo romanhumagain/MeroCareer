@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from applications.models import Applicant
+from applications.models import Applicant, SavedJob
+from job_seeker.serializers import JobSeekerJobSerializer
 from jobs.serializers import JobSerializer
 
 
@@ -11,3 +12,9 @@ class ApplicantSerializer(serializers.ModelSerializer):
     fields = ['id', 'user', 'job', 'status', 'applied_on', 'job_details' ]
     read_only_fields = ['user']
     
+class SavedJobSerializer(serializers.ModelSerializer):
+    job = JobSeekerJobSerializer()
+
+    class Meta:
+        model = SavedJob
+        fields = ['id', 'user', 'job', 'saved_at']

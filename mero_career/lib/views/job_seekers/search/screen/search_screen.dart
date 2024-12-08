@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:mero_career/services/job_seeker_job_services.dart';
+import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -8,16 +12,51 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  // Filter options
-  String? jobType = "All";
-  String? experience = "All";
-  String? jobLevel = "All";
-  String? jobCategory = "All";
+  String jobType = "All";
+  String experience = "All";
+  String jobLevel = "All";
+  String jobCategory = "All";
+  final TextEditingController searchController = TextEditingController();
+
+  JobSeekerJobServices jobServices = JobSeekerJobServices();
+  List<dynamic>? filteredJobLists = [];
+
+  void handleSearch() async {
+    try {
+      final int? experienceValue =
+          experience != "All" ? int.tryParse(experience) : null;
+
+      final response = await jobServices.filterJob(
+        job_title: searchController.text,
+        job_level: jobLevel,
+        experience: experienceValue,
+        job_type: jobType,
+        category_name: jobCategory,
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        setState(() {
+          filteredJobLists = json.decode(response.body);
+        });
+      } else {
+        showCustomFlushbar(
+          context: context,
+          message: "Couldn't search job!",
+          type: MessageType.error,
+        );
+      }
+    } catch (e) {
+      showCustomFlushbar(
+        context: context,
+        message: "An error occurred: ${e.toString()}",
+        type: MessageType.error,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController searchController = TextEditingController();
-
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -93,7 +132,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-
                   GestureDetector(
                     onTap: () {
                       _showFilters(context);
@@ -111,16 +149,20 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Space between TextField and button
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.white,
+                  GestureDetector(
+                    onTap: () {
+                      handleSearch();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -137,7 +179,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                       decoration: BoxDecoration(
                           color: Colors.blue.shade300,
                           borderRadius: BorderRadius.circular(12)),
@@ -151,7 +193,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                       decoration: BoxDecoration(
                           color: Colors.blue.shade300,
                           borderRadius: BorderRadius.circular(12)),
@@ -165,7 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                       decoration: BoxDecoration(
                           color: Colors.blue.shade300,
                           borderRadius: BorderRadius.circular(12)),
@@ -179,7 +221,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                       decoration: BoxDecoration(
                           color: Colors.blue.shade300,
                           borderRadius: BorderRadius.circular(12)),
@@ -216,28 +258,35 @@ class _SearchScreenState extends State<SearchScreen> {
             Divider(
               color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade400,
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Flutter Developer",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w400, fontSize: 16)),
-                  Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(2.5)),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-                  )
-                ],
-              ),
-            )
+            Column(
+              children: filteredJobLists!.map((data) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Flutter Developer",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  fontWeight: FontWeight.w400, fontSize: 16)),
+                      Container(
+                        padding: EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(2.5)),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.red,
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
@@ -291,9 +340,17 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     SizedBox(height: 20),
                     FilterDropdownButton(
-                      items: const ["All", "Part-Time", "Full-Time", "Remote"],
+                      items: const [
+                        "All",
+                        "Full Time",
+                        "Part Time",
+                        "Internship",
+                        "Remote",
+                        "Freelance",
+                        "Traineeship"
+                      ],
                       labelText: "Job Type",
-                      initialValue: jobType!,
+                      initialValue: jobType,
                       onChanged: (value) {
                         setState(() {
                           jobType = value;
@@ -302,9 +359,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     SizedBox(height: 20),
                     FilterDropdownButton(
-                      items: const ["All", "Junior", "Mid-Level", "Senior"],
+                      items: const ["All", "1", "2", "3", "4", "5"],
                       labelText: "Experience",
-                      initialValue: experience!,
+                      initialValue: experience,
                       onChanged: (value) {
                         setState(() {
                           experience = value;
@@ -315,12 +372,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     FilterDropdownButton(
                       items: const [
                         "All",
-                        "Entry Level",
+                        "Top Level",
+                        "Senior Level",
                         "Mid Level",
-                        "Senior Level"
+                        "Entry Level",
+                        "Fresh Graduate"
                       ],
                       labelText: "Job Level",
-                      initialValue: jobLevel!,
+                      initialValue: jobLevel,
                       onChanged: (value) {
                         setState(() {
                           jobLevel = value;
@@ -331,14 +390,18 @@ class _SearchScreenState extends State<SearchScreen> {
                     FilterDropdownButton(
                       items: const [
                         "All",
-                        "IT",
-                        "Banking",
-                        "Designer",
+                        "IT & Telecommunication",
+                        "Architecture & Design",
+                        "Teaching & Education",
+                        "Hospital",
+                        "Accounting & Finance",
+                        "Banking & Insurance",
+                        "Graphic Designing",
                         "Construction",
-                        "Hospitality"
+                        "Others"
                       ],
                       labelText: "Job Categories",
-                      initialValue: jobCategory!,
+                      initialValue: jobCategory,
                       onChanged: (value) {
                         setState(() {
                           jobCategory = value;

@@ -1,13 +1,14 @@
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, DestroyAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.views import APIView
 from jobs.models import Job
 from job_seeker.models import JobSeeker
-from .serializers import ApplicantSerializer
+from .serializers import ApplicantSerializer, SavedJobSerializer
 from rest_framework.permissions import IsAuthenticated
 from applications.models import Applicant, SavedJob
-
+from rest_framework.exceptions import NotFound
+from django.utils import timezone
 
 
 class ApplicationAPIView(ListCreateAPIView):
@@ -63,7 +64,11 @@ class SaveJobAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        job_seeker = request.user.job_seeker
+        user = request.user
+        if user.role != "job_seeker":
+            return Response({'detail':'You are not authorized for this !'}, status=status.HTTP_403_FORBIDDEN)
+        
+        job_seeker = user.job_seeker
         job_id = request.data.get('job')
         
         if not job_id:
@@ -86,7 +91,11 @@ class UnsaveJobAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
-        job_seeker = request.user.job_seeker
+        user = request.user
+        if user.role != "job_seeker":
+            return Response({'detail':'You are not authorized for this !'}, status=status.HTTP_403_FORBIDDEN)
+        
+        job_seeker = user.job_seeker
         
         job_id = self.kwargs.get('id')
         
@@ -104,3 +113,27 @@ class UnsaveJobAPIView(APIView):
             return Response({'detail': 'Job unsaved successfully'}, status=status.HTTP_204_NO_CONTENT)
         except SavedJob.DoesNotExist:
             return Response({'detail': 'Job not found in saved jobs'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class SavedPostListView(ListAPIView):
+    serializer_class = SavedJobSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        queryset = SavedJob.objects.filter(user=user.job_seeker, job__deadline__gte=timezone.now()).order_by('-saved_at')
+
+    
+        include_closed = self.request.query_params.get('include_closed', 'false') == 'true'
+        
+        if include_closed:
+            queryset = SavedJob.objects.filter(user=user.job_seeker, job__deadline__lte=timezone.now()).order_by('-saved_at')
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+    
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

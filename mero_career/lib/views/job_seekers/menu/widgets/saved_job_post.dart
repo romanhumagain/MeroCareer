@@ -6,34 +6,47 @@ import 'package:provider/provider.dart';
 import '../../../../providers/job_seeker_job_provider.dart';
 import '../../../../providers/theme_provider.dart';
 
-class JobDetailsCard extends StatelessWidget {
-  final Map<String, dynamic> job;
+class SavedJobPostDetails extends StatelessWidget {
+  final Map<String, dynamic> savedJob;
   final Size size;
-  final Color cardColor;
-  final Color tertiaryColor;
 
-  const JobDetailsCard(
-      {super.key,
-      required this.size,
-      required this.tertiaryColor,
-      required this.cardColor,
-      required this.job});
+  const SavedJobPostDetails(
+      {super.key, required this.size, required this.savedJob});
 
   @override
   Widget build(BuildContext context) {
+    final cardColor = Theme.of(context).colorScheme.surface;
+    final tertiaryColor = Theme.of(context).colorScheme.tertiary;
+
+    final job = savedJob['job'];
+    final savedAt = savedJob['saved_at'];
+
     void handleSave(Map<String, dynamic> jobData) async {
-      await Provider.of<JobSeekerJobProvider>(context, listen: false)
-          .saveJob(context, jobData);
+      final response =
+          await Provider.of<JobSeekerJobProvider>(context, listen: false)
+              .saveJob(context, jobData);
+
+      if (response?.statusCode == 201) {
+        await Provider.of<JobSeekerJobProvider>(context, listen: false)
+            .getSavedPosts(false);
+      }
     }
 
-    void handleUnsave(int jobId) async {
-      await Provider.of<JobSeekerJobProvider>(context, listen: false)
-          .unSaveJob(context, jobId);
+    void handleUnsave() async {
+      final response =
+          await Provider.of<JobSeekerJobProvider>(context, listen: false)
+              .unSaveJob(context, job['id']);
+
+      if (response?.statusCode == 204) {
+        await Provider.of<JobSeekerJobProvider>(context, listen: false)
+            .getSavedPosts(false);
+      }
     }
 
     bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
+
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.only(top: 5, bottom: 25),
       child: Row(
         children: [
           Material(
@@ -121,7 +134,7 @@ class JobDetailsCard extends StatelessWidget {
                           child: job['is_saved']
                               ? GestureDetector(
                                   onTap: () {
-                                    handleUnsave(job['id']);
+                                    handleUnsave();
                                   },
                                   child: Icon(
                                     Icons.bookmark,
@@ -244,6 +257,24 @@ class JobDetailsCard extends StatelessWidget {
                               color: isDarkMode
                                   ? Colors.grey.shade300
                                   : Colors.grey.shade800,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(width: 5),
+                        Text(
+                          "Saved ${formatSavedAt(savedAt)}",
+                          style: TextStyle(
+                              color: isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade600,
                               fontWeight: FontWeight.w400,
                               fontSize: 15),
                         )

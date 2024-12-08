@@ -13,7 +13,10 @@ from jobs.views import (JobCategoryViewSet,
                         JobRetriveAPIView, 
                         ExpiringJobAPIView, 
                         OrganizationBasedJob, 
-                        ActiveJobListAPIView)
+                        ActiveJobListAPIView, 
+                        ListRecruiterJobPost, 
+                        MatchedJobAPIView, 
+                        JobViewSet)
 
 from job_seeker.views import (RegisterJobSeekerAPIView,
                               JobSeekerRetriveUpdateDeleteAPIView, 
@@ -24,12 +27,13 @@ from job_seeker.views import (RegisterJobSeekerAPIView,
                               SkillAPIView,
                               ResumeViewSet,
                               ProfileSetupAnalysis,
-                              JobSeekerRetriveAPIView
+                              JobSeekerRetriveAPIView,
+                              GetRecruiterDetailsAPI
                               )
 
 from recruiter.views import (RegisterRecruiterAPIView, RetrieveUpdateDeleteRecruiterAPI)
 
-from applications.views import (ApplicationAPIView, ApplicationDeleteAPIView, SaveJobAPIView, UnsaveJobAPIView)
+from applications.views import (ApplicationAPIView, ApplicationDeleteAPIView, SaveJobAPIView, UnsaveJobAPIView, SavedPostListView)
 
 router = routers.DefaultRouter()
 router.register(r'jobs-category', JobCategoryViewSet, basename='jobs_category')
@@ -37,6 +41,8 @@ router.register(r'education-details', EducationDetailViewSet, basename='educatio
 router.register(r'experience-details', ExperienceDetailViewSet, basename='experience-detail')
 router.register(r'project-details', ProjectDetailViewSet, basename='project-detail')
 router.register(r'resume', ResumeViewSet, basename='resume')
+router.register(r'job', JobViewSet, basename='jobs')
+
 urlpatterns = router.urls
 
 
@@ -49,12 +55,16 @@ urlpatterns = [
   path('career-preference/', CareerPreferenceAPIView.as_view(), name='career_preference'),
   path('skill/', SkillAPIView.as_view(), name='skill_api'),
   path('profile-setup-analysis/', ProfileSetupAnalysis.as_view(), name='profile_setup_analysis'),
+  path('recruiter/job/<int:id>/', GetRecruiterDetailsAPI.as_view(), name='recruiter_with_posted_job_details'),
+  path('joblist/<int:id>/', ListRecruiterJobPost.as_view(), name='recruiter_job_details'),
   
   
   path('application/', ApplicationAPIView.as_view(), name='application_list_create'),
   path('application/<int:id>/', ApplicationDeleteAPIView.as_view(), name='application_delete'),
   path('save-job/', SaveJobAPIView.as_view(), name='save-job'),
   path('unsave-job/<int:id>/', UnsaveJobAPIView.as_view(), name='unsave-job'),
+  path('saved-post/', SavedPostListView.as_view(), name='saved-job-post'),
+  
   
   path('user/login/', LoginAPIView.as_view(), name='login_user'),
   path("send-otp/", SendOTPAPIView.as_view(), name="send-otp-auth"),
@@ -66,9 +76,10 @@ urlpatterns = [
   path('jobs/category/<int:id>/', JobListByCategoryView.as_view(), name='job-list-by-category'),
   path('get-job-details/<int:id>/', JobRetriveAPIView.as_view(), name='get_job_details'),
   path('jobs/expiring-soon/', ExpiringJobAPIView.as_view(), name='expiring-jobs'),
-  path('jobs/expiring-soon/', ExpiringJobAPIView.as_view(), name='expiring-jobs'),
   path('jobs/organization/', OrganizationBasedJob.as_view(), name='job_post_by_organization'),
   path('active/jobs/', ActiveJobListAPIView.as_view(), name='active_job_list'),
+  path('matched/jobs/', MatchedJobAPIView.as_view(), name='matched_job_list'),
+  
   
   
   

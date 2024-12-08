@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_provider.dart';
+import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/providers/recruiter_provider.dart';
@@ -15,6 +16,7 @@ void main() {
       ChangeNotifierProvider(create: (_) => JobProvider()),
       ChangeNotifierProvider(create: (_) => JobSeekerProvider()),
       ChangeNotifierProvider(create: (_) => ProfileSetupProvider()),
+      ChangeNotifierProvider(create: (_) => JobSeekerJobProvider()),
     ],
     child: MyApp(),
   ));
