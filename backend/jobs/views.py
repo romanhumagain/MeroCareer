@@ -1,8 +1,8 @@
 from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet
-from .serializers import JobCategorySerializer, JobSerializer, RequiredSkillSerializer
-from .models import JobCategory, RequiredSkill, Job
-from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView, RetrieveAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from .serializers import JobCategorySerializer, JobSerializer, RequiredSkillSerializer, RecentSearchSerializer
+from .models import JobCategory, RequiredSkill, Job, RecentSearch
+from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView, RetrieveAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -336,10 +336,89 @@ class ListRecruiterJobPost(ListAPIView):
         serializer = self.get_serializer(jobsInst, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    
-
 class JobViewSet(ModelViewSet):
     queryset = Job.objects.filter(deadline__gte = timezone.now())
     serializer_class = JobSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = JobFilter
+    
+    
+     
+#  ==== to add the recent searched ======
+class RecentSearchAPIView(ListCreateAPIView):
+    serializer_class = RecentSearchSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs): 
+        
+        recentSearchedUsers = RecentSearch.objects.filter(searched_by=request.user.job_seeker)
+        serializer = self.get_serializer(recentSearchedUsers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        print(data)
+
+        # to get the id of the searched job
+        job_id = data.get('job')
+        
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return Response({'message': 'Job does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        recentSearchedUser = RecentSearch.objects.filter(searched_by=request.user.job_seeker, searched_job=job)
+        if recentSearchedUser.exists():
+            recentSearchedUser.delete()
+        
+        data = {
+            'searched_by': request.user.job_seeker.id,
+            'searched_job': job.id
+        }
+
+        serializer = self.get_serializer(data=data) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Successfully added to recent searches'}, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RemoveFromRecentSearchAPIView(DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+
+    def delete(self, request, *args, **kwargs):
+        
+        job_id = self.kwargs.get('id')
+        try:
+            job = Job.objects.get(id = job_id)
+        except Job.DoesNotExist:
+            return Response({"detail": "Job not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+        # Check if the recent search exists
+            recentSearchedUser = RecentSearch.objects.get(searched_by = request.user.job_seeker, searched_job = job )
+        except:
+            return Response({'detail':'No recent search found'}, status=status.HTTP_404_NOT_FOUND)
+        if recentSearchedUser:
+            recentSearchedUser.delete()
+            return Response({"message": "Successfully removed from recent search."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"message": "No such search entry found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+class ClearAllSearchAPIView(DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def destroy(self, request, *args, **kwargs):
+        recentAllSearchedUser = RecentSearch.objects.filter(searched_by=request.user.job_seeker)
+        
+        if not recentAllSearchedUser.exists():
+            return Response({"message": "No recent searches found to delete."}, status=status.HTTP_404_NOT_FOUND)
+        
+        recentAllSearchedUser.delete()
+        
+        return Response({"message": "Successfully removed all from recent search."}, status=status.HTTP_204_NO_CONTENT)
+
+        
+        

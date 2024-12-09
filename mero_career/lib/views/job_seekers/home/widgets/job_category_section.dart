@@ -88,7 +88,7 @@ class _JobCategorySectionState extends State<JobCategorySection> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return SizedBox(
-                        height: 50,
+                        height: 140,
                         child: Center(
                           child: CircularProgressIndicator(),
                         ),

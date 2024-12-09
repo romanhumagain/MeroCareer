@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import JobCategory, Job, RequiredSkill
+from .models import JobCategory, Job, RequiredSkill,RecentSearch
 from rest_framework import serializers
 from recruiter.serializers import RecruiterSerializer
 from recruiter.models import Recruiter
@@ -49,3 +49,13 @@ class OrganizationBasedJob(serializers.ModelSerializer):
     model = JobCategory
     fields = ['id', 'name']
     
+    
+class RecentSearchSerializer(ModelSerializer):
+    searched_job_details = JobSerializer(read_only = True, source ='searched_job')
+    
+    class Meta:
+        model = RecentSearch
+        fields = ['searched_by', 'searched_at', 'searched_job', 'searched_job_details'] 
+        
+
+        

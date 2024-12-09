@@ -51,6 +51,7 @@ class _ExperienceDetailsScreenState extends State<ExperienceDetailsScreen> {
       'job_role': _jobRoleController.text.trim(),
       'institute_name': _instituteNameController.text.trim(),
       'start_date': _startedDateController.text.trim(),
+      'end_date': _endDateController.text.trim(),
     };
     if (_endDateController.text.trim() == "") {
       jobDetails.remove("end_date");

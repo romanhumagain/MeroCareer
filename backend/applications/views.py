@@ -9,19 +9,25 @@ from rest_framework.permissions import IsAuthenticated
 from applications.models import Applicant, SavedJob
 from rest_framework.exceptions import NotFound
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from.filters import ApplicationFilter
 
 
 class ApplicationAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ApplicantSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ApplicationFilter
 
     def get(self, request, *args, **kwargs):
+        print(request.query_params)
         try:
             job_seeker = request.user.job_seeker
         except AttributeError:
             return Response({'detail': 'Job Seeker profile not found!'}, status=status.HTTP_400_BAD_REQUEST)
         
-        applicants = Applicant.objects.filter(user=job_seeker)
+        applicants = Applicant.objects.filter(user=job_seeker).order_by('-applied_on')
+        applicants = self.filter_queryset(applicants)
         serializer = self.get_serializer(applicants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -32,6 +38,10 @@ class ApplicationAPIView(ListCreateAPIView):
             return Response({'detail': 'Job Seeker profile not found!'}, status=status.HTTP_400_BAD_REQUEST)
         
         data = request.data
+        
+        if Applicant.objects.filter(job = data['job'],user = job_seeker ).exists():
+            return Response({'detail':'Already Applied !'}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             serializer.save(user=job_seeker)

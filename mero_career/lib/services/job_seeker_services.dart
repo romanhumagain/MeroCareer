@@ -51,4 +51,38 @@ class JobSeekerServices {
         await authAPIClient.patch('/career-preference/', updatedData);
     return response;
   }
+
+// function to search the job
+  Future<http.Response> addToSearchHistory(
+      Map<String, dynamic> searchedData) async {
+    final response = await authAPIClient.post('/recent-search/', searchedData);
+    return response;
+  }
+
+// function to get all searched data
+  Future<http.Response> getRecentlySearchedData() async {
+    final response = await authAPIClient.get('/recent-search/');
+    return response;
+  }
+
+  // function to remove the search history
+  Future<http.Response> removeFromSearchHistory(int jobId) async {
+    try {
+      final response =
+          await authAPIClient.delete('/remove-recent-search/$jobId/');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to remove search details $e');
+    }
+  }
+
+// function to remove the search history
+  Future<http.Response> clearSearchedHistory() async {
+    try {
+      final response = await authAPIClient.delete('/clear-all-search/');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to clear search $e');
+    }
+  }
 }

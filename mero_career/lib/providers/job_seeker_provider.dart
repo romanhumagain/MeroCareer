@@ -11,8 +11,8 @@ import '../views/widgets/custom_flushbar_message.dart';
 
 class JobSeekerProvider extends ChangeNotifier {
   bool _isLoading = false;
-  Map<String, dynamic>? _jobSeekerProfileDetails;
-  Map<String, dynamic>? _careerPreference;
+  Map<String, dynamic>? _jobSeekerProfileDetails = {};
+  Map<String, dynamic>? _careerPreference = {};
 
   // Public getters
   bool get isLoading => _isLoading;

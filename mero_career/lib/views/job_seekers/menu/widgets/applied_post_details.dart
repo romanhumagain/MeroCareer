@@ -6,20 +6,24 @@ import 'package:provider/provider.dart';
 import '../../../../providers/job_seeker_job_provider.dart';
 import '../../../../providers/theme_provider.dart';
 
-class SavedJobPostDetails extends StatelessWidget {
-  final Map<String, dynamic> savedJob;
+class AppliedPostDetails extends StatelessWidget {
+  final Map<String, dynamic> appliedJob;
   final Size size;
+  String filterStatusBy;
 
-  const SavedJobPostDetails(
-      {super.key, required this.size, required this.savedJob});
+  AppliedPostDetails(
+      {super.key,
+      required this.size,
+      required this.appliedJob,
+      required this.filterStatusBy});
 
   @override
   Widget build(BuildContext context) {
     final cardColor = Theme.of(context).colorScheme.surface;
     final tertiaryColor = Theme.of(context).colorScheme.tertiary;
 
-    final job = savedJob['job'];
-    final savedAt = savedJob['saved_at'];
+    final job = appliedJob['job_details'];
+    final appliedAt = appliedJob['applied_on'];
 
     void handleSave(Map<String, dynamic> jobData) async {
       final response =
@@ -28,7 +32,7 @@ class SavedJobPostDetails extends StatelessWidget {
 
       if (response?.statusCode == 201) {
         await Provider.of<JobSeekerJobProvider>(context, listen: false)
-            .getSavedPosts(false);
+            .getAppliedJobs(filterStatusBy);
       }
     }
 
@@ -39,7 +43,7 @@ class SavedJobPostDetails extends StatelessWidget {
 
       if (response?.statusCode == 204) {
         await Provider.of<JobSeekerJobProvider>(context, listen: false)
-            .getSavedPosts(false);
+            .getAppliedJobs(filterStatusBy);
       }
     }
 
@@ -104,7 +108,7 @@ class SavedJobPostDetails extends StatelessWidget {
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.6,
                                       color: isDarkMode
                                           ? Colors.grey.shade100
                                           : Colors.grey.shade900,
@@ -117,7 +121,7 @@ class SavedJobPostDetails extends StatelessWidget {
                                       .textTheme
                                       .titleSmall
                                       ?.copyWith(
-                                        fontSize: 14,
+                                        fontSize: 14.5,
                                         color: isDarkMode
                                             ? Colors.grey.shade300
                                             : Colors.grey.shade800,
@@ -164,40 +168,6 @@ class SavedJobPostDetails extends StatelessWidget {
                       spacing: 15,
                       runSpacing: 8,
                       children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.school,
-                              color: tertiaryColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              job['degree'],
-                              style:
-                                  TextStyle(color: tertiaryColor, fontSize: 15),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.card_giftcard,
-                              color: tertiaryColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              job['job_level'],
-                              style:
-                                  TextStyle(color: tertiaryColor, fontSize: 15),
-                            ),
-                          ],
-                        ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -272,7 +242,7 @@ class SavedJobPostDetails extends StatelessWidget {
                       children: [
                         SizedBox(width: 5),
                         Text(
-                          "Saved ${formatSavedAt(savedAt)}",
+                          "Applied ${formatSavedAt(appliedAt)}",
                           style: TextStyle(
                               color: isDarkMode
                                   ? Colors.grey.shade400

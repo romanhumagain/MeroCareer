@@ -21,23 +21,20 @@ class JobPreference extends StatelessWidget {
     final preferences = [
       {
         'label': 'Preferred Job Title',
-        'value': data['jobTitle'] ?? 'Backend Developer'
+        'value': data['prefered_job_title'] ?? 'N/A'
       },
       {
         'label': 'Preferred Job Level',
-        'value': data['jobLevel'] ?? 'Entry Level'
+        'value': data['prefered_job_level'] ?? 'N/A'
       },
-      {
-        'label': 'Expected Salary',
-        'value': data['expectedSalary'] ?? 'NRs 20000 Monthly'
-      },
+      {'label': 'Expected Salary', 'value': data['expected_salary'] ?? 'N/A'},
       {
         'label': 'Preferred Job Location',
-        'value': data['jobLocation'] ?? 'Kathmandu'
+        'value': data['prefered_job_location'] ?? 'N/A'
       },
       {
         'label': 'Preferred Job Category',
-        'value': data['jobCategory'] ?? 'IT & Telecommunication'
+        'value': data['prefered_job_category_name'] ?? 'N/A'
       },
     ];
 

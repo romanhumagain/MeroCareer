@@ -4,6 +4,7 @@ import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/providers/recruiter_provider.dart';
+import 'package:mero_career/providers/search_provider.dart';
 import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/views/shared/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ void main() {
       ChangeNotifierProvider(create: (_) => JobSeekerProvider()),
       ChangeNotifierProvider(create: (_) => ProfileSetupProvider()),
       ChangeNotifierProvider(create: (_) => JobSeekerJobProvider()),
+      ChangeNotifierProvider(create: (_) => SearchProvider()),
     ],
     child: MyApp(),
   ));

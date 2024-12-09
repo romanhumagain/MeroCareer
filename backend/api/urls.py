@@ -16,7 +16,10 @@ from jobs.views import (JobCategoryViewSet,
                         ActiveJobListAPIView, 
                         ListRecruiterJobPost, 
                         MatchedJobAPIView, 
-                        JobViewSet)
+                        JobViewSet, 
+                        RecentSearchAPIView, 
+                        ClearAllSearchAPIView, 
+                        RemoveFromRecentSearchAPIView)
 
 from job_seeker.views import (RegisterJobSeekerAPIView,
                               JobSeekerRetriveUpdateDeleteAPIView, 
@@ -31,7 +34,12 @@ from job_seeker.views import (RegisterJobSeekerAPIView,
                               GetRecruiterDetailsAPI
                               )
 
-from recruiter.views import (RegisterRecruiterAPIView, RetrieveUpdateDeleteRecruiterAPI)
+from recruiter.views import (RegisterRecruiterAPIView, 
+                             RetrieveUpdateDeleteRecruiterAPI, 
+                             RecruiterStatsView, 
+                             RecruiterApplicantsView, 
+                             ApplicantsForJobView, 
+                             ActiveJobsWithApplicantsView)
 
 from applications.views import (ApplicationAPIView, ApplicationDeleteAPIView, SaveJobAPIView, UnsaveJobAPIView, SavedPostListView)
 
@@ -81,8 +89,14 @@ urlpatterns = [
   path('matched/jobs/', MatchedJobAPIView.as_view(), name='matched_job_list'),
   
   
+  path('recent-search/', RecentSearchAPIView.as_view(), name='recent-search'),
+  path('remove-recent-search/<int:id>/', RemoveFromRecentSearchAPIView.as_view(), name='remove-recent-search'),
+  path('clear-all-search/', ClearAllSearchAPIView.as_view(), name='clearall-search'),
   
-  
+  path('recruiter-stats/', RecruiterStatsView.as_view(), name='recruiter_stats'),
+  path('recruiter/applicants/', RecruiterApplicantsView.as_view(), name='recruiter-applicants'),
+  path('jobs/<int:job_id>/applicants/', ApplicantsForJobView.as_view(), name='job-applicants'),
+  path('active-jobs-with-applicants/', ActiveJobsWithApplicantsView.as_view(), name='active-jobs-with-applicants'),
   path('', include(router.urls))
   
 ]

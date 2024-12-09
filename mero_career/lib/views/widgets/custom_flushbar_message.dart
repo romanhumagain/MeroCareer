@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 enum MessageType { success, error, warning }
 
-void showCustomFlushbar({
-  required BuildContext context,
-  required String message,
-  required MessageType type,
-}) {
+void showCustomFlushbar(
+    {required BuildContext context,
+    required String message,
+    required MessageType type,
+    duration = 850}) {
   IconData iconData;
   Color backgroundColor;
   List<Color> gradientColors;
@@ -38,7 +38,7 @@ void showCustomFlushbar({
       size: 28.0,
       color: Colors.white,
     ),
-    duration: Duration(milliseconds: 800),
+    duration: Duration(milliseconds: duration),
     margin: EdgeInsets.all(12),
     padding: EdgeInsets.all(16),
     borderRadius: BorderRadius.circular(12),

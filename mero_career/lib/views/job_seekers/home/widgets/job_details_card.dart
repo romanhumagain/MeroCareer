@@ -142,7 +142,7 @@ class JobDetailsCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     Divider(
                       color: Theme.of(context).colorScheme.surfaceContainer,
@@ -224,7 +224,7 @@ class JobDetailsCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     Divider(
                       color: Theme.of(context).colorScheme.surfaceContainer,

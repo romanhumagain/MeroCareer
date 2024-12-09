@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/account_security_management.dart';
+import 'package:mero_career/views/job_seekers/menu/screen/applied_job_screen.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/contact_us.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/saved_post_screen.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/settings_page.dart';
@@ -22,8 +23,10 @@ class BottomSheetMenu extends StatelessWidget {
 
       if (isConfirmed) {
         await authServices.logoutUser();
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
+            (route) => false);
       }
     }
 
@@ -117,7 +120,12 @@ class BottomSheetMenu extends StatelessWidget {
                 SizedBox(
                   height: 50,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AppliedJobScreen()));
+                    },
                     child: ListTile(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),

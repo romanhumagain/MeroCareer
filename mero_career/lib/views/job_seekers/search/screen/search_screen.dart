@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/search_provider.dart';
 import 'package:mero_career/services/job_seeker_job_services.dart';
+import 'package:mero_career/views/job_seekers/home/screen/job_details_screen.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,6 +15,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   String jobType = "All";
   String experience = "All";
   String jobLevel = "All";
@@ -20,6 +25,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   JobSeekerJobServices jobServices = JobSeekerJobServices();
   List<dynamic>? filteredJobLists = [];
+  late Future<List<dynamic>?> searchedHistory;
+  bool isSearched = false;
 
   void handleSearch() async {
     try {
@@ -33,11 +40,10 @@ class _SearchScreenState extends State<SearchScreen> {
         job_type: jobType,
         category_name: jobCategory,
       );
-
-      print(response.body);
       if (response.statusCode == 200) {
         setState(() {
           filteredJobLists = json.decode(response.body);
+          print(filteredJobLists);
         });
       } else {
         showCustomFlushbar(
@@ -55,9 +61,60 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  void addToSearchHistory(
+      Map<String, dynamic> searchedData, Map<String, dynamic> jobData) async {
+    try {
+      final response = await Provider.of<SearchProvider>(context, listen: false)
+          .addToSearchHistory(context, searchedData);
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => JobDetailsScreen(
+                  jobId: jobData['id'], jobTitle: jobData['job_title'])));
+    } catch (e) {
+      print("Error adding to search history");
+    }
+  }
+
+  void clearAllSearchHistory() async {
+    try {
+      await Provider.of<SearchProvider>(context, listen: false)
+          .clearSearchHistory();
+    } catch (e) {
+      print("Error clearing search history");
+    }
+  }
+
+  void removeSearchHistory(int jobId) async {
+    try {
+      await Provider.of<SearchProvider>(context, listen: false)
+          .removeFromSearchHistory(context, jobId);
+    } catch (e) {
+      print("Error removing to search details");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    searchedHistory = _fetchSearchHistory();
+  }
+
+  Future<List<dynamic>?> _fetchSearchHistory() async {
+    final response = await Provider.of<SearchProvider>(context, listen: false)
+        .getRecentSearchDetails();
+    if (response?.statusCode == 200) {
+      return json.decode(response!.body);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Padding(
@@ -80,92 +137,106 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 8.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: isDarkMode
-                                ? Colors.grey.shade700
-                                : Colors
-                                    .grey, // Change color based on dark mode
+              child: Form(
+                key: _formKey,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Please search based on job title !";
+                          }
+                          return null;
+                        },
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 8.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.grey.shade700
+                                  : Colors
+                                      .grey, // Change color based on dark mode
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: isDarkMode
-                                ? Colors.white
-                                : Colors.blue, // Set focused border color
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : Colors.blue, // Set focused border color
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: isDarkMode
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade500,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade500,
+                            ),
                           ),
+                          labelText: "Search",
+                          hintStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontSize: 13,
+                                    letterSpacing: 0.5,
+                                    color: Colors.grey,
+                                  ),
+                          labelStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontSize: 16,
+                                    letterSpacing: 0.5,
+                                    color: isDarkMode
+                                        ? Colors.grey.shade200
+                                        : Colors.black,
+                                  ),
                         ),
-                        labelText: "Search",
-                        hintStyle:
-                            Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  fontSize: 13,
-                                  letterSpacing: 0.5,
-                                  color: Colors.grey,
-                                ),
-                        labelStyle:
-                            Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  fontSize: 16,
-                                  letterSpacing: 0.5,
-                                  color: isDarkMode
-                                      ? Colors.grey.shade200
-                                      : Colors.black,
-                                ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () {
-                      _showFilters(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.blue.shade300,
-                      ),
-                      child: Icon(
-                        Icons.tune,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () {
-                      handleSearch();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.white,
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () {
+                        _showFilters(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.blue.shade300,
+                        ),
+                        child: Icon(
+                          Icons.tune,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () {
+                        if (_formKey.currentState!.validate() ?? false) {
+                          handleSearch();
+                          setState(() {
+                            isSearched = true;
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -245,12 +316,17 @@ class _SearchScreenState extends State<SearchScreen> {
                   Text("Recent Searches",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w400, fontSize: 15.5)),
-                  Text(
-                    "Clear All",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        color: Theme.of(context).primaryColor),
+                  GestureDetector(
+                    onTap: () {
+                      clearAllSearchHistory();
+                    },
+                    child: Text(
+                      "Clear All",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: Theme.of(context).primaryColor),
+                    ),
                   )
                 ],
               ),
@@ -258,35 +334,70 @@ class _SearchScreenState extends State<SearchScreen> {
             Divider(
               color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade400,
             ),
-            Column(
-              children: filteredJobLists!.map((data) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Flutter Developer",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w400, fontSize: 16)),
-                      Container(
-                        padding: EdgeInsets.all(1),
-                        decoration: BoxDecoration(
-                            color: Colors.red.shade50,
-                            borderRadius: BorderRadius.circular(2.5)),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.red,
+            filteredJobLists!.isNotEmpty
+                ? Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Column(
+                            children: filteredJobLists!.map((data) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    addToSearchHistory(
+                                        {'job': data['id']}, data);
+                                  },
+                                  child: JobDetail(
+                                    size: size,
+                                    isDarkMode: isDarkMode,
+                                    job: data,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : (isSearched
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "No Job Found !",
+                          style: TextStyle(fontSize: 16.5),
                         ),
                       )
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+                    : Consumer<SearchProvider>(
+                        builder: (context, provider, child) {
+                        final searchedData = provider.searchedData;
+                        if (searchedData!.isEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "No recent searched data found !",
+                              style: TextStyle(fontSize: 16.5),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          children: searchedData.map((job) {
+                            return GestureDetector(
+                              onTap: () {
+                                addToSearchHistory(
+                                    {'job': job['searched_job_details']['id']},
+                                    job['searched_job_details']);
+                              },
+                              child: SearchedJobDetails(
+                                  size: size,
+                                  isDarkMode: isDarkMode,
+                                  job: job['searched_job_details']),
+                            );
+                          }).toList(),
+                        );
+                      }))
           ],
         ),
       ),
@@ -415,6 +526,154 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class JobDetail extends StatelessWidget {
+  const JobDetail({
+    super.key,
+    required this.size,
+    required this.isDarkMode,
+    required this.job,
+  });
+
+  final Size size;
+  final bool isDarkMode;
+  final Map<String, dynamic> job;
+
+  @override
+  Widget build(BuildContext context) {
+    print("receiving searched detail $job");
+    return Container(
+      width: size.width,
+      decoration: BoxDecoration(
+          color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: job['recruiter_details']['company_profile_image'] != null
+                  ? Image.network(
+                      job['recruiter_details']['company_profile_image'],
+                      height: 30,
+                      width: 30,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      'assets/images/company_logo/default_company_pic.png',
+                      height: 30,
+                      width: 30,
+                      fit: BoxFit.cover,
+                    ),
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(job['job_title'],
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500, fontSize: 16.8)),
+                Text("By ${job['recruiter_details']['company_name']}")
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SearchedJobDetails extends StatelessWidget {
+  const SearchedJobDetails({
+    super.key,
+    required this.size,
+    required this.isDarkMode,
+    required this.job,
+  });
+
+  final Size size;
+  final bool isDarkMode;
+  final Map<String, dynamic> job;
+
+  @override
+  Widget build(BuildContext context) {
+    void removeSearchHistory(int jobId) async {
+      try {
+        await Provider.of<SearchProvider>(context, listen: false)
+            .removeFromSearchHistory(context, jobId);
+      } catch (e) {
+        print("Error removing to search details");
+      }
+    }
+
+    print("receiving searched detail $job");
+    return Container(
+      width: size.width,
+      decoration: BoxDecoration(
+          color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child:
+                      job['recruiter_details']['company_profile_image'] != null
+                          ? Image.network(
+                              job['recruiter_details']['company_profile_image'],
+                              height: 30,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              'assets/images/company_logo/default_company_pic.png',
+                              height: 30,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(job['job_title'],
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                                fontWeight: FontWeight.w500, fontSize: 16.8)),
+                    Text("By ${job['recruiter_details']['company_name']}")
+                  ],
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                removeSearchHistory(job['id']);
+              },
+              child: Icon(
+                Icons.cancel,
+                color: Colors.red,
+                size: 20,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

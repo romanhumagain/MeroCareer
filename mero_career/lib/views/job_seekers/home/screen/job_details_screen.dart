@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/views/job_seekers/map/screen/company_map.dart';
 import 'package:mero_career/views/job_seekers/map/screen/company_map_screen.dart';
+import 'package:mero_career/views/widgets/custom_confirmation_message.dart';
+import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
 import 'package:provider/provider.dart';
+import '../../../../providers/theme_provider.dart';
 import '../../../../utils/date_formater.dart';
 
 class JobDetailsScreen extends StatefulWidget {
@@ -51,6 +54,22 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       await Provider.of<JobSeekerJobProvider>(context, listen: false)
           .getJobDetails(widget.jobId);
       setState(() {});
+    }
+  }
+
+  void handleJobApply(Map<String, dynamic> jobData) async {
+    final response =
+        await Provider.of<JobSeekerJobProvider>(context, listen: false)
+            .applyForJob(context, jobData);
+  }
+
+  void cancelJobApplication() async {
+    final bool confirmed = await showCustomConfirmationDialog(context,
+        "Are you sure you want to withdraw your application for this job? Once withdrawn, you may not be considered for this position.");
+    if (confirmed) {
+      final response =
+          await Provider.of<JobSeekerJobProvider>(context, listen: false)
+              .cancelJobApplication(context, widget.jobId);
     }
   }
 
@@ -107,7 +126,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     const SizedBox(width: 20),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: jobDetails!['recruiter_details']
+                      child: jobDetails['recruiter_details']
                                   ['company_profile_image'] !=
                               null
                           ? Image.network(
@@ -189,20 +208,32 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Text("Apply Before: "),
-                          Text(
-                            formatDeadline(jobDetails['deadline'])
-                                .split(' ')
-                                .sublist(1)
-                                .join(
-                                  " ",
+                      jobDetails['is_active']
+                          ? Row(
+                              children: [
+                                Text(
+                                  "Apply Before: ",
+                                  style: TextStyle(fontSize: 15.5),
                                 ),
-                            style: TextStyle(color: Colors.red, fontSize: 15),
-                          )
-                        ],
-                      ),
+                                Text(
+                                  formatDeadline(jobDetails['deadline'])
+                                      .split(' ')
+                                      .sublist(1)
+                                      .join(
+                                        " ",
+                                      ),
+                                  style: TextStyle(
+                                      color: Colors.green, fontSize: 16),
+                                )
+                              ],
+                            )
+                          : Text(
+                              "Job Closed",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
                     ],
                   ),
                 ),
@@ -263,7 +294,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                 ),
                                 CompanyProfile(
                                     recruiterDetails:
-                                        jobDetails['recruiter_details']),
+                                        jobDetails['recruiter_details'],
+                                    email: jobDetails['email']),
                                 // for salary
                                 SalaryDetails(jobDetails: jobDetails)
                               ],
@@ -278,74 +310,104 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ),
             Positioned(
               bottom: 0,
-              child: Container(
-                height: size.height / 13.5,
-                width: size.width,
-                decoration:
-                    BoxDecoration(color: Theme.of(context).colorScheme.surface),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.5),
-                      child: Container(
-                        width: size.width / 1.4,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Apply Now",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18),
+              child: GestureDetector(
+                onTap: () {
+                  jobDetails['is_active']
+                      ? jobDetails['is_applied']
+                          ? jobDetails['application_status'] ==
+                                      "Under Review" ||
+                                  jobDetails['application_status'] == "Reviewed"
+                              ? cancelJobApplication()
+                              : showCustomFlushbar(
+                                  duration: 2200,
+                                  context: context,
+                                  message:
+                                      "Your application has been approved! The recruiter may now proceed with the next steps. You can't cancel now. Try contacting recrutier !",
+                                  type: MessageType.error)
+                          : handleJobApply({'job': jobDetails['id']})
+                      : showCustomFlushbar(
+                          duration: 1600,
+                          message:
+                              "This job has been closed !, you can't apply for this job.",
+                          type: MessageType.error,
+                          context: context);
+                },
+                child: Container(
+                  height: size.height / 13.5,
+                  width: size.width,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.5),
+                        child: Container(
+                          width: size.width / 1.4,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            color: jobDetails['is_active']
+                                ? jobDetails['application_status'] == "Accepted"
+                                    ? Colors.blue.shade600
+                                    : Theme.of(context).primaryColor
+                                : Colors.blue.shade300,
+                          ),
+                          child: Center(
+                            child: Text(
+                              jobDetails['is_applied']
+                                  ? jobDetails['application_status']
+                                  : "Apply Now",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18.6),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CompanyMap()));
-                      },
-                      child: GestureDetector(
+                      SizedBox(
+                        width: 20,
+                      ),
+                      GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CompanyMapScreen(
-                                      companyAddress:
-                                          jobDetails['recruiter_details']
-                                              ['address'],
-                                      companyName:
-                                          jobDetails['recruiter_details']
-                                              ['company_name'])));
+                                  builder: (context) => CompanyMap()));
                         },
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color:
-                                Theme.of(context).colorScheme.surfaceContainer,
-                          ),
-                          child: Icon(
-                            Icons.location_on,
-                            size: 30,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CompanyMapScreen(
+                                        companyAddress:
+                                            jobDetails['recruiter_details']
+                                                ['address'],
+                                        companyName:
+                                            jobDetails['recruiter_details']
+                                                ['company_name'])));
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainer,
+                            ),
+                            child: Icon(
+                              Icons.location_on,
+                              size: 30,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             )
@@ -360,9 +422,11 @@ class CompanyProfile extends StatefulWidget {
   const CompanyProfile({
     super.key,
     required this.recruiterDetails,
+    required this.email,
   });
 
   final Map<String, dynamic>? recruiterDetails;
+  final String email;
 
   @override
   State<CompanyProfile> createState() => _CompanyProfileState();
@@ -374,7 +438,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
   @override
   Widget build(BuildContext context) {
     final recruiter = widget.recruiterDetails;
-
+    bool isDarkMode = context.read<ThemeProvider>().isDarkMode;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
@@ -382,63 +446,100 @@ class _CompanyProfileState extends State<CompanyProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Company Profile Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                recruiter?['company_profile_image'] ??
-                    'https://via.placeholder.com/150',
-                height: 60,
-                width: 60,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Company Name
-            Text(
-              recruiter?['company_name'] ?? 'Company Name',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    recruiter?['company_profile_image'] ??
+                        'https://via.placeholder.com/150',
+                    height: 60,
+                    width: 60,
+                    fit: BoxFit.cover,
                   ),
-            ),
-            SizedBox(height: 8),
+                ),
+                SizedBox(width: 16),
 
-            // Company Type & Phone Number
-            Row(
-              children: [
-                Icon(Icons.business, size: 18, color: Colors.grey),
-                SizedBox(width: 5),
-                Text(
-                  recruiter?['company_type'] ?? 'Company Type',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.phone, size: 18, color: Colors.grey),
-                SizedBox(width: 5),
-                Text(
-                  recruiter?['phone_number'] ?? 'Phone Number',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.location_on, size: 18, color: Colors.grey),
-                SizedBox(width: 5),
-                Text(
-                  recruiter?['address'] ?? 'Address',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
+                // Company Name
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      recruiter?['company_name'] ?? 'Company Name',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
+                    ),
+                    SizedBox(height: 8),
 
+                    // Company Type & Phone Number
+                    Row(
+                      children: [
+                        Icon(Icons.business, size: 18, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text(
+                          recruiter?['company_type'] ?? 'Company Type',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade700),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.business, size: 18, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text(
+                          widget.email,
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade700),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.phone, size: 18, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text(
+                          recruiter?['phone_number'] ?? 'Phone Number',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade700),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, size: 18, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text(
+                          recruiter?['address'] ?? 'Address',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade700),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              ],
+            ),
+            MyDivider(),
             // Links (LinkedIn & Website)
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -766,7 +867,7 @@ class JobInfoTable extends StatelessWidget {
           width: 6,
         ),
         SizedBox(
-          // width: size.width / 2,
+          width: size.width / 2,
           child: Text(
             value,
             style: Theme.of(context)

@@ -38,12 +38,19 @@ class WorkExperience extends StatelessWidget {
             padding: const EdgeInsets.only(left: 4.0),
             child: Column(
               children: data.map((experience) {
-                return ExperienceTimeline(
-                  date:
-                      "${formatEduDate(experience['start_date'])} - ${experience['end_date'] != null ? formatEduDate(experience['end_date']) : "Now"}",
-                  jobTitle: experience['job_title'] ?? "N/A",
-                  industryName: experience['institute_name'] ?? "N/A",
-                  role: experience['job_role'] ?? "N/A",
+                return Column(
+                  children: [
+                    ExperienceTimeline(
+                      date:
+                          "${formatEduDate(experience['start_date'])} - ${experience['end_date'] != null ? formatEduDate(experience['end_date']) : "Now"}",
+                      jobTitle: experience['job_title'] ?? "N/A",
+                      industryName: experience['institute_name'] ?? "N/A",
+                      role: experience['job_role'] ?? "N/A",
+                    ),
+                    SizedBox(
+                      height: 16,
+                    )
+                  ],
                 );
               }).toList(),
             ),

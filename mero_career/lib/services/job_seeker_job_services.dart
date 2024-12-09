@@ -138,4 +138,22 @@ class JobSeekerJobServices {
 
     return response;
   }
+
+// Function to apply to the job posts
+  Future<http.Response> applyForJob(Map<String, dynamic> jobData) async {
+    final response = await _authAPIClient.post('/application/', jobData);
+    return response;
+  }
+
+  // function to get all applied jobs
+  Future<http.Response> getAppliedJobs(String status) async {
+    final response = await _authAPIClient.get('/application/?status=$status');
+    return response;
+  }
+
+  // function to cancel job application
+  Future<http.Response> cancelJobApplication(int jobId) async {
+    final response = await _authAPIClient.delete('/application/$jobId/');
+    return response;
+  }
 }

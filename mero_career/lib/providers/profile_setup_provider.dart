@@ -10,11 +10,11 @@ import '../views/widgets/custom_flushbar_message.dart';
 
 class ProfileSetupProvider extends ChangeNotifier {
   bool _isLoading = false;
-  Map<String, dynamic>? _profileAnalysisData;
-  List<dynamic>? _skillsDetails;
-  List<dynamic>? _educationDetails;
-  List<dynamic>? _experienceDetails;
-  List<dynamic>? _projectDetails;
+  Map<String, dynamic>? _profileAnalysisData = {};
+  List<dynamic>? _skillsDetails = [];
+  List<dynamic>? _educationDetails = [];
+  List<dynamic>? _experienceDetails = [];
+  List<dynamic>? _projectDetails = [];
 
   List? get skillsDetails => _skillsDetails;
 

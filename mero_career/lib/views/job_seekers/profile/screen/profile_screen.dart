@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     fetchCareerPreference();
     fetchProfileAnalysis();
+    getAppliedJobCount();
+  }
+
+  // function to fetch the career preference
+  void getAppliedJobCount() async {
+    await Provider.of<JobSeekerJobProvider>(context, listen: false)
+        .getAppliedJobCount();
   }
 
   // function to fetch the career preference

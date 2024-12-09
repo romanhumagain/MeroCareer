@@ -5,6 +5,8 @@ import 'package:mero_career/views/recruiters/profile/widgets/about_company_detai
 import 'package:mero_career/views/recruiters/profile/widgets/company_basic_details.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../providers/job_provider.dart';
+
 class RecruiterProfileScreen extends StatelessWidget {
   const RecruiterProfileScreen({super.key});
 
@@ -121,18 +123,59 @@ class CompanyProfileHeadingSection extends StatelessWidget {
   }
 }
 
-class KeyMetricsCards extends StatelessWidget {
+class KeyMetricsCards extends StatefulWidget {
   const KeyMetricsCards({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final metrics = [
-      {"title": "Jobs Posted", "value": "45"},
-      {"title": "Applicants Received", "value": "1024"},
-      {"title": "Hires Made", "value": "18"},
-      // {"title": "Top Position", "value": "Software Engineer"},
-    ];
+  State<KeyMetricsCards> createState() => _KeyMetricsCardsState();
+}
 
+class _KeyMetricsCardsState extends State<KeyMetricsCards> {
+  List metrics = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setMatricesData();
+  }
+
+  void setMatricesData() async {
+    final provider = Provider.of<JobProvider>(context, listen: false);
+    await provider.getRecruiterStats();
+
+    final stats = await provider.recruiterStats;
+
+    setState(() {
+      metrics = [
+        {
+          "title": "Jobs Posted",
+          "value": stats?['total_job_posting'].toString()
+        },
+        {
+          "title": "Applicants Received",
+          "value": stats?['application_received'].toString()
+        },
+        {
+          "title": "Hires Made",
+          "value": stats?['accepted_applicant'].toString()
+        },
+      ];
+
+      isLoading = false;
+    });
+  }
+
+  Future<void> getRecruiterStats() async {}
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return SizedBox(
+        height: 127,
+      );
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
       child: Row(

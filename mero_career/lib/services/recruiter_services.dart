@@ -30,4 +30,10 @@ class RecruiterServices {
     final response = await authAPIClient.patch('/recruiter/', updatedData);
     return response;
   }
+
+  // function to handle get recruiter stats
+  Future<http.Response> getRecruiterStats() async {
+    final response = await authAPIClient.get('/recruiter-stats/');
+    return response;
+  }
 }

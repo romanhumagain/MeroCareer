@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/applicants_details.dart';
 import '../widgets/posted_job_details_card.dart';
+import '../widgets/recent_application.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,123 +26,123 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  width: size.width,
-                  height: size.height / 7,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        KeyMatricesCard(
-                          size: size,
-                          heading: "Active Job Posting",
-                          count: "5",
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        KeyMatricesCard(
-                          size: size,
-                          heading: "Application Received",
-                          count: "2",
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        KeyMatricesCard(
-                          size: size,
-                          heading: "Jobs Under Review",
-                          count: "2",
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        KeyMatricesCard(
-                          size: size,
-                          heading: "Total Job Posted",
-                          count: "12",
-                        ),
-                        // KeyMatricesCard(size: size),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Divider(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                RecentJobsPosting(
-                    size: size,
-                    cardColor: cardColor,
-                    tertiaryColor: tertiaryColor),
-                Divider(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Recent applications for jobs ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.2,
-                                letterSpacing: 0.4),
-                          ),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              "View All",
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          ApplicantsDetails(size: size),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          ApplicantsDetails(size: size),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                ClosingMessage()
-              ],
-            ),
-          )
+          RecruiterStats(
+              size: size, cardColor: cardColor, tertiaryColor: tertiaryColor)
         ],
       ),
     ));
+  }
+}
+
+class RecruiterStats extends StatefulWidget {
+  const RecruiterStats({
+    super.key,
+    required this.size,
+    required this.cardColor,
+    required this.tertiaryColor,
+  });
+
+  final Size size;
+  final Color cardColor;
+  final Color tertiaryColor;
+
+  @override
+  State<RecruiterStats> createState() => _RecruiterStatsState();
+}
+
+class _RecruiterStatsState extends State<RecruiterStats> {
+  @override
+  void initState() {
+    super.initState();
+    getRecruiterStats();
+  }
+
+  Future<void> getRecruiterStats() async {
+    await Provider.of<JobProvider>(context, listen: false).getRecruiterStats();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            width: widget.size.width,
+            height: widget.size.height / 7,
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(12)),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Consumer<JobProvider>(builder: (context, provider, child) {
+                final stats = provider.recruiterStats;
+                if (stats!.isEmpty) {
+                  return Text("No Data Found !");
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    KeyMatricesCard(
+                      size: widget.size,
+                      heading: "Active Job Posting",
+                      count: stats['active_job_posting'].toString(),
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    KeyMatricesCard(
+                      size: widget.size,
+                      heading: "Application Received",
+                      count: stats['application_received'].toString(),
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    KeyMatricesCard(
+                      size: widget.size,
+                      heading: "Applicant Under Review",
+                      count: stats['applicant_under_review'].toString(),
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    KeyMatricesCard(
+                      size: widget.size,
+                      heading: "Total Job Posted",
+                      count: stats['total_job_posting'].toString(),
+                    ),
+                    // KeyMatricesCard(size: size),
+                  ],
+                );
+              }),
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Divider(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+          ),
+          SizedBox(
+            height: 6,
+          ),
+          RecentJobsPosting(
+              size: widget.size,
+              cardColor: widget.cardColor,
+              tertiaryColor: widget.tertiaryColor),
+          Divider(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          RecentApplication(widget: widget),
+          ClosingMessage()
+        ],
+      ),
+    );
   }
 }
 
@@ -218,7 +219,14 @@ class _RecentJobsPostingState extends State<RecentJobsPosting> {
   @override
   void initState() {
     super.initState();
-    Provider.of<JobProvider>(context, listen: false).getJobPosts();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getJobPosts();
+    });
+  }
+
+  Future<void> getJobPosts() async {
+    await Provider.of<JobProvider>(context, listen: false).getJobPosts();
   }
 
   @override

@@ -18,10 +18,37 @@ class JobSeeker(models.Model):
   address = models.TextField()
   profile_headline = models.CharField(max_length=255, blank=True, null=True)
   profile_summary = models.TextField( blank=True, null=True)
+  total_experience = models.FloatField(default=0)
   
   def __str__(self):
     return f"{self.full_name} Profile"
   
+class ExperienceDetail(models.Model):
+  user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='job_seeker_experience_details')
+  job_title = models.CharField(max_length=255)
+  job_role = models.CharField(max_length=255)
+  institute_name = models.CharField(max_length=255)
+  start_date = models.DateField()
+  end_date = models.DateField(null=True, blank=True)
+
+  @property
+  def duration(self):
+      end_date = self.end_date or date.today() 
+      delta = end_date - self.start_date
+      return delta.days / 365.25 
+      
+  @property
+  def is_currently_working(self):
+    if self.end_date:
+        return date.today() < self.end_date
+    return True
+  
+  
+  def __str__(self):
+    return f"{self.user.full_name} {self.job_title} job details"
+  
+  class Meta:
+    unique_together = ('user','job_title', 'institute_name' )
   
 class CareerPreference(models.Model):
   user = models.OneToOneField(JobSeeker, on_delete=models.CASCADE, related_name='job_seeker_career_preference')
@@ -56,33 +83,7 @@ class EducationDetail(models.Model):
   class Meta:
     unique_together = ('user','degree_type', 'education_program', 'institute_name'   )
 
-class ExperienceDetail(models.Model):
-  user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='job_seeker_experience_details')
-  job_title = models.CharField(max_length=255)
-  job_role = models.CharField(max_length=255)
-  institute_name = models.CharField(max_length=255)
-  start_date = models.DateField()
-  end_date = models.DateField(null=True, blank=True)
-  
-  @property
-  def duration(self):
-    end_date = self.end_date or date.now()
-    delta = end_date - self.start_date
-    return delta.days // 30
-  
-  @property
-  def is_currently_working(self):
-    if self.end_date:
-        return date.today() < self.end_date
-    return True
-  
-  
-  def __str__(self):
-    return f"{self.user.full_name} {self.job_title} job details"
-  
-  class Meta:
-    unique_together = ('user','job_title', 'institute_name' )
-  
+
   
 class ProjectDetail(models.Model):
   user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='job_seeker_project_details')

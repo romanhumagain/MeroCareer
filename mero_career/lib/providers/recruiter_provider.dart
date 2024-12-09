@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mero_career/services/recruiter_services.dart';
 
 class RecruiterProvider extends ChangeNotifier {
-  Map<String, dynamic>? _recruiterProfileDetails;
+  Map<String, dynamic>? _recruiterProfileDetails = {};
   bool _isLoading = false;
 
   Map<String, dynamic>? get recruiterProfileDetails => _recruiterProfileDetails;
@@ -23,6 +23,7 @@ class RecruiterProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         _recruiterProfileDetails = json.decode(response.body);
+        notifyListeners();
       } else {
         print('Failed to fetch recruiter profile: ${response.body}');
       }

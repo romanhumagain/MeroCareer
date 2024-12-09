@@ -43,12 +43,19 @@ class EducationDetails extends StatelessWidget {
           // Education Timeline
           Column(
             children: data.map((education) {
-              return EducationTimelineItem(
-                isDarkMode: isDarkMode,
-                degree: education['degree_type'] ?? "N/A",
-                institution: education['institute_name'] ?? "N/A",
-                duration:
-                    "${formatEduDate(education['start_date'])} - ${education['end_date'] != null ? formatEduDate(education['end_date']) : "Now"}",
+              return Column(
+                children: [
+                  EducationTimelineItem(
+                    isDarkMode: isDarkMode,
+                    degree: education['degree_type'] ?? "N/A",
+                    institution: education['institute_name'] ?? "N/A",
+                    duration:
+                        "${formatEduDate(education['start_date'])} - ${education['end_date'] != null ? formatEduDate(education['end_date']) : "Now"}",
+                  ),
+                  SizedBox(
+                    height: 8,
+                  )
+                ],
               );
             }).toList(),
           ),

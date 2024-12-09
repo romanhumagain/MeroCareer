@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/views/job_seekers/menu/screen/applied_job_screen.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/screen/job_seeker_profile_preview.dart';
 import 'package:provider/provider.dart';
 
@@ -23,15 +25,15 @@ class ProfileHeadingSection extends StatelessWidget {
         .textTheme
         .titleMedium
         ?.copyWith(fontSize: 14, fontWeight: FontWeight.w400);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Consumer<JobSeekerProvider>(builder: (context, provider, child) {
-              final jobSeekerDetails = provider.jobSeekerProfileDetails;
-              return Padding(
+    return Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+      final jobSeekerDetails = provider.jobSeekerProfileDetails;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
                 padding: const EdgeInsets.only(left: 28.0),
                 child: Column(
                   children: [
@@ -72,104 +74,124 @@ class ProfileHeadingSection extends StatelessWidget {
                           ),
                   ],
                 ),
-              );
-            }),
-            SizedBox(
-              width: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                showHeadingTopScreen(context);
-              },
-              child: Icon(
-                Icons.mode_edit_outline,
-                size: 22,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              GestureDetector(
+                onTap: () {
+                  showHeadingTopScreen(context);
+                },
+                child: Icon(
+                  Icons.mode_edit_outline,
+                  size: 22,
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Consumer<JobSeekerJobProvider>(builder: (context, provider, child) {
+            final appliedJobDetails = provider.appliedJobCount;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppliedJobScreen()));
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        appliedJobDetails!['applied_job'].toString(),
+                        style: headingTextStyle?.copyWith(
+                            fontSize: 16, color: Colors.blue),
+                      ),
+                      Text(
+                        "Job Applied",
+                        style: headingTextStyle,
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Container(
+                  width: 2,
+                  height: 30,
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AppliedJobScreen()));
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        appliedJobDetails['application_under_review']
+                            .toString(),
+                        style: headingTextStyle?.copyWith(
+                            fontSize: 16, color: Colors.blue),
+                      ),
+                      Text(
+                        "Application Under Review",
+                        style: headingTextStyle,
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                CupertinoIcons.eye_solid,
+                size: 19,
                 color: Colors.blue,
               ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 8,
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                Text(
-                  "2",
-                  style: headingTextStyle?.copyWith(
-                      fontSize: 15.5, color: Colors.blue),
-                ),
-                Text(
-                  "Job Applied",
-                  style: headingTextStyle,
-                )
-              ],
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Container(
-              width: 2,
-              height: 30,
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Column(
-              children: [
-                Text(
-                  "0",
-                  style: headingTextStyle?.copyWith(
-                      fontSize: 15.5, color: Colors.blue),
-                ),
-                Text(
-                  "Application Under Review",
-                  style: headingTextStyle,
-                )
-              ],
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              CupertinoIcons.eye_solid,
-              size: 19,
-              color: Colors.blue,
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => JobSeekerProfilePreview(
-                              jobSeekerId: 1,
-                            )));
-              },
-              child: Text(
-                "Preview Profile",
-                style: TextStyle(color: Colors.blue),
+              const SizedBox(
+                width: 8,
               ),
-            ),
-          ],
-        ),
-      ],
-    );
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => JobSeekerProfilePreview(
+                                jobSeekerId: 1,
+                              )));
+                },
+                child: Text(
+                  "Preview Profile",
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    });
   }
 
   void showHeadingTopScreen(BuildContext context) {

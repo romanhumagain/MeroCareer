@@ -15,7 +15,8 @@ from jobs.models import Job, RequiredSkill
 from applications.models import SavedJob
 from recruiter.serializers import UserSerializer
 from recruiter.models import Recruiter
-
+from applications.models import Applicant
+from django.db.models import Q
 
 class JobSeekerJobSerializer(serializers.ModelSerializer):
   
@@ -23,15 +24,18 @@ class JobSeekerJobSerializer(serializers.ModelSerializer):
     recruiter_details = RecruiterSerializer(read_only=True, source='recruiter')
     category_name = serializers.SerializerMethodField(read_only=True)
     is_saved = serializers.SerializerMethodField(read_only=True)
+    email = serializers.SerializerMethodField(read_only = True)
+    is_applied = serializers.SerializerMethodField(read_only = True)
+    application_status = serializers.SerializerMethodField(read_only = True)
     
     class Meta:
         model = Job
         fields = [
             'id', 'recruiter', 'category', 'job_title', 'no_of_vacancy', 'degree',
             'deadline', 'job_type', 'job_level', 'job_requirement', 'experience',
-            'salary_range', 'skills_display', 'recruiter_details', 'is_active', 'category_name', 'is_saved'
+            'salary_range', 'skills_display', 'recruiter_details', 'is_active', 'category_name','email', 'is_saved','is_applied', 'application_status'
         ]
-        read_only_fields = ['id', 'skills_display', 'recruiter_details', 'is_active']
+        read_only_fields = ['id', 'skills_display', 'recruiter_details', 'is_active', 'email', 'application_status']
 
     def get_skills_display(self, obj):
         skills = RequiredSkill.objects.filter(job=obj)
@@ -46,15 +50,39 @@ class JobSeekerJobSerializer(serializers.ModelSerializer):
           user = request.user 
           return SavedJob.objects.filter(user=user.job_seeker, job=obj).exists()
         return False
+      
+    def get_is_applied(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+          user = request.user
+          return Applicant.objects.filter(user = user.job_seeker, job = obj).exists()
+        return False
+      
+    def get_application_status(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+          user = request.user
+          applicantInst =  Applicant.objects.filter(user = user.job_seeker, job = obj).first()
+          if applicantInst:
+            return applicantInst.status
+          return "Not Applied"
+          
+        return None
+      
+    def get_email(self, obj):
+      return obj.recruiter.user.email
 
 
 class JobSeekerSerializer(ModelSerializer):
   email = serializers.SerializerMethodField(read_only = True)
   prefered_job_category = serializers.SerializerMethodField(read_only = True)
+  applied_job = serializers.SerializerMethodField(read_only = True)
+  application_under_review = serializers.SerializerMethodField(read_only = True)
+  
   
   class Meta:
     model = JobSeeker
-    fields = ['id','user', 'profile_image','full_name','username','phone_number','address', 'profile_headline', 'profile_summary', 'email', 'prefered_job_category']
+    fields = ['id','user', 'profile_image','full_name','username','phone_number','address', 'profile_headline', 'profile_summary', 'email', 'prefered_job_category', 'applied_job', 'application_under_review']
     read_only_fields = ['user', 'email']
 
   def get_email(self, obj):
@@ -66,6 +94,12 @@ class JobSeekerSerializer(ModelSerializer):
     if obj is not None:
       return obj.job_seeker_career_preference.prefered_job_category.id
     return None
+  
+  def get_application_under_review(self, obj):
+    return Applicant.objects.filter(Q(user=obj) & (Q(status="Under Review") | Q(status="Reviewed"))).count()
+
+  def get_applied_job(self, obj):
+    return Applicant.objects.filter(user = obj).count()
   
 
     

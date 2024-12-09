@@ -127,10 +127,10 @@ class _ApplicantsDetailScreenState extends State<ApplicantsDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ApplicantsDetails(size: size),
-                  ApplicantsDetails(size: size),
-                  ApplicantsDetails(size: size),
-                  ApplicantsDetails(size: size),
+                  // ApplicantsDetails(size: size),
+                  // ApplicantsDetails(size: size),
+                  // ApplicantsDetails(size: size),
+                  // ApplicantsDetails(size: size),
                 ],
               ),
             )

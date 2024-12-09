@@ -12,8 +12,7 @@ class AboutMeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final aboutMeText = data['aboutMe'] ??
-        "I am a Software Engineering Student, currently pursuing my studies at the University of Bedfordshire. I have a strong passion for programming, specifically in Java and Python. I am highly interested in backend development. To enhance my skills, I am presently engaged in projects that utilize the Python Django framework. This hands-on experience has allowed me to delve deeper into backend development and gain a comprehensive understanding of building robust and scalable applications.";
+    final aboutMeText = data['profile_summary'] ?? "N/A";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),

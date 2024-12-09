@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/screen/job_seeker_profile_preview.dart';
 
+import '../../../../utils/date_formater.dart';
+
 class ApplicantsDetails extends StatelessWidget {
   const ApplicantsDetails({
     super.key,
     required this.size,
+    required this.data,
   });
 
   final Size size;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 8, top: 5, bottom: 12),
+      padding: const EdgeInsets.only(right: 5, top: 5, bottom: 12),
       child: Column(
         children: [
           GestureDetector(
@@ -21,7 +25,7 @@ class ApplicantsDetails extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => JobSeekerProfilePreview(
-                            jobSeekerId: 1,
+                            jobSeekerId: data['applicant_details']['id'],
                           )));
             },
             child: Container(
@@ -55,11 +59,12 @@ class ApplicantsDetails extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Roman Humagain",
+                                data['applicant_details']['full_name'],
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                               Text(
-                                "Mobile App Developer",
+                                data['applicant_details']['profile_headline'] ??
+                                    "N/A",
                                 style: Theme.of(context).textTheme.labelMedium,
                               ),
                             ],
@@ -73,7 +78,7 @@ class ApplicantsDetails extends StatelessWidget {
                             color: Colors.blue.shade200,
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
-                          "Under Review",
+                          data['status'],
                           style: TextStyle(color: Colors.white),
                         ),
                       )
@@ -96,7 +101,7 @@ class ApplicantsDetails extends StatelessWidget {
                         Text("Applied for",
                             style: Theme.of(context).textTheme.labelMedium),
                         Text(
-                          "Full Stack Developer",
+                          data['job_title'],
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -114,7 +119,7 @@ class ApplicantsDetails extends StatelessWidget {
                       Text("Applied on :- ",
                           style: Theme.of(context).textTheme.labelMedium),
                       Text(
-                        "01 Jan, 2024",
+                        formatPostedDate(data['applied_on']),
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],

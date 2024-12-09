@@ -96,6 +96,7 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
             return Center(child: Text("No profile data available"));
           }
           final profileData = snapshot.data!;
+          print(profileData['prefered_job_category']);
           return Stack(
             children: [
               SingleChildScrollView(

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/recruiters/applicants/screen/selected_job_applicants.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../providers/job_provider.dart';
 import '../../home/widgets/applicants_details.dart';
 import 'applicants_detail_screen.dart';
 
@@ -15,6 +18,20 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
   final List<String> _filterList = ['active', 'closed'];
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getActiveJobWithApplication();
+    });
+  }
+
+  Future<void> getActiveJobWithApplication() async {
+    await Provider.of<JobProvider>(context, listen: false)
+        .getActiveJobWithApplicants(_listJobsBy);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return SingleChildScrollView(
@@ -23,10 +40,10 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
             child: Container(
               width: size.width,
-              height: size.height / 7.6,
+              height: size.height / 8.5,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
@@ -88,6 +105,7 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
                       onSelected: (selected) {
                         setState(() {
                           _listJobsBy = selected ? filter : 'all';
+                          getActiveJobWithApplication();
                         });
                       },
                       selectedColor: Colors.blueAccent,
@@ -110,24 +128,23 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                JobApplicants(
-                  size: size,
-                  jobName: "AI Engineer",
-                  applicantsCount: "5",
-                ),
+                Consumer<JobProvider>(builder: (context, provider, child) {
+                  final jobWithApplicants = provider.activeJobWithApplicants;
+
+                  if (jobWithApplicants!.isEmpty) {
+                    return Text("No Jobs Found");
+                  }
+                  return Column(
+                    children: jobWithApplicants.map((job) {
+                      return JobApplicants(
+                        size: size,
+                        job: job,
+                      );
+                    }).toList(),
+                  );
+                }),
                 SizedBox(
                   height: 3,
-                ),
-                Divider(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                JobApplicants(
-                  size: size,
-                  jobName: "Full Stack Developer",
-                  applicantsCount: "5",
                 ),
               ],
             ),
@@ -139,14 +156,12 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
 }
 
 class JobApplicants extends StatelessWidget {
-  final String jobName;
-  final String applicantsCount;
+  final Map<String, dynamic> job;
 
   const JobApplicants({
     super.key,
     required this.size,
-    required this.jobName,
-    required this.applicantsCount,
+    required this.job,
   });
 
   final Size size;
@@ -165,7 +180,7 @@ class JobApplicants extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      jobName,
+                      job['job_title'],
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall
@@ -185,7 +200,7 @@ class JobApplicants extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          applicantsCount,
+                          "${job['application'].length.toString()}",
                           style: TextStyle(color: Colors.grey.shade700),
                           textAlign: TextAlign.center,
                         ),
@@ -201,8 +216,9 @@ class JobApplicants extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ApplicantsDetailScreen(
-                                  jobName: "Job Name",
+                            builder: (context) => SelectedJobApplicants(
+                                  jobTitle: job['job_title'],
+                                  jobId: job['id'],
                                 )));
                   },
                   child: Text(
@@ -225,13 +241,26 @@ class JobApplicants extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  ApplicantsDetails(size: size),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ApplicantsDetails(size: size),
-                ],
+                children: job['application'].length > 0
+                    ? job['application'].map<Widget>((data) {
+                        return Row(
+                          children: [
+                            ApplicantsDetails(size: size, data: data),
+                            SizedBox(
+                              width: 10,
+                            )
+                          ],
+                        );
+                      }).toList()
+                    : [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "No Applicants found for this job !",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        )
+                      ],
               ),
             ),
           ),

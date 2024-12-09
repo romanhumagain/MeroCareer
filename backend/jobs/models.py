@@ -43,4 +43,18 @@ class RequiredSkill(models.Model):
   def __str__(self):
     return self.name
   
+class RecentSearch(models.Model):
+    from job_seeker.models import JobSeeker
 
+    searched_by = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='searcher')
+    searched_job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='searched_job')
+    searched_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Recent Search'
+        verbose_name_plural = 'Recent Searches'
+        ordering = ['-searched_at']
+        unique_together = ('searched_by', 'searched_job')
+    
+    def __str__(self) -> str:
+        return f"{self.searched_by.full_name} searched {self.searched_job.job_title} Job!"
