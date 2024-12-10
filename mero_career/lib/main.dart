@@ -8,8 +8,12 @@ import 'package:mero_career/providers/search_provider.dart';
 import 'package:mero_career/providers/theme_provider.dart';
 import 'package:mero_career/views/shared/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeProvider()),

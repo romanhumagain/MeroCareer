@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "371643432789",
+    "project_id": "merocareer-37e6e",
+    "storage_bucket": "merocareer-37e6e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371643432789:android:68e1df8749868763b7f9dc",
+        "android_client_info": {
+          "package_name": "com.example.mero_career"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDppf8EvOPUu4UIJ76CExo8L1OxLdDQvss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

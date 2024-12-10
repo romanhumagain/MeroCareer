@@ -40,4 +40,27 @@ class ApplicantsServices {
       throw Exception('Failed to fetch job applicants of selected job $e');
     }
   }
+
+  // to get applicants of selected job
+  Future<http.Response> getApplicantDetails(int applicantId) async {
+    try {
+      final response = await _authAPIClient.get('/applicants/$applicantId/');
+      return response;
+    } catch (e) {
+      throw Exception(
+          'Failed to fetch job applicants details of selected job $e');
+    }
+  }
+
+  // update applicant details
+  Future<http.Response> updateApplicantDetails(
+      int applicantId, Map<String, dynamic> statusData) async {
+    try {
+      final response =
+          await _authAPIClient.patch('/applicants/$applicantId/', statusData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to update applicant application status $e');
+    }
+  }
 }

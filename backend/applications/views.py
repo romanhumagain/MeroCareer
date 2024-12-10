@@ -1,17 +1,17 @@
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, DestroyAPIView, ListAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, DestroyAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from jobs.models import Job
 from job_seeker.models import JobSeeker
-from .serializers import ApplicantSerializer, SavedJobSerializer
+from .serializers import ApplicantSerializer, SavedJobSerializer, RecruiterApplicantSerializer
 from rest_framework.permissions import IsAuthenticated
 from applications.models import Applicant, SavedJob
 from rest_framework.exceptions import NotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from.filters import ApplicationFilter
-
+from .permissions import IsRecruiter
 
 class ApplicationAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -147,3 +147,32 @@ class SavedPostListView(ListAPIView):
     
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+# ========= API FOR THE RECRUTIER TO FETCH THE SPECIFIC APPLICANTS AND UPDATE IT 
+class RecruiterApplicantsDetailAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsRecruiter]
+    serializer_class = RecruiterApplicantSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        print("hey.............")
+        recruiter = self.request.user.recruiter
+        return Applicant.objects.filter(job__recruiter=recruiter)
+
+    def retrieve(self, request, *args, **kwargs):
+        applicant = self.get_object()
+        serializer = self.get_serializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+    
+        applicant = self.get_object()
+        serializer = self.get_serializer(applicant, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        applicant = self.get_object()
+        applicant.delete()
+        return Response({"detail": "Applicant deleted successfully."}, status=status.HTTP_204_NO_CONTENT)

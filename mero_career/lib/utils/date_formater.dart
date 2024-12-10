@@ -51,7 +51,6 @@ String formatPostedDate(String dateString) {
   final month = DateFormat.MMM().format(date);
   final year = DateFormat.y().format(date);
 
-  // Determine the suffix based on the day
   String suffix = 'th';
   if (day == '1' || day == '21' || day == '31') {
     suffix = 'st';

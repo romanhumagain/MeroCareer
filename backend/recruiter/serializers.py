@@ -53,8 +53,6 @@ class ActiveJobWithApplicantsSerializer(serializers.ModelSerializer):
         fields = ['id', 'job_title', 'deadline', 'no_of_vacancy', 'job_type', 'is_active', 'application']
 
     def get_application(self, obj):
-        # Fetch applicants specific to the job
-        applications = Applicant.objects.filter(job=obj).select_related('user')
+        applications = Applicant.objects.filter(job=obj).select_related('user').order_by('-user__total_experience')
 
-        # Serialize using RecruiterApplicantSerializer
         return RecruiterApplicantSerializer(applications, many=True).data

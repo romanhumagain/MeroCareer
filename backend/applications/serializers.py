@@ -21,3 +21,13 @@ class SavedJobSerializer(serializers.ModelSerializer):
         
         
         
+class RecruiterApplicantSerializer(serializers.ModelSerializer):
+  job_title = serializers.SerializerMethodField(read_only = True)
+  
+  class Meta:
+    model = Applicant
+    fields = ['id', 'user', 'job', 'status', 'applied_on', 'job_title' ]
+    read_only_fields = ['user', 'job_title']
+    
+  def get_job_title(self, obj):
+    return obj.job.job_title

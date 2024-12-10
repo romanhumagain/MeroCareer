@@ -134,10 +134,14 @@ class ChangePasswordAPIView(APIView):
         if serializer.is_valid():
             user = request.user
             
+            new_password = serializer.validated_data['new_password']
             current_password = serializer.validated_data['current_password']
             
             if not user.check_password(current_password):
                 return Response({"detail": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if user.check_password(new_password):
+                return Response({"detail": "New password cannot be similar to current password !"}, status=status.HTTP_400_BAD_REQUEST)
             
             new_password = serializer.validated_data['new_password']
             user.set_password(new_password)
@@ -145,3 +149,19 @@ class ChangePasswordAPIView(APIView):
 
             return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class DeactivateAccountAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        data = request.data
+        user = request.user
+        
+        if not user.check_password(data['password']):
+            return Response({"detail": "Invalid Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user.is_active = False
+        user.save()
+        
+        return Response({'detail':'Successfully deactivated your account !'}, status=status.HTTP_200_OK)

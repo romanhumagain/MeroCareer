@@ -307,6 +307,15 @@ class ResumeViewSet(viewsets.ModelViewSet):
         
 
 #  ============ for handeling the job seeker account settings =========
+class GetAccountSettingAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AccountSettingSerializer
+    
+    def get(self, request):
+        account_setting = AccountSetting.objects.get(user=self.request.user.job_seeker)
+        serializer = AccountSettingSerializer(account_setting)
+        return Response(serializer.data, status=200)
+    
 class AccountSettingUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AccountSettingSerializer

@@ -47,6 +47,9 @@ CREATED_APPS = [
     'jobs',
     'job_seeker',
     'recruiter',
+    'chat',
+    'notification',
+    
     
 ]
 

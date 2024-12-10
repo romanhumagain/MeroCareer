@@ -26,6 +26,7 @@ class ApplicantsDetails extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => JobSeekerProfilePreview(
                             jobSeekerId: data['applicant_details']['id'],
+                            applicantId: data['id'],
                           )));
             },
             child: Container(

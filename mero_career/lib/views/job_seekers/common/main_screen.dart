@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
-import 'package:mero_career/views/job_seekers/mock_interview/screen/mock_interview_prep.dart';
 import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../home/screen/home_screen.dart';
 import '../menu/bottom_sheet_menu.dart';
+import '../notification/screen/notification_screen.dart';
 import '../profile/screen/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class _NavigationMenuState extends State<MainScreen> {
     const HomeScreen(),
     const SearchScreen(),
     const ChatScreen(),
-    const MockInterviewPrep(),
+    NotificationScreen(),
     Container(),
     const ProfileScreen()
   ];
@@ -54,10 +54,12 @@ class _NavigationMenuState extends State<MainScreen> {
   }
 
   void _fetchJobSeekeProfileDetails() async {
-    if (!widget.isLoggedInNow!) {
+    if (!widget.isLoggedInNow) {
       Provider.of<JobSeekerProvider>(context, listen: false)
           .fetchJobSeekerProfileDetails();
     }
+    Provider.of<JobSeekerProvider>(context, listen: false)
+        .getAllUnreadNotification();
   }
 
   @override
@@ -146,15 +148,15 @@ class _NavigationMenuState extends State<MainScreen> {
                 fontSize: 14.5),
             selectedFontSize: 14,
             selectedIconTheme: const IconThemeData(size: 24),
-            items: const [
+            items: [
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Icon(Icons.home_filled),
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(size: 25, Icons.home),
                 ),
                 label: "Home",
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(
@@ -168,7 +170,9 @@ class _NavigationMenuState extends State<MainScreen> {
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(
-                    CupertinoIcons.chat_bubble_fill,
+                    _selectedIndex == 2
+                        ? CupertinoIcons.chat_bubble_fill
+                        : CupertinoIcons.chat_bubble,
                     size: 23,
                   ),
                 ),
@@ -177,14 +181,47 @@ class _NavigationMenuState extends State<MainScreen> {
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
-                  child: Icon(
-                    Icons.dashboard,
-                    size: 24.5,
-                  ),
+                  child: Consumer<JobSeekerProvider>(
+                      builder: (context, provider, child) {
+                    final int unreadMessage =
+                        provider.unreadNotification!.length;
+
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          _selectedIndex != 3
+                              ? CupertinoIcons.bell
+                              : CupertinoIcons.bell_fill,
+                          size: 24.5,
+                        ),
+                        if (unreadMessage > 0)
+                          Positioned(
+                            right: -6, // Adjust position as per your design
+                            top: -6,
+                            child: Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                unreadMessage.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  }),
                 ),
-                label: "Interview",
+                label: "Notification",
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(

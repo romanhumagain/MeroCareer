@@ -3,7 +3,8 @@ from base.views import (
                         LoginAPIView, 
                         SendOTPAPIView, 
                         VerifyOTP, 
-                        ChangePasswordAPIView)
+                        ChangePasswordAPIView, 
+                        DeactivateAccountAPIView)
 from rest_framework import routers
 
 from jobs.views import (JobCategoryViewSet, 
@@ -31,7 +32,9 @@ from job_seeker.views import (RegisterJobSeekerAPIView,
                               ResumeViewSet,
                               ProfileSetupAnalysis,
                               JobSeekerRetriveAPIView,
-                              GetRecruiterDetailsAPI
+                              GetRecruiterDetailsAPI,
+                              AccountSettingUpdateAPIView, 
+                              GetAccountSettingAPIView
                               )
 
 from recruiter.views import (RegisterRecruiterAPIView, 
@@ -41,7 +44,21 @@ from recruiter.views import (RegisterRecruiterAPIView,
                              ApplicantsForJobView, 
                              ActiveJobsWithApplicantsView)
 
-from applications.views import (ApplicationAPIView, ApplicationDeleteAPIView, SaveJobAPIView, UnsaveJobAPIView, SavedPostListView)
+from applications.views import (ApplicationAPIView, 
+                                ApplicationDeleteAPIView, 
+                                SaveJobAPIView, 
+                                UnsaveJobAPIView, 
+                                SavedPostListView, 
+                                RecruiterApplicantsDetailAPIView)
+
+from notification.views import (NotificationListView, UnreadNotificationListView,MarkAllNotificationsReadView  )
+from chat.views import ( ChatRoomView, SendMessageView, ChatRoomListView, DeleteChatRoomView, 
+                        
+                        ChatRoomAPIView, 
+                        ChatRoomMessageAPIView,
+                        GetChatRoomWithJobSeeker
+                        )
+
 
 router = routers.DefaultRouter()
 router.register(r'jobs-category', JobCategoryViewSet, basename='jobs_category')
@@ -65,6 +82,11 @@ urlpatterns = [
   path('profile-setup-analysis/', ProfileSetupAnalysis.as_view(), name='profile_setup_analysis'),
   path('recruiter/job/<int:id>/', GetRecruiterDetailsAPI.as_view(), name='recruiter_with_posted_job_details'),
   path('joblist/<int:id>/', ListRecruiterJobPost.as_view(), name='recruiter_job_details'),
+  path('account/settings/', GetAccountSettingAPIView.as_view(), name='get_account_settings'),
+
+  path('settings/', AccountSettingUpdateAPIView.as_view(), name='update_account_settings'),
+  path('deactivate-account/', DeactivateAccountAPIView.as_view(), name='deactivate'),
+  
   
   
   path('application/', ApplicationAPIView.as_view(), name='application_list_create'),
@@ -72,6 +94,7 @@ urlpatterns = [
   path('save-job/', SaveJobAPIView.as_view(), name='save-job'),
   path('unsave-job/<int:id>/', UnsaveJobAPIView.as_view(), name='unsave-job'),
   path('saved-post/', SavedPostListView.as_view(), name='saved-job-post'),
+  path('applicants/<int:id>/', RecruiterApplicantsDetailAPIView.as_view(), name='applicant-detail'),
   
   
   path('user/login/', LoginAPIView.as_view(), name='login_user'),
@@ -97,6 +120,30 @@ urlpatterns = [
   path('recruiter/applicants/', RecruiterApplicantsView.as_view(), name='recruiter-applicants'),
   path('jobs/<int:job_id>/applicants/', ApplicantsForJobView.as_view(), name='job-applicants'),
   path('active-jobs-with-applicants/', ActiveJobsWithApplicantsView.as_view(), name='active-jobs-with-applicants'),
+  
+  
+  path('notifications/', NotificationListView.as_view(), name='notification-list'),
+  path('notifications/unread/', UnreadNotificationListView.as_view(), name='unread-notifications'),
+  path('notifications/mark-all-read/', MarkAllNotificationsReadView.as_view(), name='mark-all-read'),
+  
+  
+  
+  # path('chat-room/<int:recruiter_id>/', ChatRoomView.as_view(), name='chat-room-recruiter'),
+  # path('chat-room/job-seeker/<int:job_seeker_id>/', ChatRoomView.as_view(), name='chat-room-job-seeker'),
+  # path('send-message/<int:chat_room_id>/', SendMessageView.as_view(), name='send-message'),
+  # # path('chat-rooms/', ChatRoomListView.as_view(), name='chat-rooms'),
+  # # path('delete-chat-room/<int:pk>/', DeleteChatRoomView.as_view(), name='delete-chat-room'),
+
+
+ # Chat room endpoints
+    path('chat-room/', ChatRoomAPIView.as_view(), name='chat-room-list'),
+    path('chat-room/<int:job_seeker_id>/', ChatRoomAPIView.as_view(), name='chat-room-create'),
+
+    # Message endpoints
+    path('chat-room/<int:chat_room_id>/messages/', ChatRoomMessageAPIView.as_view(), name='chat-room-messages'),
+    path('jobseeker-chat-room/<int:job_seeker_id>/messages/', GetChatRoomWithJobSeeker.as_view(), name='chat-room-messages-jobseeker'),
+    
+
   path('', include(router.urls))
   
 ]

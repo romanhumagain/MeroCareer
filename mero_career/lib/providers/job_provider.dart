@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mero_career/services/applicants_services.dart';
+import 'package:mero_career/services/job_seeker_services.dart';
 import 'package:mero_career/services/job_services.dart';
 import 'package:mero_career/services/recruiter_services.dart';
 
@@ -10,6 +11,8 @@ class JobProvider extends ChangeNotifier {
   List<dynamic> _postedJobLists = [];
   List<dynamic> _filterableJobLists = [];
   Map<String, dynamic>? _recruiterStats = {};
+  Map<String, dynamic>? _applicantDetails = {};
+  Map<String, dynamic>? _jobSeekerProfileDetails = {};
   List<dynamic> _recentApplicants = [];
   List<dynamic> _selectedJobApplicants = [];
   List<dynamic> _activeJobWithApplicants = [];
@@ -30,9 +33,14 @@ class JobProvider extends ChangeNotifier {
 
   Map<String, dynamic>? get recruiterStats => _recruiterStats;
 
+  Map<String, dynamic>? get jobSeekerProfileDetails => _jobSeekerProfileDetails;
+
+  Map<String, dynamic>? get applicantDetails => _applicantDetails;
+
   JobServices jobServices = JobServices();
   ApplicantsServices applicantsServices = ApplicantsServices();
   RecruiterServices recruiterServices = RecruiterServices();
+  JobSeekerServices jobSeekerServices = JobSeekerServices();
 
   Future<http.Response?> getJobPosts() async {
     _isLoading = true;
@@ -43,8 +51,6 @@ class JobProvider extends ChangeNotifier {
         final responseData = await json.decode(response.body);
         _postedJobLists = responseData;
         notifyListeners();
-        print(
-            'Job posts updated: $_postedJobLists'); // Add this line for debugging
       }
       return response;
     } catch (e) {
@@ -226,6 +232,66 @@ class JobProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // function to get job seeker profile detials
+  Future<void> getJobSeekerDetails(int jobSeekerId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response =
+          await jobSeekerServices.fetchJobSeekerProfilePreview(jobSeekerId);
+
+      if (response.statusCode == 200) {
+        _jobSeekerProfileDetails = json.decode(response.body);
+        notifyListeners();
+      } else {
+        print('Failed to get job seeker details: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching job seeker profile details $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // function to get applicants details while previewing the job seeker profile
+  Future<void> getApplicantDetails(int applicantId) async {
+    try {
+      final response =
+          await applicantsServices.getApplicantDetails(applicantId);
+
+      if (response.statusCode == 200) {
+        _applicantDetails = await json.decode(response.body);
+        notifyListeners();
+      } else {
+        print('Failed to get applicants details: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching applicant details $e');
+    }
+  }
+
+  // function to update application status
+  Future<void> updateApplicantDetails(
+      int applicantId, Map<String, dynamic> statusData) async {
+    try {
+      final response = await applicantsServices.updateApplicantDetails(
+          applicantId, statusData);
+
+      if (response.statusCode == 200) {
+        getApplicantDetails(applicantId);
+        getRecruiterStats();
+        getRecentApplicants("");
+        notifyListeners();
+      } else {
+        print('Failed to update applicant: ${response.body}');
+      }
+    } catch (e) {
+      print('Error Updaing applicant application status $e');
     }
   }
 }

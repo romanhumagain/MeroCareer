@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_provider.dart';
+import 'package:mero_career/views/recruiters/home/screen/all_recent_application_screen.dart';
 import 'package:mero_career/views/recruiters/home/screen/job_listing_screen.dart';
 import 'package:mero_career/views/recruiters/home/widgets/home_screen_heading.dart';
 import 'package:provider/provider.dart';
@@ -180,7 +181,10 @@ class ClosingMessage extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Add navigation or action here
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AllRecentApplicationScreen()));
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),

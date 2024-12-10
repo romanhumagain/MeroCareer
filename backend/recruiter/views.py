@@ -133,7 +133,7 @@ class RecruiterApplicantsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = RecruiterApplicantSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ApplicationFilter  # Use your existing filterset
+    filterset_class = ApplicationFilter
 
     def get_queryset(self):
         recruiter = self.request.user.recruiter
@@ -156,7 +156,6 @@ class ApplicantsForJobView(generics.ListAPIView):
         except Job.DoesNotExist:
             raise PermissionDenied("You do not have permission to view this job's applicants.")
         
-        # Return the raw queryset without applying `filter_queryset` here
         return Applicant.objects.filter(job=job).order_by('-user__total_experience')
 
     
@@ -170,9 +169,9 @@ class ActiveJobsWithApplicantsView(APIView):
         job_status = request.query_params.get('status', 'active').lower()
 
         if job_status == 'closed':
-            jobs = Job.objects.filter(recruiter=recruiter, deadline__lte=timezone.now())
+            jobs = Job.objects.filter(recruiter=recruiter, deadline__lte=timezone.now()).order_by('-id')
         else:
-            jobs = Job.objects.filter(recruiter=recruiter, deadline__gt=timezone.now())
+            jobs = Job.objects.filter(recruiter=recruiter, deadline__gt=timezone.now()).order_by('-id')
 
         serializer = ActiveJobWithApplicantsSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

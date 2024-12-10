@@ -85,4 +85,28 @@ class JobSeekerServices {
       throw Exception('Failed to clear search $e');
     }
   }
+
+  // function to remove the search history
+  Future<http.Response> changeAccountPassword(
+      Map<String, dynamic> credentialsData) async {
+    try {
+      final response =
+          await authAPIClient.post('/change-password/', credentialsData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to clear search $e');
+    }
+  }
+
+  // function to remove the search history
+  Future<http.Response> deactivateAccount(
+      Map<String, dynamic> credentialsData) async {
+    try {
+      final response =
+          await authAPIClient.post('/deactivate-account/', credentialsData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to deactivate account $e');
+    }
+  }
 }

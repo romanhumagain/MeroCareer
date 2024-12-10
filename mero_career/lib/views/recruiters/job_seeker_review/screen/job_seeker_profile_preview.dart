@@ -6,9 +6,12 @@ import 'package:mero_career/services/job_seeker_services.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_details.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/widgets/education_details.dart';
+import 'package:mero_career/views/recruiters/job_seeker_review/widgets/preview_heading_for_job_seeker.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../providers/job_provider.dart';
 import '../../../../services/auth_services.dart';
 import '../../../shared/login/login_page.dart';
 import '../../home/widgets/skill_card.dart';
@@ -21,8 +24,10 @@ import '../widgets/work_experience.dart';
 
 class JobSeekerProfilePreview extends StatefulWidget {
   final int jobSeekerId;
+  final int applicantId;
 
-  const JobSeekerProfilePreview({super.key, required this.jobSeekerId});
+  const JobSeekerProfilePreview(
+      {super.key, required this.jobSeekerId, this.applicantId = 0});
 
   @override
   State<JobSeekerProfilePreview> createState() =>
@@ -30,16 +35,17 @@ class JobSeekerProfilePreview extends StatefulWidget {
 }
 
 class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
-  late Future<Map<String, dynamic>?>? _profileDetails;
   String role = "";
-
   AuthServices authServices = AuthServices();
 
   @override
   void initState() {
     super.initState();
     fetchUserRole();
-    _profileDetails = _fetchProfileDetails();
+    if (widget.applicantId != 0) {
+      fetchJobApplicantsDetails();
+    }
+    fetchJobSeekerProfile();
   }
 
   void fetchUserRole() async {
@@ -48,119 +54,105 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
 
   JobSeekerServices jobSeekerServices = JobSeekerServices();
 
-  Future<Map<String, dynamic>?> _fetchProfileDetails() async {
-    try {
-      final response = await jobSeekerServices
-          .fetchJobSeekerProfilePreview(widget.jobSeekerId);
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else if (response.statusCode == 400) {
-        showCustomFlushbar(
-          context: context,
-          message: "Couldn't Preview Profile",
-          type: MessageType.error,
-        );
-      } else if (response.statusCode == 401) {
-        AuthServices authServices = AuthServices();
-        await authServices.logoutUser();
-        showCustomFlushbar(
-          context: context,
-          message: "Session expired! Please login again",
-          type: MessageType.error,
-        );
-        await Future.delayed(Duration(seconds: 2));
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      print("Error while previewing user: $e");
-    }
-    return null;
+  void fetchJobSeekerProfile() async {
+    await Provider.of<JobProvider>(context, listen: false)
+        .getJobSeekerDetails(widget.jobSeekerId);
+  }
+
+  void fetchJobApplicantsDetails() async {
+    await Provider.of<JobProvider>(context, listen: false)
+        .getApplicantDetails(widget.applicantId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(),
-      body: FutureBuilder<Map<String, dynamic>?>(
-        future: _profileDetails,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("An error occurred: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text("No profile data available"));
-          }
-          final profileData = snapshot.data!;
-          print(profileData['prefered_job_category']);
-          return Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ProfilePreviewHeading(profileData: profileData, role: role),
-                    MyDivider(),
-                    SizedBox(height: 12),
-                    ReviewResume(
-                        size: MediaQuery.of(context).size, data: profileData),
-                    SizedBox(height: 2),
-                    JobPreference(
-                        size: MediaQuery.of(context).size,
-                        data: profileData['prefered_job_category']),
-                    MyDivider(),
-                    AboutMeSection(
-                        size: MediaQuery.of(context).size, data: profileData),
-                    MyDivider(),
-                    EducationDetails(
-                        data: profileData['job_seeker_education_details']),
-                    MyDivider(),
-                    ProfessionalSkills(
-                        skills: profileData['job_seeker_skill_details']),
-                    MyDivider(),
-                    WorkExperience(
-                        data: profileData['job_seeker_experience_details']),
-                    MyDivider(),
-                    ProjectDetails(
-                        data: profileData['job_seeker_project_details']),
-                  ],
-                ),
+      body: Consumer<JobProvider>(builder: (context, provider, child) {
+        final Map<String, dynamic>? jobSeekerDetails =
+            provider.jobSeekerProfileDetails;
+        bool isLoading = provider.isLoading;
+        // if (isLoading) {
+        //   return Center(
+        //     child: CircularProgressIndicator(),
+        //   );
+        // }
+        if (jobSeekerDetails!.isEmpty) {
+          return Text(
+            "No Job Seeker Details Found !",
+            style: TextStyle(fontSize: 14),
+          );
+        }
+        final profileData = jobSeekerDetails;
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.applicantId != 0
+                      ? ProfilePreviewHeading(
+                          profileData: profileData,
+                          role: role,
+                          applicantId: widget.applicantId)
+                      : PreviewHeadingForJobSeeker(
+                          profileData: profileData, role: role),
+                  MyDivider(),
+                  SizedBox(height: 12),
+                  ReviewResume(
+                      size: MediaQuery.of(context).size, data: profileData),
+                  SizedBox(height: 2),
+                  JobPreference(
+                      size: MediaQuery.of(context).size,
+                      data: profileData['prefered_job_category']),
+                  MyDivider(),
+                  AboutMeSection(
+                      size: MediaQuery.of(context).size, data: profileData),
+                  MyDivider(),
+                  EducationDetails(
+                      data: profileData['job_seeker_education_details']),
+                  MyDivider(),
+                  ProfessionalSkills(
+                      skills: profileData['job_seeker_skill_details']),
+                  MyDivider(),
+                  WorkExperience(
+                      data: profileData['job_seeker_experience_details']),
+                  MyDivider(),
+                  ProjectDetails(
+                      data: profileData['job_seeker_project_details']),
+                ],
               ),
-              role == "recruiter"
-                  ? Positioned(
-                      bottom: 30,
-                      right: 30,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChatDetails()),
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            CupertinoIcons.chat_bubble_fill,
-                            color: Colors.white,
-                            size: 25,
-                          ),
+            ),
+            role == "recruiter"
+                ? Positioned(
+                    bottom: 30,
+                    right: 30,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatDetails()),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          CupertinoIcons.chat_bubble_fill,
+                          color: Colors.white,
+                          size: 25,
                         ),
                       ),
-                    )
-                  : SizedBox()
-            ],
-          );
-        },
-      ),
+                    ),
+                  )
+                : SizedBox()
+          ],
+        );
+      }),
     );
   }
 }
