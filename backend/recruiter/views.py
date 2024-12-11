@@ -17,7 +17,8 @@ from django.utils import timezone
 from applications.models import Applicant
 from applications.filters import ApplicationFilter
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
@@ -35,19 +36,34 @@ class RegisterRecruiterAPIView(generics.CreateAPIView):
                   
                     user = serializer.save()
 
-                    Recruiter.objects.create(
+                    recruiter = Recruiter.objects.create(
                         user=user,
-                        company_profile_image = data['company_profile_image'],
                         company_name = data['company_name'],
                         phone_number = data['phone_number'],
                         address = data['address'],
                         company_type = data['company_type'],
                         registration_number = data['registration_number'],
                         pan_number = data['pan_number'],
-                           
+                        
                     )
-
-                return Response({'detail': 'Successfully Registered Recruiter'}, status=status.HTTP_201_CREATED)
+                    recruiter.save()
+                    
+                    refresh = RefreshToken.for_user(user)
+                    refresh['id'] = user.id
+                    refresh['email'] = user.email
+                    
+                    access_token = str(refresh.access_token)
+                    
+                    response_data = {
+                    'detail':'Recruiter Registered successfully !',
+                    'refresh':str(refresh),
+                    'access':access_token,
+                    'role':user.role, 
+                    'is_verified':user.is_verified,
+                    'is_approved':recruiter.is_approved,
+                    }
+                    
+                return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:

@@ -17,7 +17,7 @@ class Recruiter(models.Model):
   linkedin_link = models.CharField(max_length=255, null=True, blank=True, unique=True)
   website_link = models.CharField(max_length=255, null=True, blank=True, unique=True)
   
-  is_approved = models.BooleanField(default=True)
+  is_approved = models.BooleanField(default=False)
   
   
   def __str__(self):

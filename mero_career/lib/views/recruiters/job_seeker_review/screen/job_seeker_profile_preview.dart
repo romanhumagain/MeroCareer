@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mero_career/services/job_seeker_services.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_details.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
+import 'package:mero_career/views/recruiters/job_seeker_review/screen/chat_with_jobseeker.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/widgets/education_details.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/widgets/preview_heading_for_job_seeker.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
@@ -100,7 +101,8 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
                   MyDivider(),
                   SizedBox(height: 12),
                   ReviewResume(
-                      size: MediaQuery.of(context).size, data: profileData),
+                      size: MediaQuery.of(context).size,
+                      data: profileData['resume_details']),
                   SizedBox(height: 2),
                   JobPreference(
                       size: MediaQuery.of(context).size,
@@ -132,7 +134,11 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ChatDetails()),
+                              builder: (context) => ChatWithJobseeker(
+                                    jobSeekerId: jobSeekerDetails['id'],
+                                    name: jobSeekerDetails['full_name'],
+                                    imageUrl: jobSeekerDetails['profile_image'],
+                                  )),
                         );
                       },
                       child: Container(

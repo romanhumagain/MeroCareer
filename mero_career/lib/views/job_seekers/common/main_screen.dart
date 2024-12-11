@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/chat_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
 import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
@@ -47,6 +48,7 @@ class _NavigationMenuState extends State<MainScreen> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchJobSeekeProfileDetails();
@@ -58,8 +60,11 @@ class _NavigationMenuState extends State<MainScreen> {
       Provider.of<JobSeekerProvider>(context, listen: false)
           .fetchJobSeekerProfileDetails();
     }
-    Provider.of<JobSeekerProvider>(context, listen: false)
+    await Provider.of<JobSeekerProvider>(context, listen: false)
         .getAllUnreadNotification();
+
+    await Provider.of<ChatProvider>(context, listen: false)
+        .getUnreadMessageCount();
   }
 
   @override
@@ -67,7 +72,7 @@ class _NavigationMenuState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        toolbarHeight: 65,
+        toolbarHeight: 70,
         leadingWidth: 350,
         leading: GestureDetector(
           onTap: () {
@@ -104,18 +109,21 @@ class _NavigationMenuState extends State<MainScreen> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 18.0),
-            child: GestureDetector(
-              onTap: _navigateToProfile,
-              child: const CircleAvatar(
-                radius: 17,
-                backgroundImage: AssetImage(
-                  'assets/images/pp.jpg',
-                ),
-              ),
-            ),
-          ),
+          Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+            final jobSeekerDetails = provider.jobSeekerProfileDetails;
+            return Padding(
+              padding: const EdgeInsets.only(right: 18.0),
+              child: GestureDetector(
+                  onTap: _navigateToProfile,
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundImage: jobSeekerDetails?['profile_image'] != null
+                        ? NetworkImage(jobSeekerDetails?['profile_image'])
+                        : AssetImage('assets/images/blank_pp.png')
+                            as ImageProvider, // Cast AssetImage to ImageProvider
+                  )),
+            );
+          }),
         ],
       ),
       body: _screens[_selectedIndex],
@@ -169,12 +177,42 @@ class _NavigationMenuState extends State<MainScreen> {
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
-                  child: Icon(
-                    _selectedIndex == 2
-                        ? CupertinoIcons.chat_bubble_fill
-                        : CupertinoIcons.chat_bubble,
-                    size: 23,
-                  ),
+                  child: Consumer<ChatProvider>(
+                      builder: (context, provider, child) {
+                    final int unreadMessage = provider.unreadMessageCount;
+
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          _selectedIndex != 3
+                              ? CupertinoIcons.chat_bubble
+                              : CupertinoIcons.chat_bubble_fill,
+                          size: 24.5,
+                        ),
+                        if (unreadMessage > 0)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                unreadMessage.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  }),
                 ),
                 label: "Chat",
               ),

@@ -27,7 +27,7 @@ class MyButton extends StatelessWidget {
         elevation: 5,
         child: GestureDetector(
           onTap: () {
-            onTap();
+            isLoading! ? () {} : onTap();
           },
           child: Container(
             width: width,

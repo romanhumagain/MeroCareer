@@ -25,9 +25,9 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
   Color _getAnalysisColor(int percentage) {
     if (percentage < 50) {
       return Colors.red;
-    } else if (percentage >= 50 && percentage < 100) {
+    } else if (percentage >= 50 && percentage < 80) {
       return Colors.orange;
-    } else if (percentage == 80) {
+    } else if (percentage > 80 && percentage <= 100) {
       return Colors.green;
     } else {
       return Colors.grey;
@@ -52,48 +52,55 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                    height: size.height,
-                    width: size.width / 2.5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircularPercentIndicator(
-                          radius: 26.0,
-                          lineWidth: 5.0,
-                          animation: true,
-                          percent: analysisData?['percentage'] / 100,
-                          center: Text(
-                            "${analysisData?['percentage']}.0%",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 12.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: SizedBox(
+                      height: size.height,
+                      width: size.width / 2.5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircularPercentIndicator(
+                            radius: 28.0,
+                            lineWidth: 5.0,
+                            animation: true,
+                            percent: analysisData?['percentage'] / 100,
+                            center: Text(
+                              "${analysisData?['percentage']}.0%",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 12.0),
+                            ),
+                            circularStrokeCap: CircularStrokeCap.round,
+                            progressColor:
+                                _getAnalysisColor(analysisData?['percentage']),
                           ),
-                          circularStrokeCap: CircularStrokeCap.round,
-                          progressColor:
-                              _getAnalysisColor(analysisData?['percentage']),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          "MeroCareer experts suggest you to have a complete profile",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(
-                                  fontSize: 14,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          "${analysisData?['missing_details']} Missing details !",
-                          style: TextStyle(color: Colors.blue),
-                        )
-                      ],
-                    )),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "MeroCareer experts suggest you to have a complete profile",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                    fontSize: 14,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "${analysisData?['missing_details']} Missing details !",
+                            style: TextStyle(
+                                color: analysisData!['missing_details'] > 0
+                                    ? Colors.red
+                                    : Colors.green),
+                          )
+                        ],
+                      )),
+                ),
                 SizedBox(
                   width: 20,
                 ),

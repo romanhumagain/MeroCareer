@@ -46,7 +46,7 @@ class _RecentApplicationState extends State<RecentApplication> {
                 "Recent applications for jobs ",
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    fontSize: 16.2,
+                    fontSize: 17.5,
                     letterSpacing: 0.4),
               ),
               GestureDetector(
@@ -60,7 +60,7 @@ class _RecentApplicationState extends State<RecentApplication> {
                   "View All",
                   style: TextStyle(
                       color: Colors.blue,
-                      fontSize: 14.5,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500),
                 ),
               )
@@ -73,7 +73,14 @@ class _RecentApplicationState extends State<RecentApplication> {
               final recentApplicants = provider.recentApplicants;
               if (recentApplicants!.isEmpty) {
                 return SizedBox(
-                    height: 60, child: Text("No Applicants Found !"));
+                    height: 60,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "No Applicants Found !",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ));
               }
               return Row(
                 children: recentApplicants.take(10).map((applicant) {

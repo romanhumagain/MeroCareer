@@ -63,4 +63,39 @@ class ChatServices {
       throw Exception('Failed to get messages with that job id $e');
     }
   }
+
+  // to get messages of chat rooms with job if
+  Future<http.Response> chatWithJobSeeker(
+      int jobSeekerId, Map<String, dynamic> chatData) async {
+    try {
+      final response = await _authAPIClient.post(
+          '/chat-with-jobseeker/$jobSeekerId/', chatData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to send message to job seeker $e');
+    }
+  }
+
+// mark all messages as read
+  Future<http.Response> markAllMessagesRead(
+      Map<String, dynamic> roomData) async {
+    try {
+      final response =
+          await _authAPIClient.post('/messages/mark-as-read/', roomData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to mark messages as read $e');
+    }
+  }
+
+  // to get unread messages count
+  Future<http.Response> getUnreadCount() async {
+    try {
+      final response =
+          await _authAPIClient.get('/messages/unread-chat-rooms-count/');
+      return response;
+    } catch (e) {
+      throw Exception('Failed get unread messages count $e');
+    }
+  }
 }

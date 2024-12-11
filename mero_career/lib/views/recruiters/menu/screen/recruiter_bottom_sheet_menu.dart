@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../services/auth_services.dart';
 import '../../../shared/login/login_page.dart';
+import '../../../shared/logout_screen.dart';
 import '../../../widgets/custom_confirmation_message.dart';
 
 class RecruiterBottomSheetMenu extends StatelessWidget {
@@ -22,8 +23,10 @@ class RecruiterBottomSheetMenu extends StatelessWidget {
 
       if (isConfirmed) {
         await authServices.logoutUser();
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LogoutScreen()),
+            (route) => false);
       }
     }
 

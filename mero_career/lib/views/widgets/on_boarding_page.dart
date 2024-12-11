@@ -18,22 +18,9 @@ class OnBoardingPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Material(
-            elevation: 4,
+          ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                decoration: BoxDecoration(boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(20, 10),
-                  )
-                ]),
-                child: Image.asset(imageUrl, height: 225),
-              ),
-            ),
+            child: Image.asset(imageUrl, height: 300),
           ),
           SizedBox(
             height: 52,
@@ -41,7 +28,7 @@ class OnBoardingPage extends StatelessWidget {
           Text(
             heading,
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: 0.6),
+                fontSize: 27, fontWeight: FontWeight.w700, letterSpacing: 0.6),
             textAlign: TextAlign.center,
           ),
           SizedBox(
@@ -52,7 +39,7 @@ class OnBoardingPage extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .titleSmall
-                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 13.5),
+                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 14.5),
             textAlign: TextAlign.center,
           ),
         ],

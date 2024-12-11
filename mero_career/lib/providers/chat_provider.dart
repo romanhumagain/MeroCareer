@@ -11,10 +11,20 @@ import '../views/widgets/custom_flushbar_message.dart';
 
 class ChatProvider extends ChangeNotifier {
   List<dynamic> _chatDetails = [];
+  List<dynamic> _chatRooms = [];
+  int _unreadMessageCount = 0;
+
+  List<dynamic> _jobseekerChatDetails = [];
 
   bool _isLoading = false;
 
   List<dynamic>? get chatDetails => _chatDetails;
+
+  List<dynamic>? get jobseekerChatDetails => _jobseekerChatDetails;
+
+  List<dynamic>? get chatRooms => _chatRooms;
+
+  int get unreadMessageCount => _unreadMessageCount;
 
   bool get isLoading => _isLoading;
   ChatServices chatServices = ChatServices();
@@ -44,7 +54,10 @@ class ChatProvider extends ChangeNotifier {
       final response = await chatServices.getMessagesWithJobseeker(jobSeekerID);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        _chatDetails = responseData;
+        _jobseekerChatDetails = responseData;
+        notifyListeners();
+      } else {
+        _jobseekerChatDetails = [];
         notifyListeners();
       }
       return response;
@@ -54,6 +67,24 @@ class ChatProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // to get message of a selected job seeker
+  Future<http.Response?> chatWithJobSeeker(
+      int jobSeekerID, Map<String, dynamic> chatData) async {
+    try {
+      final response =
+          await chatServices.chatWithJobSeeker(jobSeekerID, chatData);
+      if (response.statusCode == 201) {
+        fetchAllMessagesWithJobseeker(jobSeekerID);
+        notifyListeners();
+      }
+      return response;
+      print(response.body);
+    } catch (e) {
+      print("Error sending message to job seeker $e");
+      return null;
     }
   }
 
@@ -112,24 +143,67 @@ class ChatProvider extends ChangeNotifier {
   Future<http.Response?> sendMessage(
       int roomId, Map<String, dynamic> contentData) async {
     try {
-      _isLoading = true;
-      notifyListeners();
-
       final response = await chatServices.sendMessage(roomId, contentData);
+      if (response.statusCode == 201) {
+        await fetchAllMessages(roomId);
+        notifyListeners();
+      }
+      return response;
+    } catch (e) {
+      print("Error while sending messages of selected chat room: $e");
+      return null;
+    }
+  }
+
+  // to get message of a selected chat room
+  Future<http.Response?> getChatRoom() async {
+    try {
+      final response = await chatServices.getChatRooms();
+      if (response.statusCode == 200) {
+        final responseData = await json.decode(response.body);
+        _chatRooms = responseData;
+        print("responseData");
+        print(responseData);
+        notifyListeners();
+      }
+      return response;
+    } catch (e) {
+      print("Error while fetching chat rooms: $e");
+      return null;
+    }
+  }
+
+  // to get all unread message count
+  Future<http.Response?> getUnreadMessageCount() async {
+    try {
+      final response = await chatServices.getUnreadCount();
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        _chatDetails = responseData;
+        _unreadMessageCount = responseData['unread_chat_rooms_count'];
         notifyListeners();
       }
-
       return response;
     } catch (e) {
-      print("Error while fetching messages of selected chat room: $e");
+      print("Error while getting unread chat room: $e");
       return null;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    }
+  }
+
+  Future<http.Response?> markAllMessageRead(
+      Map<String, dynamic> roomData) async {
+    try {
+      final response = await chatServices.markAllMessagesRead(roomData);
+
+      if (response.statusCode == 200) {
+        getUnreadMessageCount();
+        getChatRoom();
+        notifyListeners();
+      }
+      return response;
+    } catch (e) {
+      print("Error marking all message read: $e");
+      return null;
     }
   }
 }

@@ -31,6 +31,8 @@ from rest_framework import viewsets
 from job_seeker.permissions   import IsJobSeeker
 from .models import AccountSetting
 from recruiter.models import Recruiter
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class RegisterJobSeekerAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
@@ -43,7 +45,6 @@ class RegisterJobSeekerAPIView(generics.CreateAPIView):
         try:
             if serializer.is_valid():
                 with transaction.atomic():
-                    
                     user = serializer.save()
 
                     jobSeekerInst = JobSeeker.objects.create(
@@ -53,28 +54,48 @@ class RegisterJobSeekerAPIView(generics.CreateAPIView):
                         phone_number=data['phone_number'],
                         address=data['address'],
                     )
-                    
-                    accountSetting = AccountSetting.objects.create(user = jobSeekerInst)
+
+                    accountSetting = AccountSetting.objects.create(user=jobSeekerInst)
                     accountSetting.save()
-                    
+
                     try:
                         jobCategory = JobCategory.objects.get(id=data['prefered_job_category'])
-                        
+
                         CareerPreference.objects.create(
                             user=jobSeekerInst,
                             prefered_job_category=jobCategory
                         )
                     except JobCategory.DoesNotExist:
-                        raise ValidationError({"detail": "Job category doesn't exist."})
+                        return Response(
+                            {"detail": "Preferred job category does not exist."},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
 
-                return Response({'detail': 'Successfully Registered Job Seeker'}, status=status.HTTP_201_CREATED)
-            
+                    refresh = RefreshToken.for_user(user)
+                    refresh['id'] = user.id
+                    refresh['email'] = user.email
+
+                    access_token = str(refresh.access_token)
+
+                    response_data = {
+                        'detail': 'Job Seeker Registered Successfully!',
+                        'refresh': str(refresh),
+                        'access': access_token,
+                        'role': user.role,
+                        'is_verified': user.is_verified, 
+                    }
+
+                    return Response(response_data, status=status.HTTP_201_CREATED)
+
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+            return Response(
+                {'detail': 'An unexpected error occurred. Please try again later.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
 class JobSeekerRetriveUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = JobSeekerSerializer
@@ -353,7 +374,7 @@ class ProfileSetupAnalysis(APIView):
         missing_details_count = 0
 
         # Check for resume
-        has_resume_uploaded = hasattr(job_seeker, 'resume') and job_seeker.resume.resume
+        has_resume_uploaded = job_seeker.resume is not None and job_seeker.resume.resume_file is not None
         if has_resume_uploaded:
             percentage_count += 20
         else:

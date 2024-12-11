@@ -16,16 +16,25 @@ class AuthServices {
     await preferences.setString('accessToken', accessToken);
   }
 
+  // save user role
   Future<void> saveUserRole(String role) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     await sharedPreferences.setString("userRole", role);
   }
 
+  //save user verification status
   Future<void> saveVerificationStatus(bool isVerified) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     await sharedPreferences.setBool("isVerified", isVerified);
+  }
+
+  //save user recrutier approval status
+  Future<void> saveRecruiterApprovalStatus(bool isApproved) async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    await sharedPreferences.setBool("isApproved", isApproved);
   }
 
   // to get access token
@@ -52,23 +61,28 @@ class AuthServices {
     return preferences.getBool('isVerified');
   }
 
+  // to get recrutier approval status
+  Future<bool?> getRecruiterApprovalStatus() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getBool('isApproved');
+  }
+
   // to clear tokens or to logout
   Future<void> logoutUser() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove('refreshToken');
     await preferences.remove('accessToken');
     await preferences.remove('userRole');
+    await preferences.remove('isVerified');
+    await preferences.remove('isApproved');
   }
 
   // to check whether the token is valid or not and user is loggedin or not
   Future<bool> isLoggedIn() async {
     String? token = await getAccessToken();
     if (token != null && !JwtDecoder.isExpired(token)) {
-      print("token is valid");
       return true;
     } else {
-      print("token is invalid");
-
       return false;
     }
   }

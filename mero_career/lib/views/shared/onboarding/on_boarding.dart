@@ -32,21 +32,21 @@ class _OnBoardingState extends State<OnBoarding> {
                 heading: "Find Jobs That Fit You",
                 subHeading:
                     "Easily search and filter job listings to match your skills, preferences, and desired work environment. Your dream job is just a few taps away.",
-                imageUrl: 'assets/images/on_boarding3.jpg',
+                imageUrl: 'assets/images/job_details/jobs_illustration.png',
               ),
 
               OnBoardingPage(
                 heading: "Personalize Your Journey",
                 subHeading:
                     "Customize your profile and manage applications with ease to make your job search journey truly yours, every step of the way.",
-                imageUrl: 'assets/images/on_boarding2.jpg',
+                imageUrl: 'assets/images/on_boarding8.jpg',
               ),
 
               OnBoardingPage(
                 heading: "Apply Instantly",
                 subHeading:
                     "Create a profile, upload your resume, and apply to jobs with just one click, saving you time and effort in your job search.",
-                imageUrl: 'assets/images/on_boarding4.jpg',
+                imageUrl: 'assets/images/on_boarding9.jpg',
               ),
 
               // OnBoardingPage(),

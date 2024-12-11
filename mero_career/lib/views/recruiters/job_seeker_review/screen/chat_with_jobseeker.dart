@@ -3,23 +3,23 @@ import 'package:mero_career/providers/chat_provider.dart';
 import 'package:mero_career/utils/date_formater.dart';
 import 'package:provider/provider.dart';
 
-class ChatDetails extends StatefulWidget {
-  final int chatRoomId;
+class ChatWithJobseeker extends StatefulWidget {
+  final int jobSeekerId;
   final String name;
   final String imageUrl;
 
-  const ChatDetails({
+  const ChatWithJobseeker({
     super.key,
-    required this.chatRoomId,
+    required this.jobSeekerId,
     required this.name,
     required this.imageUrl,
   });
 
   @override
-  State<ChatDetails> createState() => _ChatDetailsState();
+  State<ChatWithJobseeker> createState() => _ChatWithJobseekerState();
 }
 
-class _ChatDetailsState extends State<ChatDetails> {
+class _ChatWithJobseekerState extends State<ChatWithJobseeker> {
   TextEditingController messageController = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
@@ -33,23 +33,26 @@ class _ChatDetailsState extends State<ChatDetails> {
 
   void getAllChatMessages() async {
     await Provider.of<ChatProvider>(context, listen: false)
-        .fetchAllMessages(widget.chatRoomId);
+        .fetchAllMessagesWithJobseeker(widget.jobSeekerId);
 
-    await Provider.of<ChatProvider>(context, listen: false)
-        .markAllMessageRead({'room_id': widget.chatRoomId});
-
-    _scrollToBottom();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
 
   void sendMessage() async {
     if (messageController.text.isNotEmpty) {
       final response = await Provider.of<ChatProvider>(context, listen: false)
-          .sendMessage(widget.chatRoomId, {'content': messageController.text});
+          .chatWithJobSeeker(
+              widget.jobSeekerId, {'content': messageController.text});
       messageController.clear();
 
       if (response?.statusCode == 201) {
         await Provider.of<ChatProvider>(context, listen: false).getChatRoom();
-        _scrollToBottom();
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom();
+        });
       }
     }
   }
@@ -71,7 +74,7 @@ class _ChatDetailsState extends State<ChatDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 65,
+        toolbarHeight: 70,
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -107,12 +110,13 @@ class _ChatDetailsState extends State<ChatDetails> {
             padding: const EdgeInsets.only(
                 left: 14.5, right: 14.5, top: 14.5, bottom: 100),
             child: Consumer<ChatProvider>(builder: (context, provider, child) {
-              final chatDetails = provider.chatDetails;
+              final chatDetails = provider.jobseekerChatDetails;
+              final bool isLoading = provider.isLoading;
               if (chatDetails!.isEmpty) {
                 return SizedBox();
               }
               return ListView.builder(
-                controller: _scrollController, // Use ScrollController here
+                controller: _scrollController,
                 itemCount: chatDetails.length,
                 itemBuilder: (context, index) {
                   return Chat(

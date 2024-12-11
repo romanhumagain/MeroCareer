@@ -52,11 +52,13 @@ from applications.views import (ApplicationAPIView,
                                 RecruiterApplicantsDetailAPIView)
 
 from notification.views import (NotificationListView, UnreadNotificationListView,MarkAllNotificationsReadView  )
-from chat.views import ( ChatRoomView, SendMessageView, ChatRoomListView, DeleteChatRoomView, 
-                        
+from chat.views import ( 
                         ChatRoomAPIView, 
                         ChatRoomMessageAPIView,
-                        GetChatRoomWithJobSeeker
+                        GetChatRoomWithJobSeeker,
+                        MarkAllMessagesAsReadView,
+                        UnreadChatRoomsCountView,
+                        ChatRoomWithJobseekerAPIView
                         )
 
 
@@ -126,22 +128,16 @@ urlpatterns = [
   path('notifications/unread/', UnreadNotificationListView.as_view(), name='unread-notifications'),
   path('notifications/mark-all-read/', MarkAllNotificationsReadView.as_view(), name='mark-all-read'),
   
-  
-  
-  # path('chat-room/<int:recruiter_id>/', ChatRoomView.as_view(), name='chat-room-recruiter'),
-  # path('chat-room/job-seeker/<int:job_seeker_id>/', ChatRoomView.as_view(), name='chat-room-job-seeker'),
-  # path('send-message/<int:chat_room_id>/', SendMessageView.as_view(), name='send-message'),
-  # # path('chat-rooms/', ChatRoomListView.as_view(), name='chat-rooms'),
-  # # path('delete-chat-room/<int:pk>/', DeleteChatRoomView.as_view(), name='delete-chat-room'),
-
 
  # Chat room endpoints
     path('chat-room/', ChatRoomAPIView.as_view(), name='chat-room-list'),
     path('chat-room/<int:job_seeker_id>/', ChatRoomAPIView.as_view(), name='chat-room-create'),
-
-    # Message endpoints
+    path('messages/mark-as-read/', MarkAllMessagesAsReadView.as_view(), name='mark_all_messages_as_read'),
+    path('messages/unread-chat-rooms-count/', UnreadChatRoomsCountView.as_view(), name='unread_chat_rooms_count'),
     path('chat-room/<int:chat_room_id>/messages/', ChatRoomMessageAPIView.as_view(), name='chat-room-messages'),
     path('jobseeker-chat-room/<int:job_seeker_id>/messages/', GetChatRoomWithJobSeeker.as_view(), name='chat-room-messages-jobseeker'),
+    path('chat-with-jobseeker/<int:job_seeker_id>/', ChatRoomWithJobseekerAPIView.as_view(), name='chat-room-messages-jobseeker'),
+    
     
 
   path('', include(router.urls))

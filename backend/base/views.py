@@ -35,6 +35,7 @@ class LoginAPIView(generics.CreateAPIView):
         
         access_token = str(refresh.access_token)
         
+        
         response_data = {
         'detail':'User loggedin successfully !',
         'refresh':str(refresh),
@@ -42,14 +43,11 @@ class LoginAPIView(generics.CreateAPIView):
         'role':user.role, 
         'is_verified':user.is_verified
         }
-        if user.role == 'job_seeker':
-            return Response(response_data, status=status.HTTP_200_OK)
-        elif user.role == 'recruiter':
-            return Response(response_data, status=status.HTTP_200_OK)
-        elif user.role == 'admin':
-            return Response(response_data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Invalid role."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user.role == "recruiter":
+            response_data['is_approved'] = user.recruiter.is_approved
+            
+        return Response(response_data, status=status.HTTP_200_OK)   
 
       else:
           return Response({"message": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)

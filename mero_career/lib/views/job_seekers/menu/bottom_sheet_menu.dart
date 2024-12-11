@@ -8,8 +8,11 @@ import 'package:mero_career/views/job_seekers/menu/screen/contact_us.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/saved_post_screen.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/settings_page.dart';
 import 'package:mero_career/views/shared/login/login_page.dart';
+import 'package:mero_career/views/shared/splash_screen.dart';
 import 'package:mero_career/views/widgets/custom_confirmation_message.dart';
 import 'package:provider/provider.dart';
+
+import '../../shared/logout_screen.dart';
 
 class BottomSheetMenu extends StatelessWidget {
   const BottomSheetMenu({super.key});
@@ -25,7 +28,7 @@ class BottomSheetMenu extends StatelessWidget {
         await authServices.logoutUser();
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
+            MaterialPageRoute(builder: (context) => LogoutScreen()),
             (route) => false);
       }
     }

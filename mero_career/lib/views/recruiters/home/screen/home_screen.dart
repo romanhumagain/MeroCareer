@@ -246,7 +246,7 @@ class _RecentJobsPostingState extends State<RecentJobsPosting> {
                 "Recent Jobs Posting",
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    fontSize: 16.2,
+                    fontSize: 17.5,
                     letterSpacing: 0.4),
               ),
               GestureDetector(
@@ -260,64 +260,69 @@ class _RecentJobsPostingState extends State<RecentJobsPosting> {
                   "View All",
                   style: TextStyle(
                       color: Colors.blue,
-                      fontSize: 14.5,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500),
                 ),
               )
             ],
           ),
           const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Consumer<JobProvider>(
-                builder: (context, jobProvider, child) {
-                  final jobPosts = jobProvider.postedJobLists;
-                  if (jobProvider.isLoading) {
-                    return const CircularProgressIndicator();
-                  }
-                  if (jobPosts == null || jobPosts.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "No Job Posts Found!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade600,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Consumer<JobProvider>(
+              builder: (context, jobProvider, child) {
+                final jobPosts = jobProvider.postedJobLists;
+                if (jobProvider.isLoading) {
+                  return const CircularProgressIndicator();
+                }
+                if (jobPosts == null || jobPosts.isEmpty) {
+                  return Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 5,
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            "Start by creating your first job post\nto attract potential candidates.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade400,
+                            Text(
+                              "No Job Posts Found!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18.5,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return Row(
-                    children: jobPosts.take(5).map((job) {
-                      return PostedJobDetailsCard(
-                        size: widget.size,
-                        cardColor: widget.cardColor,
-                        tertiaryColor: widget.tertiaryColor,
-                        job: job,
-                      );
-                    }).toList(),
+                            SizedBox(height: 8),
+                            Text(
+                              "Start by creating your first job post\nto attract potential candidates.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   );
-                },
-              ),
+                }
+
+                return Row(
+                  children: jobPosts.take(5).map((job) {
+                    return PostedJobDetailsCard(
+                      size: widget.size,
+                      cardColor: widget.cardColor,
+                      tertiaryColor: widget.tertiaryColor,
+                      job: job,
+                    );
+                  }).toList(),
+                );
+              },
             ),
           ),
         ],

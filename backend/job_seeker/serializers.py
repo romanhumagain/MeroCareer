@@ -160,7 +160,7 @@ class SkillSerializer(serializers.ModelSerializer):
 class ResumeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Resume
-    fields = ['id', 'user', 'resume_file', 'updated_at', 'created_at' ], 
+    fields = ['id', 'user', 'resume_file', 'updated_at', 'created_at', 'is_updated_recently' ]
     read_only_fields = ['is_updated_recently']
     
     
@@ -180,6 +180,8 @@ class JobSeekerDetailedSerializer(serializers.ModelSerializer):
     job_seeker_experience_details = ExperienceDetailSerializer(read_only=True, many=True)
     job_seeker_project_details = ProjectDetailSerializer(read_only=True, many=True)
     job_seeker_skill_details = SkillSerializer(read_only=True, many=True)
+    resume_details = serializers.SerializerMethodField(read_only=True)
+    
 
     class Meta:
         model = JobSeeker
@@ -187,13 +189,18 @@ class JobSeekerDetailedSerializer(serializers.ModelSerializer):
             'id', 'user', 'profile_image', 'full_name', 'username', 'phone_number',
             'address', 'profile_headline', 'profile_summary', 'email',
             'prefered_job_category', 'job_seeker_education_details', 
-            'job_seeker_experience_details', 'job_seeker_project_details',
+            'job_seeker_experience_details', 'job_seeker_project_details','resume_details',
             'job_seeker_skill_details'
         ]
         read_only_fields = ['user', 'email']
 
     def get_email(self, obj):
         return obj.user.email if obj else None
+      
+    def get_resume_details(self, obj):
+      resume = Resume.objects.get(user = obj)
+      serializer = ResumeSerializer(resume)
+      return serializer.data
 
 
 # ====== serializer to fetch the recruiter details along with the job posting by the recruiter

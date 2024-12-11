@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mero_career/views/job_seekers/common/main_screen.dart';
 import 'package:mero_career/views/recruiters/common/recruiter_main_screen.dart';
+import 'package:mero_career/views/shared/login/login_page.dart';
 import 'package:mero_career/views/shared/onboarding/on_boarding.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/auth_services.dart';
 
@@ -21,63 +23,100 @@ class _SplashScreenState extends State<SplashScreen> {
   bool isLoggedIn = false;
   String userRole = "";
   bool isUserVerified = false;
+  bool isRecruiterApproved = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkUserLoginStatus();
-
-    Timer(Duration(seconds: 4), () {
-      if (isLoggedIn) {
-        if (userRole == "job_seeker") {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => MainScreen()));
-        } else if (userRole == "recruiter") {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => RecruiterMainScreen()));
-        } else if (userRole == "admin") {
-        } else {
-          showCustomFlushbar(
-              context: context,
-              message: "Unauthorized User",
-              type: MessageType.error);
-        }
-      } else {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => OnBoarding()));
-      }
-    });
   }
 
-  void checkUserLoginStatus() async {
-    bool loggedIn = await authServices.isLoggedIn();
-    bool? isVerified = await authServices.getUserVerificationStatus();
+  // Await the async status check and navigation decision
+  Future<void> checkUserLoginStatus() async {
+    String? accessToken = await authServices.getAccessToken();
+    String? refreshToken = await authServices.getRefreshToken();
 
-    if (isVerified!) {
-      if (loggedIn) {
-        String? role = await authServices.getUserRole();
-        setState(() {
-          isLoggedIn = true;
-          userRole = role!;
-        });
-        return;
-      }
-      try {
+    await Future.delayed(Duration(seconds: 3));
+
+    if (accessToken == null || refreshToken == null) {
+      navigateToOnboarding();
+      return;
+    }
+
+    try {
+      bool loggedIn = await authServices.isLoggedIn();
+      if (!loggedIn) {
         await authServices.refreshAccessToken();
         loggedIn = await authServices.isLoggedIn();
-        String? role = await authServices.getUserRole();
-        setState(() {
-          isLoggedIn = loggedIn;
-          userRole = role!;
-        });
-      } catch (e) {
-        setState(() {
-          isLoggedIn = false;
-        });
+      }
+
+      if (loggedIn) {
+        await handleLoggedInUser();
+      } else {
+        navigateToOnboarding();
+      }
+    } catch (e) {
+      navigateToOnboarding();
+    }
+  }
+
+  Future<void> handleLoggedInUser() async {
+    try {
+      String? role = await authServices.getUserRole();
+      bool? isVerified = await authServices.getUserVerificationStatus();
+      bool? hasRecruiterApproved =
+          await authServices.getRecruiterApprovalStatus();
+
+      setState(() {
+        isLoggedIn = true;
+        userRole = role!;
+        isUserVerified = isVerified ?? false;
+        if (role == "recruiter") {
+          isRecruiterApproved = hasRecruiterApproved ?? false;
+        }
+      });
+
+      Timer(Duration(seconds: 1), navigateUser);
+    } catch (e) {
+      showCustomFlushbar(
+          context: context,
+          message: "Error fetching user data",
+          type: MessageType.error);
+      navigateToOnboarding();
+    }
+  }
+
+  void navigateToOnboarding() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => OnBoarding()));
+  }
+
+  void navigateUser() {
+    if (isLoggedIn) {
+      if (userRole == "job_seeker") {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MainScreen()),
+            (route) => false);
+      } else if (userRole == "recruiter") {
+        if (isRecruiterApproved) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => RecruiterMainScreen()),
+              (route) => false);
+        } else {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginPage()));
+        }
+      } else if (userRole == "admin") {
+        // Handle admin role
+      } else {
+        showCustomFlushbar(
+            context: context,
+            message: "Unauthorized User",
+            type: MessageType.error);
       }
     }
-    return;
   }
 
   @override

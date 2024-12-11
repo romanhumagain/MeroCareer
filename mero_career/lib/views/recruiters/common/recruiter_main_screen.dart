@@ -8,6 +8,7 @@ import 'package:mero_career/views/recruiters/job_post/screen/recruiter_job_post_
 import 'package:mero_career/views/recruiters/menu/screen/recruiter_bottom_sheet_menu.dart';
 import 'package:provider/provider.dart';
 
+import '../../../providers/chat_provider.dart';
 import '../profile/screen/profile_screen.dart';
 
 class RecruiterMainScreen extends StatefulWidget {
@@ -48,7 +49,10 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _fetchRecruiterProfileDetails();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchRecruiterProfileDetails();
+    });
   }
 
   void _fetchRecruiterProfileDetails() async {
@@ -56,11 +60,13 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
       Provider.of<RecruiterProvider>(context, listen: false)
           .fetchRecruiterProfile();
     }
+
+    await Provider.of<ChatProvider>(context, listen: false)
+        .getUnreadMessageCount();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -152,15 +158,15 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
                 fontSize: 14.5),
             selectedFontSize: 14,
             selectedIconTheme: const IconThemeData(size: 24),
-            items: const [
-              BottomNavigationBarItem(
+            items: [
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(Icons.home_filled),
                 ),
                 label: "Home",
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(
@@ -170,7 +176,7 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
                 ),
                 label: "Applicants",
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(
@@ -182,15 +188,47 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Icon(
-                    CupertinoIcons.chat_bubble_fill,
-                    size: 23,
-                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: Consumer<ChatProvider>(
+                      builder: (context, provider, child) {
+                    final int unreadMessage = provider.unreadMessageCount;
+
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          _selectedIndex != 3
+                              ? CupertinoIcons.chat_bubble
+                              : CupertinoIcons.chat_bubble_fill,
+                          size: 24.5,
+                        ),
+                        if (unreadMessage > 0)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                unreadMessage.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  }),
                 ),
                 label: "Chat",
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(

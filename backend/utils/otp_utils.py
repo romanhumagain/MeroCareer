@@ -8,15 +8,17 @@ from django.conf import settings
 
 def generate_otp(user):
     try:
-        totp = pyotp.TOTP(pyotp.random_base32(), interval=300)
+        base32_secret = pyotp.random_base32()
+        totp = pyotp.TOTP(base32_secret, digits=4, interval=300)
         otp = totp.now()
         expires_at = timezone.now() + timedelta(minutes=5)
         
-        while OTP.objects.filter(otp = otp).exists():
-            totp = pyotp.TOTP(pyotp.random_base32(), interval=300)
+        while OTP.objects.filter(otp=otp).exists():
+            base32_secret = pyotp.random_base32()
+            totp = pyotp.TOTP(base32_secret, digits=4, interval=300)
             otp = totp.now()
         
-        otpInstance = OTP.objects.create(user=user, otp=otp, expires_at=expires_at)
+        otp_instance = OTP.objects.create(user=user, otp=otp, expires_at=expires_at)
         return otp
     except Exception as err:
         return None
@@ -55,7 +57,7 @@ def send_email_for_otp(user):
                     
                     <p></p>
                     <p>Best regards,<br>
-                    The Blogify Team</p>
+                    MeroCareer</p>
             """
         subject = "OTP Verification🔒"
         email = user.email

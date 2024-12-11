@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mero_career/providers/theme_provider.dart';
+import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:mero_career/views/shared/register/recruiter_register_page.dart';
+import 'package:mero_career/views/shared/register/user_verification_page.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
@@ -50,6 +52,8 @@ class _RegisterPageState extends State<RegisterPage> {
   String _selectedCategory = "";
   String _selectedCategoryId = "";
 
+  AuthServices authServices = AuthServices();
+
   void _getCategory() {
     print("category details: $_selectedCategory $_selectedCategoryId");
   }
@@ -83,19 +87,28 @@ class _RegisterPageState extends State<RegisterPage> {
           JobSeekerServices jobSeekerServices = JobSeekerServices();
           final response = await jobSeekerServices.registerUser(jobSeekerData);
 
-          print('Status Code: ${response.statusCode}');
-          print('Response Body: ${response.body}');
-
+          print(response.body);
           if (response.statusCode == 201) {
             final responseData = json.decode(response.body);
+
+            await authServices.saveTokens(
+                responseData['refresh'], responseData['access']);
+            await authServices.saveUserRole(responseData['role']);
+            await authServices
+                .saveVerificationStatus(responseData['is_verified']);
 
             showCustomFlushbar(
               context: context,
               message:
-                  "Successfully registered your account. You can now Login!",
+                  "Successfully registered your account. Please verify your account now !",
               type: MessageType.success,
             );
             _clearFields();
+            await Future.delayed(Duration(seconds: 1));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserVerificationPage()));
           } else if (response.statusCode == 400) {
             final responseData = json.decode(response.body);
             showCustomFlushbar(

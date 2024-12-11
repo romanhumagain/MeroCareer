@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from applications.models import Applicant
 from .models import Notification
 from utils.send_email import send_application_status_changed_email
+from chat.models import ChatRoom
 
 @receiver(post_save, sender = Applicant)
 def handle_application_status(sender, instance, created, **kwargs):
@@ -31,5 +32,14 @@ def handle_application_status(sender, instance, created, **kwargs):
          notification.save()
          
     
-def send_application_status_message(user):
-    pass
+@receiver(post_save, sender = ChatRoom)
+def handle_chat_room_creation(sender, instance, created, **kwargs):
+    if created:
+        receiver = instance.job_seeker.user
+        actor = instance.recruiter.user
+        
+        message = f"{instance.recruiter.company_name} has sent you a message."
+        notification = Notification.objects.create(
+            receiver = receiver, actor = actor, message = message
+        )
+        notification.save()

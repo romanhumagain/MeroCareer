@@ -99,3 +99,24 @@ String formatSavedAt(String savedAt) {
     return "Invalid date"; // Handle parsing errors gracefully
   }
 }
+
+String formatChatTime(String isoTime) {
+  DateTime dateTime = DateTime.parse(isoTime);
+
+  return DateFormat('hh:mm a').format(dateTime);
+}
+
+String formatUpdatedAt(String updatedAt) {
+  try {
+    // Parse the ISO 8601 datetime string into a DateTime object
+    DateTime dateTime = DateTime.parse(updatedAt);
+
+    // Define the desired format (e.g., 'MMM d, yyyy, hh:mm a')
+    String formattedDate = DateFormat('MMM d, yyyy, hh:mm a').format(dateTime);
+
+    return formattedDate;
+  } catch (e) {
+    // Handle errors (e.g., invalid format)
+    return 'Invalid date';
+  }
+}

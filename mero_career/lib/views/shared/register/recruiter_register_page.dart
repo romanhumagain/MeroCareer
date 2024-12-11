@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mero_career/providers/theme_provider.dart';
+import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/services/recruiter_services.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
+import 'package:mero_career/views/shared/register/user_verification_page.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_passwordfield.dart';
 import 'package:mero_career/views/widgets/my_textfield.dart';
@@ -43,7 +45,9 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      _selectedImage = image;
+      setState(() {
+        _selectedImage = image;
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Profile image updated!"),
       ));
@@ -60,6 +64,8 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
     _panNumberController.clear();
     _passwordController.clear();
   }
+
+  AuthServices authServices = AuthServices();
 
   void _registerCompany() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -84,30 +90,41 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
         final response =
             await recruiterServices.registerRecruiter(recruiterData);
 
-        print('Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
-
         if (response.statusCode == 201) {
           final responseData = json.decode(response.body);
 
+          // setting the tokens
+          await authServices.saveTokens(
+              responseData['refresh'], responseData['access']);
+          await authServices.saveUserRole(responseData['role']);
+          await authServices
+              .saveVerificationStatus(responseData['is_verified']);
+          await authServices
+              .saveRecruiterApprovalStatus(responseData['is_approved']);
+
           showCustomFlushbar(
-            context: context,
-            message: "Successfully registered your company !",
-            type: MessageType.success,
-          );
+              context: context,
+              message:
+                  "Successfully registered your account. Please verify your account now !.",
+              type: MessageType.success,
+              duration: 800);
+
+          await Future.delayed(Duration(seconds: 1));
           _clearFields();
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => UserVerificationPage()));
         } else if (response.statusCode == 400) {
           showCustomFlushbar(
-            context: context,
-            message: "Sorry, couldn't register your account.",
-            type: MessageType.error,
-          );
+              context: context,
+              message: "Sorry, couldn't register your account.",
+              type: MessageType.error,
+              duration: 1000);
         } else if (response.statusCode == 500) {
           showCustomFlushbar(
-            context: context,
-            message: "Server error. Please try again later.",
-            type: MessageType.error,
-          );
+              context: context,
+              message: "Server error. Please try again later.",
+              type: MessageType.error,
+              duration: 1000);
         } else {
           showCustomFlushbar(
             context: context,
@@ -208,7 +225,7 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                         fontSize: 14,
                         color: Colors.blue,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -317,11 +334,11 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                         if (value == null || value.isEmpty) {
                           return 'Registration number cannot be empty !';
                         }
-                        final NoRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
-
-                        if (!NoRegExp.hasMatch(value)) {
-                          return 'Please enter a valid Registration number!';
-                        }
+                        // final NoRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+                        //
+                        // if (!NoRegExp.hasMatch(value)) {
+                        //   return 'Please enter a valid Registration number!';
+                        // }
                         return null;
                       },
                     ),
@@ -337,11 +354,11 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                         if (value == null || value.isEmpty) {
                           return 'Pan number cannot be empty !';
                         }
-                        final NoRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
-
-                        if (!NoRegExp.hasMatch(value)) {
-                          return 'Please enter a valid PAN number!';
-                        }
+                        // final NoRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+                        //
+                        // if (!NoRegExp.hasMatch(value)) {
+                        //   return 'Please enter a valid PAN number!';
+                        // }
                         return null;
                       },
                     ),

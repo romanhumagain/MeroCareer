@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../job_seekers/common/main_screen.dart';
 import '../../widgets/custom_flushbar_message.dart';
+import '../register/under_approval_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -59,16 +60,29 @@ class _LoginPageState extends State<LoginPage> {
           await authServices
               .saveVerificationStatus(responseData['is_verified']);
 
-          showCustomFlushbar(
-            context: context,
-            message:
-                "Successfully Logged in., Please verify your account now !",
-            type: MessageType.success,
-          );
+          if (responseData['role'] == "recruiter") {
+            await authServices
+                .saveRecruiterApprovalStatus(responseData['is_approved']);
+          }
+
+          if (responseData['is_verified']) {
+            showCustomFlushbar(
+              context: context,
+              message: "Successfully Logged in.",
+              type: MessageType.success,
+            );
+          } else {
+            showCustomFlushbar(
+              context: context,
+              message:
+              "Successfully Logged in., Please verify your account now !",
+              type: MessageType.success,
+            );
+          }
 
           Timer(const Duration(milliseconds: 1500), () async {
             if (!responseData['is_verified']) {
-              Navigator.pushReplacement(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => UserVerificationPage()));
@@ -76,23 +90,34 @@ class _LoginPageState extends State<LoginPage> {
               if (responseData['role'] == 'job_seeker') {
                 await Provider.of<JobSeekerProvider>(context, listen: false)
                     .fetchJobSeekerProfileDetails();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainScreen(
-                    isLoggedInNow: true,
-                  )),
-                );
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MainScreen(
+                              isLoggedInNow: true,
+                            )),
+                        (route) => false);
               } else if (responseData['role'] == "recruiter") {
-                await Provider.of<RecruiterProvider>(context, listen: false)
-                    .fetchRecruiterProfile();
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RecruiterMainScreen(
-                            isLoggedInNow: true,
-                          )),
-                );
+                bool? isApproved =
+                await authServices.getRecruiterApprovalStatus();
+                if (isApproved!) {
+                  await Provider.of<RecruiterProvider>(context, listen: false)
+                      .fetchRecruiterProfile();
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              RecruiterMainScreen(
+                                isLoggedInNow: true,
+                              )),
+                          (route) => false);
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UnderApprovalPage()));
+                }
               } else {
                 print("Unknown User!");
               }
@@ -147,7 +172,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final Size size = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Center(
@@ -162,9 +189,9 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     ClipRRect(
                         child: Image.asset(
-                      'assets/images/logo.png',
-                      height: 60,
-                    )),
+                          'assets/images/logo.png',
+                          height: 60,
+                        )),
                   ],
                 ),
 
@@ -172,7 +199,8 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   "MeroCareer",
                   style: GoogleFonts.openSans(
-                      textStyle: Theme.of(context)
+                      textStyle: Theme
+                          .of(context)
                           .textTheme
                           .headlineLarge
                           ?.copyWith(fontSize: 24.5)),
@@ -182,7 +210,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Text(
                   "Get started with your job search today.",
-                  style: Theme.of(context)
+                  style: Theme
+                      .of(context)
                       .textTheme
                       .headlineSmall
                       ?.copyWith(fontSize: 15),
@@ -239,7 +268,8 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               Text(
                                 "Remember Me",
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .textTheme
                                     .titleMedium
                                     ?.copyWith(fontSize: 15),
@@ -256,7 +286,10 @@ class _LoginPageState extends State<LoginPage> {
                             },
                             child: Text(
                               "Forgot Password ?",
-                              style: Theme.of(context).textTheme.titleSmall,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleSmall,
                             ),
                           )
                         ],
@@ -282,7 +315,8 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Text(
                       "Create a new account ?",
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .titleLarge
                           ?.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
@@ -304,29 +338,6 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.blue,
                               letterSpacing: 0.4)),
                     )
-                  ],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
-                      },
-                      child: Text("Continue as Recruiter",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 17,
-                              color: Colors.blue,
-                              letterSpacing: 0.4)),
-                    ),
                   ],
                 ),
                 const SizedBox(
@@ -389,9 +400,9 @@ class SocialOption extends StatelessWidget {
           borderRadius: BorderRadius.circular(100)),
       child: ClipRRect(
           child: Image.asset(
-        imageUrl,
-        height: 28,
-      )),
+            imageUrl,
+            height: 28,
+          )),
     );
   }
 }

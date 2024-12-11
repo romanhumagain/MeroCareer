@@ -28,15 +28,68 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         fields = ['id', 'job_seeker', 'recruiter', 'created_at', 'messages']
 
 class JobSeekerChatRoomSerializer(serializers.ModelSerializer):
-    user_details = RecruiterSerializer(read_only = True, source = 'recruiter')
+    last_message = serializers.SerializerMethodField(read_only = True)
+    is_unread = serializers.SerializerMethodField(read_only = True)
+    last_message_date = serializers.SerializerMethodField(read_only = True)
+    profile_image = serializers.SerializerMethodField(read_only = True)
+    sender_name = serializers.SerializerMethodField(read_only = True)
+    
     
     class Meta:
         model = ChatRoom
-        fields = ['id', 'job_seeker', 'recruiter', 'created_at', 'user_details']
+        fields = ['id', 'job_seeker', 'recruiter', 'created_at', 'last_message', 'is_unread', 'last_message_date', 'sender_name', 'profile_image']
         
+        
+    def get_last_message(self, obj):
+        messageInst =  Message.objects.filter(chat_room = obj).order_by('-timestamp').first()
+        return messageInst.content
+    
+    def get_is_unread(self, obj):
+        request = self.context.get('request') 
+        return Message.objects.filter(chat_room = obj, is_read = False, receiver = request.user ).exists()
+    
+    def get_last_message_date(self, obj):
+        messageInst =  Message.objects.filter(chat_room = obj).order_by('-timestamp').first()
+        return messageInst.timestamp 
+    
+    def get_sender_name(self, obj):
+        return obj.recruiter.company_name
+    
+    def get_profile_image(self, obj):
+        request = self.context.get('request') 
+        profile_image = obj.recruiter.company_profile_image
+        return request.build_absolute_uri(profile_image.url) if request else profile_image.url
+    
+
+    
 class RecruiterChatRoomSerializer(serializers.ModelSerializer):
-    user_details = JobSeekerSerializer(read_only = True, source = 'job_seeker')
+    last_message = serializers.SerializerMethodField(read_only = True)
+    is_unread = serializers.SerializerMethodField(read_only = True)
+    last_message_date = serializers.SerializerMethodField(read_only = True)
+    profile_image = serializers.SerializerMethodField(read_only = True)
+    sender_name = serializers.SerializerMethodField(read_only = True)
     
     class Meta:
         model = ChatRoom
-        fields = ['id', 'job_seeker', 'recruiter', 'created_at', 'user_details']
+        fields = ['id', 'job_seeker', 'recruiter', 'created_at','last_message', 'is_unread', 'last_message_date', 'sender_name', 'profile_image']
+        
+    def get_last_message(self, obj):
+        messageInst =  Message.objects.filter(chat_room = obj).order_by('-timestamp').first()
+        return messageInst.content
+    
+    def get_is_unread(self, obj):
+        request = self.context.get('request') 
+        return Message.objects.filter(chat_room = obj, is_read = False, receiver = request.user ).exists()
+    
+    def get_last_message_date(self, obj):
+        messageInst =  Message.objects.filter(chat_room = obj).order_by('-timestamp').first()
+        return messageInst.timestamp 
+    
+    def get_sender_name(self, obj):
+        return obj.job_seeker.full_name
+
+    def get_profile_image(self, obj):
+        request = self.context.get('request') 
+        profile_image = obj.job_seeker.profile_image
+        return request.build_absolute_uri(profile_image.url) if request else profile_image.url
+    
