@@ -62,10 +62,10 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedCategoryId == "") {
         showCustomFlushbar(
-          context: context,
-          message: "Please select your job preference !",
-          type: MessageType.warning,
-        );
+            context: context,
+            message: "Please select your job preference !",
+            type: MessageType.warning,
+            duration: 1500);
       } else {
         setState(() {
           _isLoading = true;
@@ -98,13 +98,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 .saveVerificationStatus(responseData['is_verified']);
 
             showCustomFlushbar(
-              context: context,
-              message:
-                  "Successfully registered your account. Please verify your account now !",
-              type: MessageType.success,
-            );
+                context: context,
+                message:
+                    "Successfully registered your account. Please verify your account now !",
+                type: MessageType.success,
+                duration: 1600);
+            await Future.delayed(Duration(seconds: 2));
             _clearFields();
-            await Future.delayed(Duration(seconds: 1));
+
             Navigator.push(
                 context,
                 MaterialPageRoute(

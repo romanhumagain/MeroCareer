@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="text-center">
+    <div className="flex items-center justify-center min-h-screen bg-gray-300">
+      <div className="text-center mb-14">
         <div className="flex items-center justify-center">
           <img src={app_logo} alt="" height={100} width={100} />
         </div>

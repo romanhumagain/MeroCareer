@@ -544,87 +544,16 @@ class JobDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("receiving searched detail $job");
-    return Container(
-      width: size.width,
-      decoration: BoxDecoration(
-          color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: job['recruiter_details']['company_profile_image'] != null
-                  ? Image.network(
-                      job['recruiter_details']['company_profile_image'],
-                      height: 30,
-                      width: 30,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.asset(
-                      'assets/images/company_logo/default_company_pic.png',
-                      height: 30,
-                      width: 30,
-                      fit: BoxFit.cover,
-                    ),
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(job['job_title'],
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500, fontSize: 16.8)),
-                Text("By ${job['recruiter_details']['company_name']}")
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SearchedJobDetails extends StatelessWidget {
-  const SearchedJobDetails({
-    super.key,
-    required this.size,
-    required this.isDarkMode,
-    required this.job,
-  });
-
-  final Size size;
-  final bool isDarkMode;
-  final Map<String, dynamic> job;
-
-  @override
-  Widget build(BuildContext context) {
-    void removeSearchHistory(int jobId) async {
-      try {
-        await Provider.of<SearchProvider>(context, listen: false)
-            .removeFromSearchHistory(context, jobId);
-      } catch (e) {
-        print("Error removing to search details");
-      }
-    }
-
-    print("receiving searched detail $job");
-    return Container(
-      width: size.width,
-      decoration: BoxDecoration(
-          color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+    return Column(
+      children: [
+        Container(
+          width: size.width,
+          decoration: BoxDecoration(
+              color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ClipRRect(
@@ -661,19 +590,108 @@ class SearchedJobDetails extends StatelessWidget {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                removeSearchHistory(job['id']);
-              },
-              child: Icon(
-                Icons.cancel,
-                color: Colors.red,
-                size: 20,
-              ),
-            )
-          ],
+          ),
         ),
-      ),
+        SizedBox(
+          height: 8,
+        )
+      ],
+    );
+  }
+}
+
+class SearchedJobDetails extends StatelessWidget {
+  const SearchedJobDetails({
+    super.key,
+    required this.size,
+    required this.isDarkMode,
+    required this.job,
+  });
+
+  final Size size;
+  final bool isDarkMode;
+  final Map<String, dynamic> job;
+
+  @override
+  Widget build(BuildContext context) {
+    void removeSearchHistory(int jobId) async {
+      try {
+        await Provider.of<SearchProvider>(context, listen: false)
+            .removeFromSearchHistory(context, jobId);
+      } catch (e) {
+        print("Error removing to search details");
+      }
+    }
+
+    return Column(
+      children: [
+        Container(
+          width: size.width,
+          decoration: BoxDecoration(
+              color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: job['recruiter_details']
+                                  ['company_profile_image'] !=
+                              null
+                          ? Image.network(
+                              job['recruiter_details']['company_profile_image'],
+                              height: 30,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              'assets/images/company_logo/default_company_pic.png',
+                              height: 30,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(job['job_title'],
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.8)),
+                        Text("By ${job['recruiter_details']['company_name']}")
+                      ],
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    removeSearchHistory(job['id']);
+                  },
+                  child: Icon(
+                    Icons.cancel,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 8,
+        )
+      ],
     );
   }
 }

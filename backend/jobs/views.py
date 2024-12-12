@@ -40,7 +40,7 @@ class JobListByCategoryView(ListAPIView):
             return Response({'detail': "Job Category doesn't exist."}, status=status.HTTP_400_BAD_REQUEST)
         
         
-        jobInst = Job.objects.filter(category=jobCategoryInst)
+        jobInst = Job.objects.filter(category=jobCategoryInst).order_by('-posted_on')
         
         job_status = self.request.query_params.get('status', None)
         if job_status == "active":
@@ -73,7 +73,7 @@ class MatchedJobAPIView(ListAPIView):
         #     return Response({'detail': "Job Category doesn't exist."}, status=status.HTTP_400_BAD_REQUEST)
         
         
-        jobInst = Job.objects.filter(category=jobSeekerPreCatInst,deadline__gte = timezone.now() )
+        jobInst = Job.objects.filter(category=jobSeekerPreCatInst,deadline__gte = timezone.now() ).order_by('-posted_on')
         serializer = self.get_serializer(jobInst, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -137,7 +137,7 @@ class ExpiringJobAPIView(ListAPIView):
         current_time = timezone.now()
         soon_expiry_time = current_time + timedelta(days=10)
         
-        jobs = Job.objects.filter(category=preferred_category, deadline__gte=current_time, deadline__lte=soon_expiry_time)
+        jobs = Job.objects.filter(category=preferred_category, deadline__gte=current_time, deadline__lte=soon_expiry_time).order_by('-posted_on')
 
         # Serialize and return the filtered jobs
         serializer = self.get_serializer(jobs, many=True)

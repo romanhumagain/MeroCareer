@@ -60,7 +60,7 @@ const ForgotPassword = () => {
       console.log(response)
       if (response.ok) {
         show_toastify("Successfully changed your password! \n You can login now!", "success");
-        reset();
+        // reset();
         
       } else {
         const errorData = await response.json();
@@ -114,7 +114,7 @@ const ForgotPassword = () => {
   if (!isTokenVerified) {
     return (
       <>
-        <div className='flex items-center justify-center h-screen mb-3'>
+        <div className='flex items-center justify-center h-screen mb-3 bg-gray-300'>
           <div className='mb-24 text-center'>
             <p className='text-[70px] font-bold text-gray-600'>404 Error</p>
             <p className='text-2xl text-gray-600'>Token Expired !</p>
@@ -130,8 +130,8 @@ const ForgotPassword = () => {
       {loading && (
         <LoadingModal isOpen={true} />
       )}
-      <div className='flex w-full h-screen py-10 transition-all duration-300 pb-30 '>
-        <div className='h-[85%] p-1 pb-10 bg-slate-100 max-w-[390px] w-full  rounded-lg shadow-lg mx-auto dark:bg-neutral-800 '>
+      <div className='flex w-full h-screen py-10 transition-all duration-300 pb-30 bg-slate-300 '>
+        <div className='h-[85%] p-1 pb-10 bg-gray-300 max-w-[390px] w-full  rounded-lg shadow-lg mx-auto dark:bg-neutral-800 '>
           <div className="flex justify-center text-center">
             <img src={MeroCarrerLogo} alt="" height={60} width={60} />
           </div>

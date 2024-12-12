@@ -19,8 +19,10 @@ def handle_application_status(sender, instance, created, **kwargs):
         
         
         if instance.user.job_seeker_settings.job_application_status_alert == True:
-            send_application_status_changed_email(user = receiver,full_name=full_name,  job_title=job_title, status=instance.status, recruiter_name=instance.job.recruiter.company_name)
-        
+            try:
+                send_application_status_changed_email(user = receiver,full_name=full_name,  job_title=job_title, status=instance.status, recruiter_name=instance.job.recruiter.company_name)
+            except Exception as e:
+                print(f"Error sending application status change email: {e}")
         
     elif created:
          job_title = instance.job.job_title

@@ -54,6 +54,7 @@ class ProfileSetupProvider extends ChangeNotifier {
 
     try {
       final response = await profileSetupServices.getProfileSetupAnalysis();
+      print(response.body);
       if (response.statusCode == 200) {
         final responseData = await json.decode(response.body);
         _profileAnalysisData = await responseData;

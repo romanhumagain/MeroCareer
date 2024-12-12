@@ -155,11 +155,9 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
             type: MessageType.success,
             duration: 1600);
 
-        clearFields();
         await authServices.saveVerificationStatus(true);
-
         await Future.delayed(Duration(seconds: 2));
-
+        clearFields();
         if (userRole == 'job_seeker') {
           await Provider.of<JobSeekerProvider>(context, listen: false)
               .fetchJobSeekerProfileDetails();

@@ -114,7 +114,7 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
               child: GestureDetector(
                   onTap: _navigateToProfile,
                   child: CircleAvatar(
-                    radius: 17,
+                    radius: 15,
                     backgroundImage: recruiterDetails?[
                                 'company_profile_image'] !=
                             null

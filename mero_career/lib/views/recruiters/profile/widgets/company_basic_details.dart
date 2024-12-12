@@ -189,7 +189,7 @@ class CompanyBasicDetails extends StatelessWidget {
                           alignment: Alignment.topRight,
                           children: [
                             CircleAvatar(
-                              radius: 17,
+                              radius: 26,
                               backgroundImage: recruiterDetails?[
                                           'company_profile_image'] !=
                                       null

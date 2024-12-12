@@ -77,14 +77,6 @@ class _ExpiringJobsState extends State<ExpiringJobs> {
                   builder: (context, provider, child) {
                 final expiringJobs = provider.expiringJobs;
                 final isLoading = provider.isLoading;
-                if (isLoading) {
-                  return SizedBox(
-                    height: 100,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
                 if (expiringJobs!.isEmpty) {
                   return Center(
                     child: Text("No expiring jobs found currently! "),

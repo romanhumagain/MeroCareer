@@ -28,7 +28,7 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
     } else if (percentage >= 50 && percentage < 80) {
       return Colors.orange;
     } else if (percentage > 80 && percentage <= 100) {
-      return Colors.green;
+      return Colors.red;
     } else {
       return Colors.grey;
     }

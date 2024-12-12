@@ -118,7 +118,7 @@ class ChatList extends StatelessWidget {
               borderRadius: BorderRadius.circular(15)),
           child: ListTile(
             leading: CircleAvatar(
-              radius: 25,
+              radius: 20,
               backgroundImage: chatRoom['profile_image'] != null
                   ? NetworkImage("${chatRoom['profile_image']}")
                   : AssetImage('assets/images/default_profile.png')

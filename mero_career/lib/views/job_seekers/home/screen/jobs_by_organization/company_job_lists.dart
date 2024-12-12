@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/job_seekers/home/screen/jobs_by_organization/organization_job_details_card.dart';
 
 import '../../../../../services/auth_services.dart';
 import '../../../../../services/job_seeker_job_services.dart';
@@ -238,6 +239,7 @@ class _JobOpeningListsState extends State<JobOpeningLists> {
 
   JobSeekerJobServices jobServices = JobSeekerJobServices();
 
+  /// herer
   Future<List<dynamic>?> getJobLists() async {
     try {
       final response = await jobServices.fetchJobPosts(
@@ -293,8 +295,7 @@ class _JobOpeningListsState extends State<JobOpeningLists> {
                   onSelected: (selected) {
                     setState(() {
                       _listJobsBy = selected ? filter : 'active';
-                      _jobListing =
-                          getJobLists(); // Re-fetch data on filter change
+                      _jobListing = getJobLists();
                     });
                   },
                   selectedColor:
@@ -312,9 +313,7 @@ class _JobOpeningListsState extends State<JobOpeningLists> {
           child: FutureBuilder<List<dynamic>?>(
             future: _jobListing,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
+              if (snapshot.hasError) {
                 return Center(
                   child: Text(
                     "An error occurred. Please try again.",
@@ -335,11 +334,16 @@ class _JobOpeningListsState extends State<JobOpeningLists> {
                   padding: EdgeInsets.all(10),
                   itemCount: data.length,
                   itemBuilder: (context, index) {
-                    return JobDetailsCard(
+                    return OrganizationJobDetailsCard(
                       size: size,
                       cardColor: cardColor,
                       tertiaryColor: tertiaryColor,
                       job: data[index],
+                      fetchData: () {
+                        setState(() {
+                          _jobListing = getJobLists();
+                        });
+                      },
                     );
                   },
                 );

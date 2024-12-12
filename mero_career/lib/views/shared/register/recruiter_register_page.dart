@@ -107,9 +107,9 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
               message:
                   "Successfully registered your account. Please verify your account now !.",
               type: MessageType.success,
-              duration: 800);
+              duration: 1600);
 
-          await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(Duration(seconds: 2));
           _clearFields();
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => UserVerificationPage()));
@@ -426,7 +426,7 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                       color: Colors.blue,
                       width: size.width,
                       height: 44,
-                      isLoading: _isLoading,
+                      // isLoading: _isLoading,
                       text: "Register Company",
                       onTap: _registerCompany,
                     ),

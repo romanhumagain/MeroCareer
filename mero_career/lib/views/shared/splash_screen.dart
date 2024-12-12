@@ -6,6 +6,7 @@ import 'package:mero_career/views/job_seekers/common/main_screen.dart';
 import 'package:mero_career/views/recruiters/common/recruiter_main_screen.dart';
 import 'package:mero_career/views/shared/login/login_page.dart';
 import 'package:mero_career/views/shared/onboarding/on_boarding.dart';
+import 'package:mero_career/views/shared/register/user_verification_page.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -92,30 +93,35 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigateUser() {
-    if (isLoggedIn) {
-      if (userRole == "job_seeker") {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => MainScreen()),
-            (route) => false);
-      } else if (userRole == "recruiter") {
-        if (isRecruiterApproved) {
+    if (isUserVerified) {
+      if (isLoggedIn) {
+        if (userRole == "job_seeker") {
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => RecruiterMainScreen()),
+              MaterialPageRoute(builder: (context) => MainScreen()),
               (route) => false);
+        } else if (userRole == "recruiter") {
+          if (isRecruiterApproved) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => RecruiterMainScreen()),
+                (route) => false);
+          } else {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          }
+        } else if (userRole == "admin") {
+          // Handle admin role
         } else {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
+          showCustomFlushbar(
+              context: context,
+              message: "Unauthorized User",
+              type: MessageType.error);
         }
-      } else if (userRole == "admin") {
-        // Handle admin role
-      } else {
-        showCustomFlushbar(
-            context: context,
-            message: "Unauthorized User",
-            type: MessageType.error);
       }
+    } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
   }
 

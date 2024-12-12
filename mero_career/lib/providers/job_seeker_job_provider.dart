@@ -16,16 +16,19 @@ class JobSeekerJobProvider extends ChangeNotifier {
   List<dynamic>? _matchedJobs = [];
   List<dynamic>? _expiringJobs = [];
   List<dynamic>? _allActiveJobs = [];
-  Map<String, dynamic>? _jobDetails = {};
+  Map<String, dynamic> _jobDetails = {};
   List<dynamic>? _savedPosts = [];
   List<dynamic>? _appliedJobs = [];
   Map<String, dynamic>? _appliedJobCount = {};
+  List<dynamic>? _jobListByCategory = [];
 
   List<dynamic>? get matchedJobs => _matchedJobs;
 
   List<dynamic>? get expiringJobs => _expiringJobs;
 
   List<dynamic>? get allActiveJobs => _allActiveJobs;
+
+  List<dynamic>? get jobListByCategory => _jobListByCategory;
 
   List<dynamic>? get savedPosts => _savedPosts;
 
@@ -78,6 +81,27 @@ class JobSeekerJobProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // function to get jobs by category
+  Future<http.Response?> getJobsByCategory(
+      BuildContext context, int categoryId, String jobsListBy) async {
+    try {
+      final response =
+          await jobServices.fetchJobByCategory(categoryId, jobsListBy);
+      if (response.statusCode == 200) {
+        _jobListByCategory = json.decode(response.body);
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        handleLogoutUser(context);
+      } else {
+        print(response.body);
+      }
+      return response;
+    } catch (e) {
+      print("Error fetching job lists $e");
+      return null;
     }
   }
 

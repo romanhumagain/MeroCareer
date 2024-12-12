@@ -85,7 +85,7 @@ class _ChatDetailsState extends State<ChatDetails> {
               backgroundImage: widget.imageUrl != null
                   ? NetworkImage(widget.imageUrl)
                   : AssetImage('assets/images/avatar1.png') as ImageProvider,
-              radius: 16,
+              radius: 12,
             ),
             const SizedBox(
               width: 10,

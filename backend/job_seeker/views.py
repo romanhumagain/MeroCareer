@@ -373,13 +373,13 @@ class ProfileSetupAnalysis(APIView):
         percentage_count = 10
         missing_details_count = 0
 
-        # Check for resume
-        has_resume_uploaded = job_seeker.resume is not None and job_seeker.resume.resume_file is not None
+        has_resume_uploaded =  Resume.objects.filter(user = job_seeker).exists()
         if has_resume_uploaded:
             percentage_count += 20
         else:
             missing_details_count += 1
-
+            
+        
         # Check for profile image
         has_profile_image = job_seeker.profile_image and job_seeker.profile_image.name not in [
             'profile/default_profile_pic.webp', 
