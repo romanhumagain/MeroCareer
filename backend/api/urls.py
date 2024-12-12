@@ -4,7 +4,11 @@ from base.views import (
                         SendOTPAPIView, 
                         VerifyOTP, 
                         ChangePasswordAPIView, 
-                        DeactivateAccountAPIView)
+                        DeactivateAccountAPIView, 
+                        PasswordResetAPIView,
+                        ConfirmPasswordResetAPIView,
+                        VerifyPasswordResetTokenAPIView
+                        )
 from rest_framework import routers
 
 from jobs.views import (JobCategoryViewSet, 
@@ -130,15 +134,19 @@ urlpatterns = [
   
 
  # Chat room endpoints
-    path('chat-room/', ChatRoomAPIView.as_view(), name='chat-room-list'),
-    path('chat-room/<int:job_seeker_id>/', ChatRoomAPIView.as_view(), name='chat-room-create'),
-    path('messages/mark-as-read/', MarkAllMessagesAsReadView.as_view(), name='mark_all_messages_as_read'),
-    path('messages/unread-chat-rooms-count/', UnreadChatRoomsCountView.as_view(), name='unread_chat_rooms_count'),
-    path('chat-room/<int:chat_room_id>/messages/', ChatRoomMessageAPIView.as_view(), name='chat-room-messages'),
-    path('jobseeker-chat-room/<int:job_seeker_id>/messages/', GetChatRoomWithJobSeeker.as_view(), name='chat-room-messages-jobseeker'),
-    path('chat-with-jobseeker/<int:job_seeker_id>/', ChatRoomWithJobseekerAPIView.as_view(), name='chat-room-messages-jobseeker'),
+  path('chat-room/', ChatRoomAPIView.as_view(), name='chat-room-list'),
+  path('chat-room/<int:job_seeker_id>/', ChatRoomAPIView.as_view(), name='chat-room-create'),
+  path('messages/mark-as-read/', MarkAllMessagesAsReadView.as_view(), name='mark_all_messages_as_read'),
+  path('messages/unread-chat-rooms-count/', UnreadChatRoomsCountView.as_view(), name='unread_chat_rooms_count'),
+  path('chat-room/<int:chat_room_id>/messages/', ChatRoomMessageAPIView.as_view(), name='chat-room-messages'),
+  path('jobseeker-chat-room/<int:job_seeker_id>/messages/', GetChatRoomWithJobSeeker.as_view(), name='chat-room-messages-jobseeker'),
+  path('chat-with-jobseeker/<int:job_seeker_id>/', ChatRoomWithJobseekerAPIView.as_view(), name='chat-room-messages-jobseeker'),
+  
     
-    
+  #  forgot password
+  path("password-reset/", PasswordResetAPIView.as_view(), name="password-reset"),
+  path("verify-password-reset-token/<str:token>/", VerifyPasswordResetTokenAPIView.as_view(), name="verify-password-reset-token",),
+  path("confirm-password-reset/", ConfirmPasswordResetAPIView.as_view(), name="confirm-password-reset",),
 
   path('', include(router.urls))
   

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:mero_career/services/otp_services.dart';
 import 'package:mero_career/views/shared/forgot_password/forgot_password_success_page.dart';
+import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_button.dart';
 import 'package:mero_career/views/widgets/my_textfield.dart';
 
@@ -13,9 +17,48 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
 
+  OtpServices otpServices = OtpServices();
+  bool isLoading = false;
+
   void _handleForgotPassword() async {
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => ForgotPasswordSuccessPage()));
+    if (_emailController.text != "") {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        final Map<String, dynamic> data = {
+          'email': _emailController.text.trim()
+        };
+        final response = await otpServices.requestPasswordReset(data);
+
+        if (response!.statusCode == 200) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ForgotPasswordSuccessPage(
+                      email: _emailController.text.trim())));
+        } else {
+          final responseData = await json.decode(response!.body);
+          showCustomFlushbar(
+              context: context,
+              message: responseData['detail'],
+              type: MessageType.error,
+              duration: 1200);
+        }
+      } catch (e) {
+        print("Error sending email ! , $e");
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } else {
+      showCustomFlushbar(
+          context: context,
+          message: "Please provide your registered email address !",
+          type: MessageType.warning,
+          duration: 1200);
+    }
   }
 
   @override
@@ -62,6 +105,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 color: Colors.blue.shade600,
                 width: size.width,
                 height: 45,
+                isLoading: isLoading,
                 onTap: _handleForgotPassword,
                 text: "Submit")
           ],

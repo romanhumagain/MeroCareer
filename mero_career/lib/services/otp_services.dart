@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:mero_career/models/job/job_category_model.dart';
+import 'package:mero_career/utils/api_client.dart';
 import 'package:mero_career/utils/api_config.dart';
 
 import '../utils/auth_api_client.dart';
@@ -28,6 +29,20 @@ class OtpServices {
       return response;
     } catch (e) {
       print("Error verrifying OTP: $e");
+      return null;
+    }
+  }
+
+  ApiClient apiClient = ApiClient();
+
+  // Function to send change password reset email
+  Future<http.Response?> requestPasswordReset(
+      Map<String, dynamic> emailData) async {
+    try {
+      final response = await apiClient.post('/password-reset/', emailData);
+      return response;
+    } catch (e) {
+      print("Error requesting password reset option $e");
       return null;
     }
   }

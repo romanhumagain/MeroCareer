@@ -52,3 +52,23 @@ class OTP(models.Model):
   
   def __str__(self):
         return f"OTP for {self.user.email} - {self.otp}"
+      
+      
+  
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='token')
+    token = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    token_expired = models.BooleanField(default=False)
+    
+    def save(self, *args, **kwargs):
+        PasswordResetToken.objects.filter(user= self.user, token_expired=False).update(token_expired=True, expires_at= timezone.now() )
+        super(PasswordResetToken, self).save(*args, **kwargs)
+        
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+    
+    def __str__(self) -> str:
+        return self.token

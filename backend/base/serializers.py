@@ -58,3 +58,14 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("New password and confirm password do not match.")
       
         return data
+      
+      
+class PasswordResetTokenSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = OTP
+    fields = ['token', 'token_expired']
+    
+class PasswordResetSerializer(serializers.Serializer):
+  token = serializers.CharField(max_length = 100)
+  password = serializers.CharField(write_only = True)
+  

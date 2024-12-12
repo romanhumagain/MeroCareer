@@ -1,10 +1,64 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/shared/login/login_page.dart';
 
+import '../../../services/otp_services.dart';
+import '../../widgets/custom_flushbar_message.dart';
 import '../../widgets/my_button.dart';
 
-class ForgotPasswordSuccessPage extends StatelessWidget {
-  const ForgotPasswordSuccessPage({super.key});
+class ForgotPasswordSuccessPage extends StatefulWidget {
+  final String email;
+
+  const ForgotPasswordSuccessPage({super.key, required this.email});
+
+  @override
+  State<ForgotPasswordSuccessPage> createState() =>
+      _ForgotPasswordSuccessPageState();
+}
+
+class _ForgotPasswordSuccessPageState extends State<ForgotPasswordSuccessPage> {
+  OtpServices otpServices = OtpServices();
+  bool isLoading = false;
+
+  void _handleForgotPassword() async {
+    if (widget.email != "") {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        final Map<String, dynamic> data = {'email': widget.email};
+        final response = await otpServices.requestPasswordReset(data);
+
+        if (response!.statusCode == 200) {
+          showCustomFlushbar(
+              context: context,
+              message: "Successfully resent email !",
+              type: MessageType.success,
+              duration: 1200);
+        } else {
+          final responseData = await json.decode(response!.body);
+          showCustomFlushbar(
+              context: context,
+              message: responseData['detail'],
+              type: MessageType.error,
+              duration: 1200);
+        }
+      } catch (e) {
+        print("Error sending email ! , $e");
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } else {
+      showCustomFlushbar(
+          context: context,
+          message: "Please provide your registered email address !",
+          type: MessageType.warning,
+          duration: 1200);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,15 +105,21 @@ class ForgotPasswordSuccessPage extends StatelessWidget {
                 color: Colors.blue.shade600,
                 width: size.width / 1.5,
                 height: 45,
+                isLoading: isLoading,
                 onTap: handleSuccess,
                 text: "Done"),
             SizedBox(
               height: 20,
             ),
-            Text(
-              "Resend Email ? ",
-              style: TextStyle(
-                  letterSpacing: 0.5, fontSize: 16, color: Colors.blue),
+            GestureDetector(
+              onTap: () {
+                _handleForgotPassword();
+              },
+              child: Text(
+                "Resend Email ? ",
+                style: TextStyle(
+                    letterSpacing: 0.5, fontSize: 16, color: Colors.blue),
+              ),
             )
           ],
         ),
