@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -51,10 +52,10 @@ class BasicDetailsCard extends StatelessWidget {
             SizedBox(
               height: 8,
             ),
-            Consumer<JobSeekerProvider>(builder: (context, provider, child){
+            Consumer<ProfileSetupProvider>(builder: (context, provider, child) {
               final jobSeekerDetails = provider.jobSeekerProfileDetails;
               return Column(
-                children:  [
+                children: [
                   Row(
                     children: [
                       Icon(
@@ -114,18 +115,19 @@ class BasicDetailsCard extends StatelessWidget {
   }
 
   void _showBasicDetailsBottomSheet(BuildContext context) {
-    final jobSeekerProvider = Provider.of<JobSeekerProvider>(context, listen:false);
+    final jobSeekerProvider =
+        Provider.of<ProfileSetupProvider>(context, listen: false);
 
-    TextEditingController fullNameController =
-        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['full_name']);
-    TextEditingController usernameController =
-        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['username']);
-    TextEditingController phoneNummberController =
-        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['phone_number']);
-    TextEditingController emailController =
-        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['email']);
-    TextEditingController locationController =
-        TextEditingController(text: jobSeekerProvider.jobSeekerProfileDetails?['address']);
+    TextEditingController fullNameController = TextEditingController(
+        text: jobSeekerProvider.jobSeekerProfileDetails?['full_name']);
+    TextEditingController usernameController = TextEditingController(
+        text: jobSeekerProvider.jobSeekerProfileDetails?['username']);
+    TextEditingController phoneNummberController = TextEditingController(
+        text: jobSeekerProvider.jobSeekerProfileDetails?['phone_number']);
+    TextEditingController emailController = TextEditingController(
+        text: jobSeekerProvider.jobSeekerProfileDetails?['email']);
+    TextEditingController locationController = TextEditingController(
+        text: jobSeekerProvider.jobSeekerProfileDetails?['address']);
 
     showModalBottomSheet(
         context: context,
@@ -234,7 +236,7 @@ class BasicDetailsCard extends StatelessWidget {
                           width: 25,
                         ),
                         GestureDetector(
-                          onTap: () async{
+                          onTap: () async {
                             Map<String, dynamic> profileData = {
                               'full_name': fullNameController.text,
                               'username': usernameController.text,
@@ -242,12 +244,13 @@ class BasicDetailsCard extends StatelessWidget {
                               'email': emailController.text,
                               'address': locationController.text,
                             };
-                            await jobSeekerProvider.updateJobSeekerProfileDetails(context, profileData);
-
+                            await jobSeekerProvider
+                                .updateJobSeekerProfileDetails(
+                                    context, profileData);
                           },
                           child: Container(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 7),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               color: Colors.blue,

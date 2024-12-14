@@ -51,21 +51,16 @@ class AuthAPIClient {
   // Main GET method to handle both token validation and requests
   Future<http.Response> get(String endpoint) async {
     String? accessToken = await authServices.getAccessToken();
-
     // Check if the access token is valid
     if (accessToken != null && !await _isAccessTokenValid()) {
       // If access token is invalid, refresh it
       await _refreshAccessToken();
-
       // Get the new access token after refresh
       accessToken = await authServices.getAccessToken();
-
       if (accessToken == null) {
-        // If the refresh token is also invalid or expired, return 401
         return http.Response('Unauthorized', 401);
       }
     }
-
     // Make the GET request with the valid access token
     final response = await http.get(
       Uri.parse('$baseUrl$endpoint'),

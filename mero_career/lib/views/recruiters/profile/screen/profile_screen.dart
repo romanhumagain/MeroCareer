@@ -62,7 +62,7 @@ class CompanyProfileHeadingSection extends StatelessWidget {
             return Column(
               children: [
                 CircleAvatar(
-                  radius: 17,
+                  radius: 25,
                   backgroundImage: recruiterData?['company_profile_image'] !=
                           null
                       ? NetworkImage(recruiterData?['company_profile_image'])

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/services/job_seeker_services.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_details.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
@@ -10,8 +11,9 @@ import 'package:mero_career/views/recruiters/job_seeker_review/widgets/education
 import 'package:mero_career/views/recruiters/job_seeker_review/widgets/preview_heading_for_job_seeker.dart';
 import 'package:mero_career/views/widgets/custom_flushbar_message.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
-
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../../providers/job_provider.dart';
 import '../../../../services/auth_services.dart';
 import '../../../shared/login/login_page.dart';
@@ -42,11 +44,13 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
   @override
   void initState() {
     super.initState();
+
     fetchUserRole();
+    fetchJobSeekerProfile();
+
     if (widget.applicantId != 0) {
       fetchJobApplicantsDetails();
     }
-    fetchJobSeekerProfile();
   }
 
   void fetchUserRole() async {
@@ -58,11 +62,26 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
   void fetchJobSeekerProfile() async {
     await Provider.of<JobProvider>(context, listen: false)
         .getJobSeekerDetails(widget.jobSeekerId);
+
+    await Provider.of<ProfileSetupProvider>(context, listen: false)
+        .fetchProfileCompletionDetails(widget.jobSeekerId);
   }
 
   void fetchJobApplicantsDetails() async {
     await Provider.of<JobProvider>(context, listen: false)
         .getApplicantDetails(widget.applicantId);
+  }
+
+  Color _getAnalysisColor(int percentage) {
+    if (percentage < 50) {
+      return Colors.red;
+    } else if (percentage >= 50 && percentage < 91) {
+      return Colors.orange;
+    } else if (percentage > 91 && percentage <= 100) {
+      return Colors.green;
+    } else {
+      return Colors.grey;
+    }
   }
 
   @override
@@ -98,6 +117,51 @@ class _JobSeekerProfilePreviewState extends State<JobSeekerProfilePreview> {
                           applicantId: widget.applicantId)
                       : PreviewHeadingForJobSeeker(
                           profileData: profileData, role: role),
+                  MyDivider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 15),
+                    child: Consumer<ProfileSetupProvider>(
+                        builder: (context, provider, child) {
+                      final analysisData = provider.profileCompletionData;
+                      if (analysisData!.isEmpty) {
+                        return LoadingAnimationWidget.staggeredDotsWave(
+                          color: Colors.blue,
+                          size: 28,
+                        );
+                      }
+                      return Row(
+                        children: [
+                          CircularPercentIndicator(
+                            radius: 25.0,
+                            lineWidth: 4.0,
+                            animation: true,
+                            percent: analysisData['percentage'] / 100,
+                            center: Text(
+                              "${analysisData['percentage']}.0%",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 10.0),
+                            ),
+                            circularStrokeCap: CircularStrokeCap.round,
+                            progressColor:
+                                _getAnalysisColor(analysisData['percentage']),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          analysisData['missing_details'] == 0
+                              ? Text(
+                                  "All details provided !",
+                                  style: TextStyle(color: Colors.green),
+                                )
+                              : Text(
+                                  "${analysisData['missing_details']} Missing Details !",
+                                  style: TextStyle(color: Colors.red),
+                                )
+                        ],
+                      );
+                    }),
+                  ),
                   MyDivider(),
                   SizedBox(height: 12),
                   ReviewResume(

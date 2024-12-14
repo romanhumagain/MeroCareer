@@ -32,6 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   late Future<List<JobCategory>> _jobCategories;
+  bool isTermsAndConditionAccepted = false;
 
   @override
   void initState() {
@@ -66,6 +67,12 @@ class _RegisterPageState extends State<RegisterPage> {
             message: "Please select your job preference !",
             type: MessageType.warning,
             duration: 1500);
+      } else if (!isTermsAndConditionAccepted) {
+        showCustomFlushbar(
+            context: context,
+            message: "Accept terms and condition before registering account.",
+            type: MessageType.warning,
+            duration: 1500);
       } else {
         setState(() {
           _isLoading = true;
@@ -87,7 +94,6 @@ class _RegisterPageState extends State<RegisterPage> {
           JobSeekerServices jobSeekerServices = JobSeekerServices();
           final response = await jobSeekerServices.registerUser(jobSeekerData);
 
-          print(response.body);
           if (response.statusCode == 201) {
             final responseData = json.decode(response.body);
 
@@ -114,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
             final responseData = json.decode(response.body);
             showCustomFlushbar(
               context: context,
-              message: responseData['error'] ??
+              message: responseData['detail'] ??
                   "Sorry, couldn't register your account.",
               type: MessageType.error,
             );
@@ -345,8 +351,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Checkbox(
-                          value: true,
-                          onChanged: (value) {},
+                          value: isTermsAndConditionAccepted,
+                          onChanged: (value) {
+                            setState(() {
+                              isTermsAndConditionAccepted = value!;
+                            });
+                          },
                           activeColor: Colors.blue.shade600,
                         ),
                         Text(

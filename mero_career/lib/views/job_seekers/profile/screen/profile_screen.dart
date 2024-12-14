@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // function to fetch the career preference
   void fetchCareerPreference() async {
-    await Provider.of<JobSeekerProvider>(context, listen: false)
+    await Provider.of<ProfileSetupProvider>(context, listen: false)
         .fetchCareerPreference(context);
   }
 

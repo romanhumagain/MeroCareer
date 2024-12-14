@@ -34,7 +34,6 @@ class _UnderApprovalPageState extends State<UnderApprovalPage> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
               ),
             ),
             const SizedBox(height: 10),
@@ -43,7 +42,6 @@ class _UnderApprovalPageState extends State<UnderApprovalPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black54,
               ),
             ),
             const SizedBox(height: 30),

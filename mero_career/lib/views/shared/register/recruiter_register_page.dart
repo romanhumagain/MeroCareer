@@ -28,6 +28,7 @@ class RecruiterRegisterPage extends StatefulWidget {
 class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool isTermsAndConditionAccepted = false;
 
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -73,6 +74,14 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
         _isLoading = true;
       });
 
+      if (!isTermsAndConditionAccepted) {
+        showCustomFlushbar(
+            context: context,
+            message: "Accept terms and condition before registering account.",
+            type: MessageType.warning,
+            duration: 1500);
+        return;
+      }
       final recruiterData = {
         'company_name': _companyNameController.text,
         'email': _emailController.text,
@@ -385,8 +394,12 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Checkbox(
-                          value: true,
-                          onChanged: (value) {},
+                          value: isTermsAndConditionAccepted,
+                          onChanged: (value) {
+                            setState(() {
+                              isTermsAndConditionAccepted = value!;
+                            });
+                          },
                           activeColor: Colors.blue.shade600,
                         ),
                         Text(
@@ -426,7 +439,7 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                       color: Colors.blue,
                       width: size.width,
                       height: 44,
-                      // isLoading: _isLoading,
+                      isLoading: _isLoading,
                       text: "Register Company",
                       onTap: _registerCompany,
                     ),

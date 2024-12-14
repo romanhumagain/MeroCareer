@@ -3,8 +3,8 @@ import 'package:mero_career/views/recruiters/job_seeker_review/screen/job_seeker
 
 import '../../../../utils/date_formater.dart';
 
-class ApplicantsDetails extends StatelessWidget {
-  const ApplicantsDetails({
+class JobWiseApplicants extends StatelessWidget {
+  const JobWiseApplicants({
     super.key,
     required this.size,
     required this.data,
@@ -15,7 +15,6 @@ class ApplicantsDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(data['applicant_details']['profile_image']);
     return Padding(
       padding: const EdgeInsets.only(right: 5, top: 5, bottom: 12),
       child: Column(
@@ -50,7 +49,7 @@ class ApplicantsDetails extends StatelessWidget {
                             child: data['applicant_details']['profile_image'] !=
                                     null
                                 ? Image.network(
-                                    "${data['applicant_details']['profile_image']}",
+                                    "http://10.0.2.2:8000${data['applicant_details']['profile_image']}",
                                     height: 45,
                                     width: 45,
                                     fit: BoxFit.cover,

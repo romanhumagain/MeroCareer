@@ -21,12 +21,11 @@ class ResumePreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("http://10.0.2.2:8000${resumeDetails!['resume_file']}");
     return Scaffold(
       appBar: MyAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: resumeDetails == null
+        child: resumeDetails?['resume_file'] == ""
             ? Center(
                 child: Text(
                   "No resume available for this job seeker.",

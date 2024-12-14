@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/providers/recruiter_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/views/recruiters/common/recruiter_main_screen.dart';
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
             showCustomFlushbar(
               context: context,
               message:
-              "Successfully Logged in., Please verify your account now !",
+                  "Successfully Logged in., Please verify your account now !",
               type: MessageType.success,
             );
           }
@@ -88,30 +89,28 @@ class _LoginPageState extends State<LoginPage> {
                       builder: (context) => UserVerificationPage()));
             } else {
               if (responseData['role'] == 'job_seeker') {
-                await Provider.of<JobSeekerProvider>(context, listen: false)
+                await Provider.of<ProfileSetupProvider>(context, listen: false)
                     .fetchJobSeekerProfileDetails();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            MainScreen(
+                        builder: (context) => MainScreen(
                               isLoggedInNow: true,
                             )),
-                        (route) => false);
+                    (route) => false);
               } else if (responseData['role'] == "recruiter") {
                 bool? isApproved =
-                await authServices.getRecruiterApprovalStatus();
+                    await authServices.getRecruiterApprovalStatus();
                 if (isApproved!) {
                   await Provider.of<RecruiterProvider>(context, listen: false)
                       .fetchRecruiterProfile();
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              RecruiterMainScreen(
+                          builder: (context) => RecruiterMainScreen(
                                 isLoggedInNow: true,
                               )),
-                          (route) => false);
+                      (route) => false);
                 } else {
                   Navigator.push(
                       context,
@@ -172,9 +171,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery
-        .of(context)
-        .size;
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Center(
@@ -189,9 +186,9 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     ClipRRect(
                         child: Image.asset(
-                          'assets/images/logo.png',
-                          height: 60,
-                        )),
+                      'assets/images/logo.png',
+                      height: 60,
+                    )),
                   ],
                 ),
 
@@ -199,8 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   "MeroCareer",
                   style: GoogleFonts.openSans(
-                      textStyle: Theme
-                          .of(context)
+                      textStyle: Theme.of(context)
                           .textTheme
                           .headlineLarge
                           ?.copyWith(fontSize: 24.5)),
@@ -210,8 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Text(
                   "Get started with your job search today.",
-                  style: Theme
-                      .of(context)
+                  style: Theme.of(context)
                       .textTheme
                       .headlineSmall
                       ?.copyWith(fontSize: 15),
@@ -268,8 +263,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               Text(
                                 "Remember Me",
-                                style: Theme
-                                    .of(context)
+                                style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
                                     ?.copyWith(fontSize: 15),
@@ -286,10 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                             },
                             child: Text(
                               "Forgot Password ?",
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleSmall,
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           )
                         ],
@@ -315,8 +306,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Text(
                       "Create a new account ?",
-                      style: Theme
-                          .of(context)
+                      style: Theme.of(context)
                           .textTheme
                           .titleLarge
                           ?.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
@@ -400,9 +390,9 @@ class SocialOption extends StatelessWidget {
           borderRadius: BorderRadius.circular(100)),
       child: ClipRRect(
           child: Image.asset(
-            imageUrl,
-            height: 28,
-          )),
+        imageUrl,
+        height: 28,
+      )),
     );
   }
 }

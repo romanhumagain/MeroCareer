@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/main.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
 import 'package:mero_career/services/otp_services.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
@@ -159,7 +160,7 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
         await Future.delayed(Duration(seconds: 2));
         clearFields();
         if (userRole == 'job_seeker') {
-          await Provider.of<JobSeekerProvider>(context, listen: false)
+          await Provider.of<ProfileSetupProvider>(context, listen: false)
               .fetchJobSeekerProfileDetails();
           Navigator.pushAndRemoveUntil(
               context,
@@ -342,7 +343,6 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                         "Didn't receive the code? ",
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
-                              color: Colors.black87,
                             ),
                       ),
                       GestureDetector(
@@ -351,6 +351,7 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                         },
                         child: Text(
                           "Resend",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,

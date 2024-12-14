@@ -198,9 +198,13 @@ class JobSeekerDetailedSerializer(serializers.ModelSerializer):
         return obj.user.email if obj else None
       
     def get_resume_details(self, obj):
-      resume = Resume.objects.get(user = obj)
-      serializer = ResumeSerializer(resume)
-      return serializer.data
+      try:
+          resume = Resume.objects.get(user=obj)
+          serializer = ResumeSerializer(resume)
+          return serializer.data
+      except Resume.DoesNotExist:
+          return {"resume_file": ""}
+
 
 
 # ====== serializer to fetch the recruiter details along with the job posting by the recruiter

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_provider.dart';
 import 'package:mero_career/services/auth_services.dart';
+import 'package:mero_career/views/recruiters/home/screen/job_listing_screen.dart';
 import 'package:mero_career/views/shared/modal/show_degree_modal.dart';
 import 'package:mero_career/views/shared/modal/show_job_level_modal.dart';
 import 'package:mero_career/views/shared/modal/show_job_type_modal.dart';
@@ -141,8 +142,13 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
             showCustomFlushbar(
                 context: context,
                 message: "Job posted successfully!",
-                type: MessageType.success);
+                type: MessageType.success,
+                duration: 950);
+            await Future.delayed(Duration(seconds: 2));
             clearJobPostFields();
+
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => JobListingsScreen()));
           } else if (response?.statusCode == 400) {
             showCustomFlushbar(
               context: context,
@@ -862,6 +868,7 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
       },
     );
   }
+
   void _showJobLevelModalSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -879,7 +886,6 @@ class _RecruiterJobPostScreenState extends State<RecruiterJobPostScreen> {
     );
   }
 }
-
 
 class SelectContainer extends StatelessWidget {
   final String selectText;

@@ -25,10 +25,10 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
   Color _getAnalysisColor(int percentage) {
     if (percentage < 50) {
       return Colors.red;
-    } else if (percentage >= 50 && percentage < 80) {
+    } else if (percentage >= 50 && percentage < 91) {
       return Colors.orange;
-    } else if (percentage > 80 && percentage <= 100) {
-      return Colors.red;
+    } else if (percentage > 91 && percentage <= 100) {
+      return Colors.green;
     } else {
       return Colors.grey;
     }
@@ -109,7 +109,7 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
                   percentageCover: "20",
                   icon: Icons.file_copy,
                   heading: "Never miss adding your resume ",
-                  buttonTitle: analysisData?['has_resume_uploaded']
+                  buttonTitle: analysisData['has_resume_uploaded']
                       ? "View Resume"
                       : "Upload Resume",
                   onTap: () {
@@ -125,7 +125,7 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
                   percentageCover: "10",
                   icon: Icons.camera_alt,
                   heading: "Upload your profile picture ",
-                  buttonTitle: analysisData?['has_profile_image']
+                  buttonTitle: analysisData['has_profile_image']
                       ? "View Image"
                       : "Upload Photo",
                   onTap: () {
@@ -143,9 +143,9 @@ class ProfileSetupAnalysisSection extends StatelessWidget {
                   percentageCover: "10",
                   icon: Icons.person,
                   heading: "Add your profile summary ",
-                  buttonTitle: analysisData?['has_profile_summary']
+                  buttonTitle: analysisData['has_profile_summary']
                       ? "View Profile"
-                      : "Add About Yourself",
+                      : "About Yourself",
                   onTap: () {
                     ProfileSummary profileSummary = ProfileSummary(size: size);
                     profileSummary.showAddProfileSummarySection(context);

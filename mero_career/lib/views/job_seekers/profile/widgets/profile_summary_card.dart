@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/common/modal_top_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -27,8 +28,8 @@ class ProfileSummary extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(14.0),
-          child:
-              Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+          child: Consumer<ProfileSetupProvider>(
+              builder: (context, provider, child) {
             final profileDetails = provider.jobSeekerProfileDetails;
             final isProfileSummaryAdded =
                 profileDetails?['profile_summary']?.isNotEmpty ?? false;
@@ -62,12 +63,14 @@ class ProfileSummary extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 !isProfileSummaryAdded
-                    ?
-                Text(
-                  "Highlight your key career achievements to help recruiters know your potential",
-                  style: Theme.of(context).textTheme.titleSmall,
-                ):
-                Text(profileDetails?['profile_summary'], style: Theme.of(context).textTheme.titleSmall,),
+                    ? Text(
+                        "Highlight your key career achievements to help recruiters know your potential",
+                        style: Theme.of(context).textTheme.titleSmall,
+                      )
+                    : Text(
+                        profileDetails?['profile_summary'],
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
               ],
             );
           }),
@@ -78,7 +81,7 @@ class ProfileSummary extends StatelessWidget {
 
   void showAddProfileSummarySection(BuildContext context) {
     final jobSeekerProfileProvider =
-        Provider.of<JobSeekerProvider>(context, listen: false);
+        Provider.of<ProfileSetupProvider>(context, listen: false);
 
     final TextEditingController profileSummaryController =
         TextEditingController(

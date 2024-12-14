@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/views/recruiters/notification/screen/recruiter_notification_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../providers/job_seeker_provider.dart';
 import '../../../../providers/recruiter_provider.dart';
 
 class HomeScreenHeading extends StatelessWidget {
@@ -73,14 +75,55 @@ class HomeScreenHeading extends StatelessWidget {
               ],
             ),
             // Notification Icon
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.0),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.notifications_active,
-                    size: 25,
-                    color: Colors.white,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  RecruiterNotificationScreen()));
+                    },
+                    child: Consumer<JobSeekerProvider>(
+                      builder: (context, provider, child) {
+                        final int unreadMessages =
+                            provider.unreadNotification?.length ?? 0;
+
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.notifications_active,
+                              size: 28,
+                              color: Colors.white,
+                            ),
+                            if (unreadMessages > 0)
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    unreadMessages.toString(),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

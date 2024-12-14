@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/profile/screen/career_preference_screen.dart';
 import 'package:mero_career/views/job_seekers/profile/widgets/preference_badge.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,8 @@ class CareerPreferenceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>CareerPreferenceScreen()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CareerPreferenceScreen()));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
@@ -42,42 +44,49 @@ class CareerPreferenceCard extends StatelessWidget {
                     SizedBox(
                       width: 10,
                     ),
-
-                    Consumer<JobSeekerProvider>(builder: (context, provider, child){
+                    Consumer<ProfileSetupProvider>(
+                        builder: (context, provider, child) {
                       final jobSeekerDetails = provider.careerPreference;
-                      final isAllPrefAdded = jobSeekerDetails?['is_all_pref_added'] ?? false;
+                      final isAllPrefAdded =
+                          jobSeekerDetails?['is_all_pref_added'] ?? false;
 
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                         decoration: BoxDecoration(
-                          color: isAllPrefAdded ? Colors.blue.shade300 :Colors.green.shade200,
+                          color: isAllPrefAdded
+                              ? Colors.blue.shade300
+                              : Colors.green.shade200,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
                           children: [
-                            isAllPrefAdded ?
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                "View Details",
-                                style: TextStyle(color: Colors.green.shade100, fontWeight: FontWeight.w500),
-                              ),
-                            ):
-                            Row(
-                              children: [
-                                Icon(Icons.arrow_upward,
-                                    color: Colors.green.shade100),Text(
-                                  "Boost 12 %",
-                                  style: TextStyle(color: Colors.green.shade100),
-                                ),
-                              ],
-                            ),
-
+                            isAllPrefAdded
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Text(
+                                      "View Details",
+                                      style: TextStyle(
+                                          color: Colors.green.shade100,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )
+                                : Row(
+                                    children: [
+                                      Icon(Icons.arrow_upward,
+                                          color: Colors.green.shade100),
+                                      Text(
+                                        "Boost 12 %",
+                                        style: TextStyle(
+                                            color: Colors.green.shade100),
+                                      ),
+                                    ],
+                                  ),
                           ],
                         ),
                       );
                     })
-
                   ],
                 ),
                 Icon(

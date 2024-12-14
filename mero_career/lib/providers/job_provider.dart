@@ -239,7 +239,6 @@ class JobProvider extends ChangeNotifier {
   Future<void> getJobSeekerDetails(int jobSeekerId) async {
     _isLoading = true;
     notifyListeners();
-
     try {
       final response =
           await jobSeekerServices.fetchJobSeekerProfilePreview(jobSeekerId);

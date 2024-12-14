@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mero_career/providers/job_seeker_job_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/menu/screen/applied_job_screen.dart';
 import 'package:mero_career/views/recruiters/job_seeker_review/screen/job_seeker_profile_preview.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class ProfileHeadingSection extends StatelessWidget {
         .textTheme
         .titleMedium
         ?.copyWith(fontSize: 14, fontWeight: FontWeight.w400);
-    return Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+    return Consumer<ProfileSetupProvider>(builder: (context, provider, child) {
       final jobSeekerDetails = provider.jobSeekerProfileDetails;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,7 +197,7 @@ class ProfileHeadingSection extends StatelessWidget {
 
   void showHeadingTopScreen(BuildContext context) {
     final jobSeekerProvider =
-        Provider.of<JobSeekerProvider>(context, listen: false);
+        Provider.of<ProfileSetupProvider>(context, listen: false);
 
     // Text controllers
     TextEditingController fullNameController = TextEditingController(

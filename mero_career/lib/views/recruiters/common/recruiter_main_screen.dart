@@ -9,6 +9,7 @@ import 'package:mero_career/views/recruiters/menu/screen/recruiter_bottom_sheet_
 import 'package:provider/provider.dart';
 
 import '../../../providers/chat_provider.dart';
+import '../../../providers/job_seeker_provider.dart';
 import '../profile/screen/profile_screen.dart';
 
 class RecruiterMainScreen extends StatefulWidget {
@@ -60,6 +61,9 @@ class _RecruiterMainScreenState extends State<RecruiterMainScreen> {
       Provider.of<RecruiterProvider>(context, listen: false)
           .fetchRecruiterProfile();
     }
+
+    await Provider.of<JobSeekerProvider>(context, listen: false)
+        .getAllUnreadNotification();
 
     await Provider.of<ChatProvider>(context, listen: false)
         .getUnreadMessageCount();

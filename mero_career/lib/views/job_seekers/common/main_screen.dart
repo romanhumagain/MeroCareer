@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mero_career/providers/chat_provider.dart';
 import 'package:mero_career/providers/job_seeker_provider.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/chat/screen/chat_screen.dart';
 import 'package:mero_career/views/job_seekers/search/screen/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +58,7 @@ class _NavigationMenuState extends State<MainScreen> {
 
   void _fetchJobSeekeProfileDetails() async {
     if (!widget.isLoggedInNow) {
-      Provider.of<JobSeekerProvider>(context, listen: false)
+      Provider.of<ProfileSetupProvider>(context, listen: false)
           .fetchJobSeekerProfileDetails();
     }
     await Provider.of<JobSeekerProvider>(context, listen: false)
@@ -109,7 +110,7 @@ class _NavigationMenuState extends State<MainScreen> {
           ),
         ),
         actions: [
-          Consumer<JobSeekerProvider>(builder: (context, provider, child) {
+          Consumer<ProfileSetupProvider>(builder: (context, provider, child) {
             final jobSeekerDetails = provider.jobSeekerProfileDetails;
             return Padding(
               padding: const EdgeInsets.only(right: 18.0),

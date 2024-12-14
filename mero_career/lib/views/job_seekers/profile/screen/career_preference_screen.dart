@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:mero_career/views/job_seekers/common/app_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -34,31 +35,39 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final careerPrefProvider = Provider.of<JobSeekerProvider>(context);
+    final careerPrefProvider = Provider.of<ProfileSetupProvider>(context);
 
     // Initialize TextControllers for the fields
     TextEditingController jobTitleController = TextEditingController(
-        text: careerPrefProvider.careerPreference?['prefered_job_title']
-    );
+        text: careerPrefProvider.careerPreference?['prefered_job_title']);
     TextEditingController jobLocationController = TextEditingController(
-        text: careerPrefProvider.careerPreference?['prefered_job_location']
-    );
+        text: careerPrefProvider.careerPreference?['prefered_job_location']);
     TextEditingController expectedSalaryController = TextEditingController(
-        text: careerPrefProvider.careerPreference?['expected_salary'].toString()
-    );
+        text:
+            careerPrefProvider.careerPreference?['expected_salary'].toString());
 
     // Initialize selected values from the provider if it's not already set
-    if (_selectedCategory.isEmpty && careerPrefProvider.careerPreference?['prefered_job_category_name'] != null) {
-      _selectedCategory = careerPrefProvider.careerPreference?['prefered_job_category_name'] ?? "";
-      _selectedCategoryId = careerPrefProvider.careerPreference?['prefered_job_category_id'] ?? "";
+    if (_selectedCategory.isEmpty &&
+        careerPrefProvider.careerPreference?['prefered_job_category_name'] !=
+            null) {
+      _selectedCategory =
+          careerPrefProvider.careerPreference?['prefered_job_category_name'] ??
+              "";
+      _selectedCategoryId =
+          careerPrefProvider.careerPreference?['prefered_job_category_id'] ??
+              "";
     }
 
-    if (_selectedJobType.isEmpty && careerPrefProvider.careerPreference?['prefered_job_type'] != null) {
-      _selectedJobType = careerPrefProvider.careerPreference?['prefered_job_type'] ??  "";
+    if (_selectedJobType.isEmpty &&
+        careerPrefProvider.careerPreference?['prefered_job_type'] != null) {
+      _selectedJobType =
+          careerPrefProvider.careerPreference?['prefered_job_type'] ?? "";
     }
 
-    if (_selectedJobLevel.isEmpty && careerPrefProvider.careerPreference?['prefered_job_level'] != null) {
-      _selectedJobLevel = careerPrefProvider.careerPreference?['prefered_job_level'] ?? "";
+    if (_selectedJobLevel.isEmpty &&
+        careerPrefProvider.careerPreference?['prefered_job_level'] != null) {
+      _selectedJobLevel =
+          careerPrefProvider.careerPreference?['prefered_job_level'] ?? "";
     }
 
     return Scaffold(
@@ -75,9 +84,14 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 8),
-                  Text("Career Preference", style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 21)),
+                  Text("Career Preference",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(fontSize: 21)),
                   SizedBox(height: 8),
-                  Text("Add details about your preferred job profile.", style: Theme.of(context).textTheme.titleSmall),
+                  Text("Add details about your preferred job profile.",
+                      style: Theme.of(context).textTheme.titleSmall),
                   SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.only(right: 18.0),
@@ -100,7 +114,9 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                         SizedBox(height: 20),
                         SelectContainer(
                           isSelected: _selectedCategory.isNotEmpty,
-                          selectText: _selectedCategory.isEmpty ? "Select Job Category" : _selectedCategory,
+                          selectText: _selectedCategory.isEmpty
+                              ? "Select Job Category"
+                              : _selectedCategory,
                           onTap: () {
                             _showJobCategoryModal(context);
                           },
@@ -108,7 +124,9 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                         SizedBox(height: 20),
                         SelectContainer(
                           isSelected: _selectedJobLevel.isNotEmpty,
-                          selectText: _selectedJobLevel.isEmpty ? "Select Job Level" : _selectedJobLevel,
+                          selectText: _selectedJobLevel.isEmpty
+                              ? "Select Job Level"
+                              : _selectedJobLevel,
                           onTap: () {
                             _showJobLevelModalSheet(context);
                           },
@@ -116,7 +134,9 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                         SizedBox(height: 20),
                         SelectContainer(
                           isSelected: _selectedJobType.isNotEmpty,
-                          selectText: _selectedJobType.isEmpty ? "Select Job Type" : _selectedJobType,
+                          selectText: _selectedJobType.isEmpty
+                              ? "Select Job Type"
+                              : _selectedJobType,
                           onTap: () {
                             _showJobTypeModalSheet(context);
                           },
@@ -128,7 +148,8 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 25),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -138,29 +159,45 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                     },
                     child: Text(
                       "Cancel",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.blue),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: Colors.blue),
                     ),
                   ),
                   SizedBox(width: 25),
                   GestureDetector(
                     onTap: () {
                       Map<String, dynamic> updatedPreference = {
-                        'prefered_job_title': jobTitleController.text.isEmpty ? "" : jobTitleController.text,
-                        'prefered_job_location': jobLocationController.text.isEmpty ? "" : jobLocationController.text,
-                        'expected_salary': expectedSalaryController.text.isEmpty ? "" : expectedSalaryController.text,
+                        'prefered_job_title': jobTitleController.text.isEmpty
+                            ? ""
+                            : jobTitleController.text,
+                        'prefered_job_location':
+                            jobLocationController.text.isEmpty
+                                ? ""
+                                : jobLocationController.text,
+                        'expected_salary': expectedSalaryController.text.isEmpty
+                            ? ""
+                            : expectedSalaryController.text,
                         'prefered_job_level': _selectedJobLevel,
                         'prefered_job_type': _selectedJobType,
                         'prefered_job_category': _selectedCategoryId,
                       };
-                      careerPrefProvider.updateCareerPreference(context, updatedPreference);
+                      careerPrefProvider.updateCareerPreference(
+                          context, updatedPreference);
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.blue,
                       ),
-                      child: Text("Save Changes", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18.5, color: Colors.white)),
+                      child: Text("Save Changes",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.5,
+                              color: Colors.white)),
                     ),
                   ),
                 ],
@@ -226,7 +263,6 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
   }
 }
 
-
 class SelectContainer extends StatelessWidget {
   final String selectText;
   final Function onTap;
@@ -264,8 +300,8 @@ class SelectContainer extends StatelessWidget {
                   color: isSelected
                       ? Colors.white
                       : (isDarkMode
-                      ? Colors.grey.shade300
-                      : Colors.grey.shade900)),
+                          ? Colors.grey.shade300
+                          : Colors.grey.shade900)),
             ),
             SizedBox(
               width: 5,
@@ -274,8 +310,8 @@ class SelectContainer extends StatelessWidget {
                 color: isSelected
                     ? Colors.white
                     : (isDarkMode
-                    ? Colors.grey.shade300
-                    : Colors.grey.shade900))
+                        ? Colors.grey.shade300
+                        : Colors.grey.shade900))
           ],
         ),
       ),

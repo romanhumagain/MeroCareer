@@ -333,7 +333,7 @@ class GetAccountSettingAPIView(APIView):
     serializer_class = AccountSettingSerializer
     
     def get(self, request):
-        account_setting = AccountSetting.objects.get(user=self.request.user.job_seeker)
+        account_setting = AccountSetting.objects.get(user=request.user.job_seeker)
         serializer = AccountSettingSerializer(account_setting)
         return Response(serializer.data, status=200)
     
@@ -469,4 +469,98 @@ class GetRecruiterDetailsAPI(generics.RetrieveAPIView):
         recruiterInst = self.get_object().get(id = self.kwargs.get('id'))
         serializer = self.get_serializer(recruiterInst)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class GetProfileCompletionRate(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, *args, **kwargs):
+        job_seeker_id = self.kwargs.get('id')
+        try:
+            job_seeker = JobSeeker.objects.get(id=job_seeker_id)
+        except JobSeeker.DoesNotExist:
+            return Response({'detail': "Job Seeker doesn't exist."}, status=404)
+
+        percentage_count = 10
+        missing_details_count = 0
+
+        has_resume_uploaded =  Resume.objects.filter(user = job_seeker).exists()
+        if has_resume_uploaded:
+            percentage_count += 20
+        else:
+            missing_details_count += 1
+            
+        
+        # Check for profile image
+        has_profile_image = job_seeker.profile_image and job_seeker.profile_image.name not in [
+            'profile/default_profile_pic.webp', 
+            'profile/default_profile_pic.png'
+        ]
+        if has_profile_image:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
+
+        # Check for profile summary
+        has_profile_summary = bool(job_seeker.profile_summary)
+        if has_profile_summary:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
+
+        # Check for education details
+        has_education_details = EducationDetail.objects.filter(user=job_seeker).exists()
+        if has_education_details:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
+        
+        # Check for experience details
+        has_experience_details = ExperienceDetail.objects.filter(user=job_seeker).exists()
+        if has_experience_details:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
+            
+        # Check for project details
+        has_project_details = ProjectDetail.objects.filter(user=job_seeker).exists()
+        if has_project_details:
+            percentage_count += 10  
+        else:
+            missing_details_count += 1
+
+        # Check for skills
+        has_skills = Skill.objects.filter(user=job_seeker).exists()
+        if has_skills:
+            percentage_count += 10
+        else:
+            missing_details_count += 1
+
+        # Check for career preferences
+        has_career_preference = False
+        career_preference = job_seeker.job_seeker_career_preference
+        if career_preference:
+            if career_preference.prefered_job_title and career_preference.prefered_job_location and career_preference.expected_salary and career_preference.prefered_job_level and career_preference.prefered_job_type:
+                has_career_preference = True
+                percentage_count += 10
+        else:
+            missing_details_count += 1
+
+        # Ensure the percentage does not exceed 100
+        if percentage_count > 100:
+            percentage_count = 100
+
+        return Response({
+            'percentage': percentage_count,
+            'missing_details': missing_details_count,
+            'has_resume_uploaded': has_resume_uploaded,
+            'has_profile_image': has_profile_image,
+            'has_profile_summary': has_profile_summary,
+            'has_education_details': has_education_details,
+            'has_experience_details': has_experience_details,
+            'has_project_details': has_project_details,
+            'has_skills': has_skills,
+            'has_career_preference': has_career_preference,
+        }, status=200)
+
     

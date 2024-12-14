@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mero_career/services/profile_setup_services.dart';
 
 import '../services/auth_services.dart';
+import '../services/job_seeker_services.dart';
 import '../views/shared/login/login_page.dart';
 import '../views/widgets/custom_flushbar_message.dart';
 
@@ -15,10 +16,15 @@ class ProfileSetupProvider extends ChangeNotifier {
   List<dynamic>? _educationDetails = [];
   List<dynamic>? _experienceDetails = [];
   List<dynamic>? _projectDetails = [];
+  Map<String, dynamic>? _jobSeekerProfileDetails = {};
+  Map<String, dynamic>? _careerPreference = {};
+  Map<String, dynamic>? _profileCompletionData = {};
 
   List? get skillsDetails => _skillsDetails;
 
   Map<String, dynamic>? get profileAnalysisData => _profileAnalysisData;
+
+  Map<String, dynamic>? get profileCompletionData => _profileCompletionData;
 
   bool get isLoading => _isLoading;
 
@@ -28,7 +34,11 @@ class ProfileSetupProvider extends ChangeNotifier {
 
   List? get projectDetails => _projectDetails;
 
+  Map<String, dynamic>? get jobSeekerProfileDetails => _jobSeekerProfileDetails;
+
+  Map<String, dynamic>? get careerPreference => _careerPreference;
   ProfileSetupServices profileSetupServices = ProfileSetupServices();
+  final JobSeekerServices jobSeekerServices = JobSeekerServices();
 
   // function to handle logout
   void handleLogoutUser(BuildContext context) async {
@@ -51,10 +61,9 @@ class ProfileSetupProvider extends ChangeNotifier {
   Future<http.Response?> fetchProfileAnalysis() async {
     _isLoading = true;
     notifyListeners();
-
     try {
       final response = await profileSetupServices.getProfileSetupAnalysis();
-      print(response.body);
+
       if (response.statusCode == 200) {
         final responseData = await json.decode(response.body);
         _profileAnalysisData = await responseData;
@@ -62,13 +71,155 @@ class ProfileSetupProvider extends ChangeNotifier {
       }
       return response;
     } catch (e) {
-      print("Error fetching analysis details..... $e");
       return null;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
+
+  // function to get profile analysis
+  Future<http.Response?> fetchProfileCompletionDetails(int jobseekerId) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response =
+          await profileSetupServices.getProfileSetupCompletion(jobseekerId);
+      if (response.statusCode == 200) {
+        final responseData = await json.decode(response.body);
+        _profileCompletionData = await responseData;
+        notifyListeners();
+      }
+      return response;
+    } catch (e) {
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  ///// job seeker provider /////
+
+  /// Fetch job seeker profile details
+  Future<http.Response?> fetchJobSeekerProfileDetails() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final response = await jobSeekerServices.fetchJobSeekerProfile();
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        _jobSeekerProfileDetails = responseData;
+        notifyListeners();
+      }
+      return response;
+    } catch (e) {
+      print("Error while fetching job seeker profile: $e");
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // update job seeker profile
+  Future<void> updateJobSeekerProfileDetails(
+      BuildContext context, Map<String, dynamic> updatedData) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response =
+          await jobSeekerServices.updateJobSeekerProfileDetails(updatedData);
+      if (response.statusCode == 200) {
+        showCustomFlushbar(
+            context: context,
+            message: "Successfully updated profile details",
+            type: MessageType.success);
+        await fetchJobSeekerProfileDetails();
+        await fetchProfileAnalysis();
+        notifyListeners();
+        await Future.delayed(Duration(milliseconds: 1500));
+        Navigator.pop(context);
+      } else if (response.statusCode == 400) {
+        showCustomFlushbar(
+            context: context,
+            message: "Sorry !, Couldn't update your profile !",
+            type: MessageType.error);
+      } else if (response.statusCode == 401) {
+        handleLogoutUser(context);
+      }
+    } catch (e) {
+      print("Error updating profile !");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // fetch job seeker career preference
+  Future<void> fetchCareerPreference(BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await jobSeekerServices.fetchCareerPreference();
+      if (response.statusCode == 200) {
+        final responseData = await json.decode(response.body);
+        _careerPreference = responseData;
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        handleLogoutUser(context);
+      } else {
+        showCustomFlushbar(
+            context: context,
+            message: "Error fetching career preference !",
+            type: MessageType.error);
+      }
+    } catch (e) {
+      print("Error fetching career preference, $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // update job seeker career preference
+  Future<void> updateCareerPreference(
+      BuildContext context, Map<String, dynamic> updatedData) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response =
+          await jobSeekerServices.updateCareerPreference(updatedData);
+      if (response.statusCode == 200) {
+        showCustomFlushbar(
+            context: context,
+            message: "Successfully updated career preference",
+            type: MessageType.success);
+        fetchCareerPreference(context);
+        await fetchProfileAnalysis();
+        notifyListeners();
+        await Future.delayed(Duration(milliseconds: 1500));
+        Navigator.pop(context);
+      } else if (response.statusCode == 400) {
+        print("updatedData is ......... $updatedData");
+        showCustomFlushbar(
+            context: context,
+            message: "Sorry !, Couldn't update your career preference !",
+            type: MessageType.error);
+      } else if (response.statusCode == 401) {
+        handleLogoutUser(context);
+      }
+    } catch (e) {
+      print("Error updating career preference !");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  ///// job seeker provider ///
 
   // function to fetch all skills data
   Future<http.Response?> fetchSkillsData() async {

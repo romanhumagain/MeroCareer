@@ -38,7 +38,8 @@ from job_seeker.views import (RegisterJobSeekerAPIView,
                               JobSeekerRetriveAPIView,
                               GetRecruiterDetailsAPI,
                               AccountSettingUpdateAPIView, 
-                              GetAccountSettingAPIView
+                              GetAccountSettingAPIView, 
+                              GetProfileCompletionRate
                               )
 
 from recruiter.views import (RegisterRecruiterAPIView, 
@@ -86,6 +87,8 @@ urlpatterns = [
   path('career-preference/', CareerPreferenceAPIView.as_view(), name='career_preference'),
   path('skill/', SkillAPIView.as_view(), name='skill_api'),
   path('profile-setup-analysis/', ProfileSetupAnalysis.as_view(), name='profile_setup_analysis'),
+  path('profile-completion/<int:id>/', GetProfileCompletionRate.as_view(), name='profile_setup_analysis'),
+  
   path('recruiter/job/<int:id>/', GetRecruiterDetailsAPI.as_view(), name='recruiter_with_posted_job_details'),
   path('joblist/<int:id>/', ListRecruiterJobPost.as_view(), name='recruiter_job_details'),
   path('account/settings/', GetAccountSettingAPIView.as_view(), name='get_account_settings'),

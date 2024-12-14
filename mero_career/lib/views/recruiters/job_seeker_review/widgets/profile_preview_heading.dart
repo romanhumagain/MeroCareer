@@ -4,6 +4,7 @@ import 'package:mero_career/providers/job_provider.dart';
 import 'package:mero_career/utils/date_formater.dart';
 import 'package:mero_career/views/widgets/my_divider.dart';
 import 'package:provider/provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfilePreviewHeading extends StatefulWidget {
   final String role;
@@ -23,6 +24,7 @@ class ProfilePreviewHeading extends StatefulWidget {
 
 class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
   String _jobStatus = "Under Review";
+  bool isLoading = false;
 
   final List<String> _statusOptions = [
     "Under Review",
@@ -91,15 +93,21 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
   }
 
   void _updateJobStatus(String newStatus) async {
-    final provider = context.read<JobProvider>();
     setState(() {
-      _jobStatus = newStatus;
+      isLoading = true;
     });
+    final provider = context.read<JobProvider>();
 
     await provider.updateApplicantDetails(
       widget.applicantId,
       {"status": newStatus},
     );
+    setState(() {
+      isLoading = false;
+    });
+    setState(() {
+      _jobStatus = newStatus;
+    });
   }
 
   void _openStatusModal(BuildContext context) {
@@ -140,7 +148,7 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
     return GestureDetector(
       onTap: () => _openStatusModal(context),
       child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: _statusColors[_jobStatus] ?? Colors.blue.shade300,
             borderRadius: BorderRadius.circular(12),
@@ -151,14 +159,25 @@ class _ProfilePreviewHeadingState extends State<ProfilePreviewHeading> {
             if (applicantDetails!.isEmpty) {
               return Text("N/A");
             }
-            return Text(
-              applicantDetails['status'],
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            );
+            return isLoading
+                ? SizedBox(
+                    width: 70,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
+                  )
+                : Text(
+                    applicantDetails['status'],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                    ),
+                  );
           })),
     );
   }

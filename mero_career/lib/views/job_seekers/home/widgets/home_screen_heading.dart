@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mero_career/providers/profile_setup_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/job_seeker_provider.dart';
@@ -10,6 +11,7 @@ class HomeScreenHeading extends StatelessWidget {
   });
 
   final Size size;
+
   String getGreetingMessage() {
     int currentHour = DateTime.now().hour;
 
@@ -21,7 +23,6 @@ class HomeScreenHeading extends StatelessWidget {
       return "Good Evening";
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +46,12 @@ class HomeScreenHeading extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:  [
-            Consumer<JobSeekerProvider>(builder: (context, provider, child){
+          children: [
+            Consumer<ProfileSetupProvider>(builder: (context, provider, child) {
               final jobSeekerData = provider.jobSeekerProfileDetails;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
+                children: [
                   Text(
                     getGreetingMessage(),
                     style: TextStyle(
@@ -84,7 +85,7 @@ class HomeScreenHeading extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: Column(
-                children:  const [
+                children: const [
                   Icon(
                     Icons.notifications_active,
                     size: 25,

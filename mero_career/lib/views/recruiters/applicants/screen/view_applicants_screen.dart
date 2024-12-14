@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/recruiters/applicants/screen/selected_job_applicants.dart';
+import 'package:mero_career/views/recruiters/applicants/widgets/job_wise_applicants.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/job_provider.dart';
@@ -245,7 +246,7 @@ class JobApplicants extends StatelessWidget {
                     ? job['application'].map<Widget>((data) {
                         return Row(
                           children: [
-                            ApplicantsDetails(size: size, data: data),
+                            JobWiseApplicants(size: size, data: data),
                             SizedBox(
                               width: 10,
                             )

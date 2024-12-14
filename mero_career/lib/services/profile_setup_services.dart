@@ -108,4 +108,11 @@ class ProfileSetupServices {
     final response = await authAPIClient.delete('/project-details/$id/');
     return response;
   }
+
+  // function to get experience details
+  Future<http.Response> getProfileSetupCompletion(int jobseekerId) async {
+    final response =
+        await authAPIClient.get('/profile-completion/$jobseekerId/');
+    return response;
+  }
 }
