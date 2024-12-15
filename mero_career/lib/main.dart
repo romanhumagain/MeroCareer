@@ -41,12 +41,6 @@ class MyApp extends StatelessWidget {
             ? themeProvider.themeData
             : themeProvider.themeData,
         home: SplashScreen(),
-        // home: UserVerificationPage(),
-        // home: MainScreen(),
-        // home: UnderApprovalPage(),
-        // home: RecruiterMainScreen(),
-        // home: ProfileSetupPage()
-        // home: AdminHomeScreen(),
       );
     });
   }
