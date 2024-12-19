@@ -93,23 +93,6 @@ class PostedJobDetailsCard extends StatelessWidget {
                         SizedBox(
                           width: 15,
                         ),
-                        Container(
-                          height: 25,
-                          width: 25,
-                          padding: const EdgeInsets.all(3),
-                          // Adjust size
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: Colors.red.shade100,
-                          ),
-                          child: Center(
-                            child: Text(
-                              "2",
-                              style: TextStyle(color: Colors.grey.shade700),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
                       ],
                     ),
                     SizedBox(

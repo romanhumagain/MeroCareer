@@ -70,10 +70,6 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
 
   void _registerCompany() async {
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        _isLoading = true;
-      });
-
       if (!isTermsAndConditionAccepted) {
         showCustomFlushbar(
             context: context,
@@ -82,6 +78,10 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
             duration: 1500);
         return;
       }
+      setState(() {
+        _isLoading = true;
+      });
+
       final recruiterData = {
         'company_name': _companyNameController.text,
         'email': _emailController.text,
@@ -99,9 +99,9 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
         final response =
             await recruiterServices.registerRecruiter(recruiterData);
 
-        if (response.statusCode == 201) {
-          final responseData = json.decode(response.body);
+        final responseData = json.decode(response.body);
 
+        if (response.statusCode == 201) {
           // setting the tokens
           await authServices.saveTokens(
               responseData['refresh'], responseData['access']);
@@ -125,15 +125,16 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
         } else if (response.statusCode == 400) {
           showCustomFlushbar(
               context: context,
-              message: "Sorry, couldn't register your account.",
+              message: responseData['detail'] ??
+                  "Sorry, couldn't register your account.",
               type: MessageType.error,
-              duration: 1000);
+              duration: 1500);
         } else if (response.statusCode == 500) {
           showCustomFlushbar(
               context: context,
               message: "Server error. Please try again later.",
               type: MessageType.error,
-              duration: 1000);
+              duration: 1500);
         } else {
           showCustomFlushbar(
             context: context,
@@ -144,14 +145,15 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
       } catch (e) {
         if (e is SocketException) {
           showCustomFlushbar(
-            context: context,
-            message: "No internet connection. Please check your connection.",
-            type: MessageType.error,
-          );
+              context: context,
+              message: "No internet connection. Please check your connection.",
+              type: MessageType.error,
+              duration: 1500);
         } else {
           showCustomFlushbar(
             context: context,
             message: "Something went wrong. Please try again later.",
+            duration: 1500,
             type: MessageType.error,
           );
         }
@@ -289,8 +291,11 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Phone number cannot be empty !';
-                              } else if (value.length != 10) {
-                                return "Enter a valid phone number";
+                              }
+                              final onlyNumbersRegExp = RegExp(r'^[0-9-]+$');
+
+                              if (!onlyNumbersRegExp.hasMatch(value)) {
+                                return 'Please enter a valid phone number!';
                               }
                               return null;
                             },
@@ -343,11 +348,12 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                         if (value == null || value.isEmpty) {
                           return 'Registration number cannot be empty !';
                         }
-                        // final NoRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
-                        //
-                        // if (!NoRegExp.hasMatch(value)) {
-                        //   return 'Please enter a valid Registration number!';
-                        // }
+                        final onlyNumbersRegExp = RegExp(r'^[0-9]+$');
+
+                        if (!onlyNumbersRegExp.hasMatch(value)) {
+                          return 'Please enter a valid registration number!';
+                        }
+
                         return null;
                       },
                     ),
@@ -363,11 +369,10 @@ class _RecruiterRegisterPageState extends State<RecruiterRegisterPage> {
                         if (value == null || value.isEmpty) {
                           return 'Pan number cannot be empty !';
                         }
-                        // final NoRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
-                        //
-                        // if (!NoRegExp.hasMatch(value)) {
-                        //   return 'Please enter a valid PAN number!';
-                        // }
+                        final onlyNumbersRegExp = RegExp(r'^[0-9]+$');
+                        if (!onlyNumbersRegExp.hasMatch(value)) {
+                          return 'Please enter a valid pan number!';
+                        }
                         return null;
                       },
                     ),

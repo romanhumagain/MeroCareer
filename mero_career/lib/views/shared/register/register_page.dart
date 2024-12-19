@@ -55,10 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   AuthServices authServices = AuthServices();
 
-  void _getCategory() {
-    print("category details: $_selectedCategory $_selectedCategoryId");
-  }
-
   void _registerUser() async {
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedCategoryId == "") {
@@ -66,13 +62,13 @@ class _RegisterPageState extends State<RegisterPage> {
             context: context,
             message: "Please select your job preference !",
             type: MessageType.warning,
-            duration: 1500);
+            duration: 1600);
       } else if (!isTermsAndConditionAccepted) {
         showCustomFlushbar(
             context: context,
             message: "Accept terms and condition before registering account.",
             type: MessageType.warning,
-            duration: 1500);
+            duration: 1600);
       } else {
         setState(() {
           _isLoading = true;
@@ -94,9 +90,10 @@ class _RegisterPageState extends State<RegisterPage> {
           JobSeekerServices jobSeekerServices = JobSeekerServices();
           final response = await jobSeekerServices.registerUser(jobSeekerData);
 
-          if (response.statusCode == 201) {
-            final responseData = json.decode(response.body);
+          final responseData = json.decode(response.body);
 
+          if (response.statusCode == 201) {
+            // final responseData = json.decode(response.body);
             await authServices.saveTokens(
                 responseData['refresh'], responseData['access']);
             await authServices.saveUserRole(responseData['role']);
@@ -119,31 +116,32 @@ class _RegisterPageState extends State<RegisterPage> {
           } else if (response.statusCode == 400) {
             final responseData = json.decode(response.body);
             showCustomFlushbar(
-              context: context,
-              message: responseData['detail'] ??
-                  "Sorry, couldn't register your account.",
-              type: MessageType.error,
-            );
+                context: context,
+                message: responseData['detail'] ??
+                    "Sorry, couldn't register your account.",
+                type: MessageType.error,
+                duration: 1600);
           } else if (response.statusCode == 500) {
             showCustomFlushbar(
-              context: context,
-              message: "Server error. Please try again later.",
-              type: MessageType.error,
-            );
+                context: context,
+                message: "Server error. Please try again later.",
+                type: MessageType.error,
+                duration: 1500);
           } else {
             showCustomFlushbar(
-              context: context,
-              message: "Unexpected error occurred. Please try again later.",
-              type: MessageType.error,
-            );
+                context: context,
+                message: "Unexpected error occurred. Please try again later.",
+                type: MessageType.error,
+                duration: 1500);
           }
         } catch (e) {
           if (e is SocketException) {
             showCustomFlushbar(
-              context: context,
-              message: "No internet connection. Please check your connection.",
-              type: MessageType.error,
-            );
+                context: context,
+                message:
+                    "No internet connection. Please check your connection.",
+                type: MessageType.error,
+                duration: 1500);
           } else {
             showCustomFlushbar(
               context: context,

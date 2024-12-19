@@ -51,7 +51,7 @@ class JobDetailsCard extends StatelessWidget {
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                width: size.width / 1.12,
+                width: size.width / 1.1,
                 decoration: BoxDecoration(
                     color: cardColor, borderRadius: BorderRadius.circular(12)),
                 child: Column(
@@ -189,15 +189,15 @@ class JobDetailsCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.roller_shades_closed_outlined,
+                              Icons.monetization_on,
                               color: tertiaryColor,
                             ),
                             SizedBox(
                               width: 5,
                             ),
                             Text(
-                              job['salary_range'] != null
-                                  ? "${job['salary_range']}k/month"
+                              job['salary_range'] != ""
+                                  ? "${job['salary_range']} /month"
                                   : "Not Disclosed",
                               style:
                                   TextStyle(color: tertiaryColor, fontSize: 15),

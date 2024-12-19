@@ -28,12 +28,19 @@ class RegisterRecruiterAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         data = request.data
+        
+        if User.objects.filter(email = data['email']).exists():
+            return Response({'detail':'Email already exists. Please use another verified company email !'}, status=status.HTTP_400_BAD_REQUEST)
+    
         serializer = self.get_serializer(data=data)
 
         try:
             if serializer.is_valid():
                 with transaction.atomic():
                   
+                    if Recruiter.objects.filter(phone_number = data['phone_number']).exists():
+                        return Response({'detail':'Phone number already exists. Please use another number !'}, status=status.HTTP_400_BAD_REQUEST)
+                    
                     user = serializer.save()
 
                     recruiter = Recruiter.objects.create(

@@ -43,7 +43,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               context: context,
               message: responseData['detail'],
               type: MessageType.error,
-              duration: 1200);
+              duration: 1600);
         }
       } catch (e) {
         print("Error sending email ! , $e");

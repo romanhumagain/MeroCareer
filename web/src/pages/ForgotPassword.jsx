@@ -60,7 +60,7 @@ const ForgotPassword = () => {
       console.log(response)
       if (response.ok) {
         show_toastify("Successfully changed your password! \n You can login now!", "success");
-        // reset();
+        reset();
         
       } else {
         const errorData = await response.json();

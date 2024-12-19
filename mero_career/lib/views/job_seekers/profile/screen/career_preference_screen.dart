@@ -43,10 +43,10 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
     TextEditingController jobLocationController = TextEditingController(
         text: careerPrefProvider.careerPreference?['prefered_job_location']);
     TextEditingController expectedSalaryController = TextEditingController(
-        text:
-            careerPrefProvider.careerPreference?['expected_salary'].toString());
+        text: careerPrefProvider.careerPreference?['expected_salary']
+                .toString() ??
+            "");
 
-    // Initialize selected values from the provider if it's not already set
     if (_selectedCategory.isEmpty &&
         careerPrefProvider.careerPreference?['prefered_job_category_name'] !=
             null) {
@@ -97,20 +97,6 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                     padding: const EdgeInsets.only(right: 18.0),
                     child: Column(
                       children: [
-                        PreferenceTextField(
-                          controller: jobTitleController,
-                          labelText: "Preferred Job Title",
-                        ),
-                        SizedBox(height: 15),
-                        PreferenceTextField(
-                          controller: jobLocationController,
-                          labelText: "Preferred Job Location",
-                        ),
-                        SizedBox(height: 15),
-                        PreferenceTextField(
-                          controller: expectedSalaryController,
-                          labelText: "Expected Salary (/Month)",
-                        ),
                         SizedBox(height: 20),
                         SelectContainer(
                           isSelected: _selectedCategory.isNotEmpty,
@@ -140,6 +126,21 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                           onTap: () {
                             _showJobTypeModalSheet(context);
                           },
+                        ),
+                        SizedBox(height: 15),
+                        PreferenceTextField(
+                          controller: jobTitleController,
+                          labelText: "Preferred Job Title",
+                        ),
+                        SizedBox(height: 15),
+                        PreferenceTextField(
+                          controller: jobLocationController,
+                          labelText: "Preferred Job Location",
+                        ),
+                        SizedBox(height: 15),
+                        PreferenceTextField(
+                          controller: expectedSalaryController,
+                          labelText: "Expected Salary (/Month)",
                         ),
                       ],
                     ),

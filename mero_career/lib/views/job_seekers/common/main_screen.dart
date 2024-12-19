@@ -186,7 +186,7 @@ class _NavigationMenuState extends State<MainScreen> {
                       clipBehavior: Clip.none,
                       children: [
                         Icon(
-                          _selectedIndex != 3
+                          _selectedIndex != 2
                               ? CupertinoIcons.chat_bubble
                               : CupertinoIcons.chat_bubble_fill,
                           size: 24.5,

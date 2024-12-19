@@ -49,7 +49,7 @@ class ProfileHeadingSection extends StatelessWidget {
                                   as ImageProvider, // Cast AssetImage to ImageProvider
                         )),
                     Text(
-                      jobSeekerDetails?['full_name'] ?? '...Loading',
+                      jobSeekerDetails?['full_name'] ?? '',
                       style: Theme.of(context)
                           .textTheme
                           .headlineMedium
@@ -180,7 +180,7 @@ class ProfileHeadingSection extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => JobSeekerProfilePreview(
-                                jobSeekerId: 1,
+                                jobSeekerId: jobSeekerDetails?['id'],
                               )));
                 },
                 child: Text(
@@ -201,12 +201,11 @@ class ProfileHeadingSection extends StatelessWidget {
 
     // Text controllers
     TextEditingController fullNameController = TextEditingController(
-      text: jobSeekerProvider.jobSeekerProfileDetails?['full_name'] ??
-          '..Loading',
+      text: jobSeekerProvider.jobSeekerProfileDetails?['full_name'] ?? '',
     );
     TextEditingController profileHeadlineController = TextEditingController(
-      text: jobSeekerProvider.jobSeekerProfileDetails?['profile_headline'] ??
-          '..Loading',
+      text:
+          jobSeekerProvider.jobSeekerProfileDetails?['profile_headline'] ?? '',
     );
 
     final ImagePicker picker = ImagePicker();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mero_career/views/recruiters/applicants/screen/selected_job_applicants.dart';
 import 'package:mero_career/views/recruiters/applicants/widgets/job_wise_applicants.dart';
+import 'package:mero_career/views/widgets/my_divider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/job_provider.dart';
@@ -184,7 +185,7 @@ class JobApplicants extends StatelessWidget {
                       job['job_title'],
                       style: Theme.of(context)
                           .textTheme
-                          .headlineSmall
+                          .headlineMedium
                           ?.copyWith(fontSize: 17, letterSpacing: 0),
                     ),
                     SizedBox(
@@ -258,13 +259,17 @@ class JobApplicants extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "No Applicants found for this job !",
-                            style: TextStyle(fontSize: 16),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(fontSize: 14),
                           ),
                         )
                       ],
               ),
             ),
           ),
+          MyDivider()
         ],
       ),
     );

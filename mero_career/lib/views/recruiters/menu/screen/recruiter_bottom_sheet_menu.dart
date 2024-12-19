@@ -92,28 +92,28 @@ class RecruiterBottomSheetMenu extends StatelessWidget {
                   "Account Settings",
                   style: style1,
                 ),
-                SizedBox(
-                  height: 50,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage()));
-                    },
-                    child: ListTile(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                      leading: Icon(Icons.settings),
-                      title: Text("Settings"),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(
+                //   height: 50,
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => SettingsPage()));
+                //     },
+                //     child: ListTile(
+                //       contentPadding:
+                //           EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                //       leading: Icon(Icons.settings),
+                //       title: Text("Settings"),
+                //       trailing: Icon(
+                //         Icons.arrow_forward_ios,
+                //         color: Colors.grey,
+                //         size: 20,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(
                   height: 50,
                   child: GestureDetector(
